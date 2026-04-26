@@ -345,7 +345,7 @@
                         <div class="mb-3">
                             <label class="form-label" style="font-weight: 600;">Answer</label>
                             <textarea name="answer" class="form-control" rows="4" required></textarea>
-                        </div>
+                        </div> 
                     </div>
                     <div class="modal-footer" style="border-top: none;">
                         <button type="submit" class="btn btn-nav-match w-100" style="border-radius: 10px;">Create
