@@ -31,7 +31,7 @@
     @auth
       <div class="sidebar-user">
         <div class="user-avatar">
-          {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+          {{ strtoupper(substr(Auth::user()->name, 0, 1)) }} 
         </div>
         <div class="user-info">
           <div class="user-info-name">{{ Auth::user()->name }}</div>
