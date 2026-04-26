@@ -1,0 +1,134 @@
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+        .manage-container {
+            font-family: 'DM Sans', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 60%, #b8860b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+        }
+
+        .item-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s ease;
+        }
+
+        .item-card:hover {
+            border-color: rgba(212, 175, 83, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-premium-action {
+            background: rgba(212, 175, 83, 0.1);
+            color: #b8860b;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn-premium-action:hover {
+            background: #d4af53;
+            color: #fff;
+        }
+
+        .btn-premium-danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn-premium-danger:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .sub-item-list {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-nav-match {
+            background-color: rgb(55, 55, 55);
+            border-color: rgb(55, 55, 55);
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .btn-nav-match:hover {
+            background-color: rgb(45, 45, 45);
+            border-color: rgb(45, 45, 45);
+            color: white;
+        }
+
+        .btn-nav-match:hover {
+            background-color: rgb(45, 45, 45);
+            border-color: rgb(45, 45, 45);
+            color: white;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .manage-container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .item-card {
+                padding: 1.25rem;
+                border-radius: 12px;
+            }
+
+            .item-card h4 {
+                font-size: 1.2rem;
+            }
+
+            .btn-premium-action,
+            .btn-premium-danger {
+                font-size: 0.8rem;
+                padding: 0.5rem 0.8rem;
+            }
+
+            .sub-item-list h6 {
+                font-size: 0.9rem;
+            }
+
+            .table td {
+                font-size: 0.85rem;
+                padding: 0.6rem 0;
+            }
+
+            /* Buttons stay on same line */
+            @media (max-width: 480px) {
+                .item-card .d-flex {
+                    flex-wrap: nowrap;
+                }
+            }
+        }

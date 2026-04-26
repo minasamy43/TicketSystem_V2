@@ -1,0 +1,322 @@
+/* Knowledgebase article and category css */
+
+/* 1- Category page css */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
+.kb-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: #d4af53;
+}
+
+.cat-hero {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.cat-icon-wrap {
+    font-size: 3rem;
+    background: rgba(212, 175, 83, 0.08);
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    flex-shrink: 0;
+}
+
+.cat-hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 0.5rem;
+}
+
+.cat-hero p {
+    font-size: 1.05rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.article-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.article-item {
+    background: #fff;
+    border-radius: 14px;
+    padding: 1.5rem 1.75rem;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.article-item:hover {
+    transform: translateX(5px);
+    border-color: rgba(212, 175, 83, 0.3);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.04);
+}
+
+.article-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #111;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.article-wrapper.active .article-arrow {
+    transform: rotate(180deg);
+}
+
+.article-content-container {
+    padding: 0 1.75rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #fff;
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+    color: #444;
+    line-height: 1.7;
+    font-size: 1rem;
+}
+
+.article-wrapper.active .article-content-container {
+    padding: 1rem 1.75rem 1.5rem;
+    max-height: 2000px;
+    border: 1px solid rgba(212, 175, 83, 0.3);
+    border-top: none;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.04);
+}
+
+.article-wrapper.active .article-item {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-color: rgba(212, 175, 83, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+    transform: none;
+}
+
+.article-content-container h2,
+.article-content-container h3 {
+    font-family: 'Playfair Display', serif;
+    color: #111;
+    margin-top: 1.5rem;
+}
+
+.article-content-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+@media (max-width: 768px) {
+    .kb-container {
+        padding: 1.5rem 1rem;
+    }
+
+    .cat-hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+        gap: 1rem;
+    }
+
+    .cat-icon-wrap {
+        width: 70px;
+        height: 70px;
+        font-size: 2.2rem;
+    }
+
+    .cat-hero h1 {
+        font-size: 1.7rem;
+    }
+
+    .back-link {
+        justify-content: center;
+        display: flex;
+        margin-bottom: 1.5rem;
+    }
+
+    .article-item {
+        padding: 1.2rem;
+    }
+
+    .article-title {
+        font-size: 1rem;
+    }
+}
+
+/* 2- Article page css */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
+.kb-container {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: #d4af53;
+}
+
+.article-content-wrapper {
+    background: #fff;
+    padding: 3rem 3.5rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.article-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.cat-badge {
+    display: inline-block;
+    background: rgba(212, 175, 83, 0.1);
+    color: #b8860b;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.35rem 0.8rem;
+    border-radius: 50px;
+    margin-bottom: 1.5rem;
+}
+
+.article-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: #111;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.article-body {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #444;
+}
+
+.article-body p {
+    margin-bottom: 1.5rem;
+}
+
+.article-body h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #111;
+    margin: 2.5rem 0 1rem;
+}
+
+.article-body h3 {
+    font-weight: 600;
+    font-size: 1.4rem;
+    color: #222;
+    margin: 2rem 0 1rem;
+}
+
+.article-body ul,
+.article-body ol {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+}
+
+.article-body li {
+    margin-bottom: 0.5rem;
+}
+
+.article-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 768px) {
+    .kb-container {
+        padding: 1.5rem 1rem;
+    }
+
+    .article-content-wrapper {
+        padding: 2rem 1.25rem;
+        border-radius: 16px;
+    }
+
+    .article-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .article-header h1 {
+        font-size: 1.85rem;
+        line-height: 1.3;
+    }
+
+    .back-link {
+        justify-content: center;
+        display: flex;
+        margin-bottom: 1.5rem;
+    }
+}
