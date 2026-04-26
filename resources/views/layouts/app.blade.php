@@ -34,7 +34,7 @@
           {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
         </div>
         <div class="user-info">
-          <div class="user-info-name">{{ Auth::user()->name }}ffffffffffffffffffs</div>
+          <div class="user-info-name">{{ Auth::user()->name }}</div>
           <div class="user-info-role">{{ Auth::user()->role == 1 ? 'Administrator' : 'User Account' }}</div>
         </div>
       </div>
