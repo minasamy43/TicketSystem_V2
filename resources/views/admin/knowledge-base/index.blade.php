@@ -343,7 +343,7 @@
                             <input type="text" name="question" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                   sdc         <label class="form-label" style="font-weight: 600;">Answer</label>
+                            <label class="form-label" style="font-weight: 600;">Answer</label>
                             <textarea name="answer" class="form-control" rows="4" required></textarea>
                         </div>
                     </div>
