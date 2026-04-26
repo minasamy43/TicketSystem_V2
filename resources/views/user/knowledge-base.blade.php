@@ -1,4 +1,7 @@
 @extends('layouts.app')
+
+@section('title', 'Knowledge Base')
+@section('breadcrumb', 'Knowledge Base')
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/User-knowledge-base.css') }}">
 @endpush

@@ -1,5 +1,8 @@
 @extends('layouts.app')
 
+@section('title', 'Admin Ranking')
+@section('breadcrumb', 'Ranking')
+
 @push('styles')
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>

@@ -1,5 +1,8 @@
 @extends('layouts.app')
 
+@section('title', 'View Ticket #' . $ticket->id)
+@section('breadcrumb', 'View Ticket')
+
 
 @section('content')
     <style>

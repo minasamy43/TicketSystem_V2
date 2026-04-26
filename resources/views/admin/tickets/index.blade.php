@@ -1,9 +1,12 @@
 @extends('layouts.app')
 
+@section('title', 'Tickets Management')
+@section('breadcrumb', 'Tickets')
+
 @push('styles')
-<link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap"
-    rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 @endpush
 
 @section('content')
@@ -225,6 +228,7 @@
 
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
+
             .table-bordered thead th,
             .table-bordered tbody td {
                 padding: 10px;
@@ -245,7 +249,7 @@
     </style>
 
     <div class="container mt-4">
-      
+
 
         <div class="card shadow-sm border-0" style="border-radius: 16px; overflow: hidden;">
             <div class="card-body p-0">
@@ -412,11 +416,18 @@
                                 @empty
                                     <tr class="empty-state-row">
                                         <td colspan="8" class="p-0">
-                                            <div class="empty-state-container text-center w-100" style="padding: 4rem 1rem; background: #fff;">
-                                                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                                                    <div style="font-size: 3.5rem; margin-bottom: 0.5rem; opacity: 0.6; filter: grayscale(0.2);">📭</div>
-                                                    <h5 style="font-family: 'Playfair Display', serif; color: #111; font-weight: 600; margin-bottom: 0.3rem;">All caught up!</h5>
-                                                    <p style="color: #777; font-size: 0.95rem; margin-bottom: 0;">There are no tickets found here to display.</p>
+                                            <div class="empty-state-container text-center w-100"
+                                                style="padding: 4rem 1rem; background: #fff;">
+                                                <div
+                                                    style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                                    <div
+                                                        style="font-size: 3.5rem; margin-bottom: 0.5rem; opacity: 0.6; filter: grayscale(0.2);">
+                                                        📭</div>
+                                                    <h5
+                                                        style="font-family: 'Playfair Display', serif; color: #111; font-weight: 600; margin-bottom: 0.3rem;">
+                                                        All caught up!</h5>
+                                                    <p style="color: #777; font-size: 0.95rem; margin-bottom: 0;">There are no
+                                                        tickets found here to display.</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -431,7 +442,8 @@
                     <div class="px-4 pb-4">
                         <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
                             <small class="text-muted">
-                                Showing {{ $tickets->firstItem() }}–{{ $tickets->lastItem() }} of {{ $tickets->total() }} tickets
+                                Showing {{ $tickets->firstItem() }}–{{ $tickets->lastItem() }} of {{ $tickets->total() }}
+                                tickets
                             </small>
                             {{ $tickets->links() }}
                         </div>
@@ -568,47 +580,47 @@
                             newRow.setAttribute('data-ticket-id', ticket.id);
                             newRow.className = 'new-entry-flash unread-row';
                             newRow.style.cursor = 'pointer';
-                            
+
                             newRow.innerHTML = `
-                                <td style="font-weight: 600; color: #d4af53;">#${ticket.id}</td>
-                                <td style="font-weight: 500;">${ticket.user_name}</td>
-                                <td>${ticket.subject}</td>
-                                <td>
-                                    <select class="status-select-badge status-${ticket.status === 'in progress' ? 'progress' : ticket.status}" onchange="updateStatusLive(${ticket.id}, this.value, this)">
-                                        <option value="open" ${ticket.status === 'open' ? 'selected' : ''}>Open 🎟️</option>
-                                        <option value="in progress" ${ticket.status === 'in progress' ? 'selected' : ''}>In Progress 👍🏻</option>
-                                        <option value="closed" ${ticket.status === 'closed' ? 'selected' : ''}>Closed ✅️</option>
-                                    </select>
-                                </td>
-                                <td class="text-muted" id="inprogress-${ticket.id}">${ticket.inprogress_by}</td>
-                                <td class="text-muted" id="closer-${ticket.id}">${ticket.closer}</td>
-                                <td>
-                                    <div style="display:flex; align-items:center; gap:8px;">
-                                        <span style="color:#d4af53; flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg></span>
-                                        <div>
-                                            <div style="font-weight:600; color:#333; font-size:0.88rem; line-height:1.2;">${ticket.time}</div>
-                                            <div style="font-size:0.72rem; color:#aaa; margin-top:2px;">${ticket.relative_time}</div>
+                                    <td style="font-weight: 600; color: #d4af53;">#${ticket.id}</td>
+                                    <td style="font-weight: 500;">${ticket.user_name}</td>
+                                    <td>${ticket.subject}</td>
+                                    <td>
+                                        <select class="status-select-badge status-${ticket.status === 'in progress' ? 'progress' : ticket.status}" onchange="updateStatusLive(${ticket.id}, this.value, this)">
+                                            <option value="open" ${ticket.status === 'open' ? 'selected' : ''}>Open 🎟️</option>
+                                            <option value="in progress" ${ticket.status === 'in progress' ? 'selected' : ''}>In Progress 👍🏻</option>
+                                            <option value="closed" ${ticket.status === 'closed' ? 'selected' : ''}>Closed ✅️</option>
+                                        </select>
+                                    </td>
+                                    <td class="text-muted" id="inprogress-${ticket.id}">${ticket.inprogress_by}</td>
+                                    <td class="text-muted" id="closer-${ticket.id}">${ticket.closer}</td>
+                                    <td>
+                                        <div style="display:flex; align-items:center; gap:8px;">
+                                            <span style="color:#d4af53; flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg></span>
+                                            <div>
+                                                <div style="font-weight:600; color:#333; font-size:0.88rem; line-height:1.2;">${ticket.time}</div>
+                                                <div style="font-size:0.72rem; color:#aaa; margin-top:2px;">${ticket.relative_time}</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <a href="javascript:void(0)" onclick="openAdminChat(${ticket.id})" class="action-btn-premium position-relative" title="Chat">
-                                        <svg viewBox="0 0 256 256" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="messenger-grad" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#00C6FF" /><stop offset="50%" stop-color="#0078FF" /><stop offset="100%" stop-color="#A033FF" /></linearGradient></defs><path fill="url(#messenger-grad)" d="M128,24C68.9,24,21,68.6,21,123.5c0,31.2,15.7,58.5,40.1,76.5c1.4,1,2.5,2.6,2.8,4.3l3.8,27.3c0.4,3,3.7,4.8,6.4,3.3l29.1-14.9c1-0.5,2.2-0.6,3.2-0.3c7.2,1.8,14.8,2.7,22.7,2.7c59.1,0,107-44.6,107-99.5S187.1,24,128,24z M138.8,148v-0.1l-25.5-27c-4-4.2-10.6-4.5-15.1-0.5l-31.5,28.5c-3,2.7-7.2-0.8-5.2-4.1l29.4-48c3.2-5.3,10.6-6.6,15.5-2.8l25.3,19.3c3.8,2.9,9.3,3.3,13.5-0.1l32-26.1c3-2.5,7,1,5.2,4.3L153,141.5C149.8,146.9,142.5,148.6,138.8,148z" /></svg>
-                                        ${ticket.unread_count > 0 ? `<span id="unread-count-${ticket.id}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light shadow-sm" style="font-size: 0.66rem; padding: 0.24em 0.45em; line-height: 1;">${ticket.unread_count}</span>` : ''}
-                                    </a>
-                                </td>
-                            `;
-                            
-                            newRow.addEventListener('click', function(e) {
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="javascript:void(0)" onclick="openAdminChat(${ticket.id})" class="action-btn-premium position-relative" title="Chat">
+                                            <svg viewBox="0 0 256 256" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="messenger-grad" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#00C6FF" /><stop offset="50%" stop-color="#0078FF" /><stop offset="100%" stop-color="#A033FF" /></linearGradient></defs><path fill="url(#messenger-grad)" d="M128,24C68.9,24,21,68.6,21,123.5c0,31.2,15.7,58.5,40.1,76.5c1.4,1,2.5,2.6,2.8,4.3l3.8,27.3c0.4,3,3.7,4.8,6.4,3.3l29.1-14.9c1-0.5,2.2-0.6,3.2-0.3c7.2,1.8,14.8,2.7,22.7,2.7c59.1,0,107-44.6,107-99.5S187.1,24,128,24z M138.8,148v-0.1l-25.5-27c-4-4.2-10.6-4.5-15.1-0.5l-31.5,28.5c-3,2.7-7.2-0.8-5.2-4.1l29.4-48c3.2-5.3,10.6-6.6,15.5-2.8l25.3,19.3c3.8,2.9,9.3,3.3,13.5-0.1l32-26.1c3-2.5,7,1,5.2,4.3L153,141.5C149.8,146.9,142.5,148.6,138.8,148z" /></svg>
+                                            ${ticket.unread_count > 0 ? `<span id="unread-count-${ticket.id}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light shadow-sm" style="font-size: 0.66rem; padding: 0.24em 0.45em; line-height: 1;">${ticket.unread_count}</span>` : ''}
+                                        </a>
+                                    </td>
+                                `;
+
+                            newRow.addEventListener('click', function (e) {
                                 if (e.target.closest('a') || e.target.closest('button') || e.target.closest('input') || e.target.closest('select')) return;
                                 window.location.href = `/admin/tickets/${ticket.id}`;
                             });
-                            
+
                             const emptyRow = tbody.querySelector('.empty-state-row');
                             if (emptyRow) emptyRow.remove();
                             const emptyContainer = document.querySelector('.empty-state-container');
                             if (emptyContainer) emptyContainer.closest('tr').remove();
-                            
+
                             tbody.insertBefore(newRow, tbody.firstChild);
                         }
                     });

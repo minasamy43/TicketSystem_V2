@@ -1,4 +1,7 @@
 @extends('layouts.app')
+
+@section('title', 'View Ticket #' . $ticket->id)
+@section('breadcrumb', 'View Ticket')
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/User-show-ticket.css') }}">
 @endpush

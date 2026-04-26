@@ -1,4 +1,7 @@
 @extends('layouts.app')
+
+@section('title', 'Create New Ticket')
+@section('breadcrumb', 'Create Ticket')
 @section('content')
 
     <div class="container mt-4">

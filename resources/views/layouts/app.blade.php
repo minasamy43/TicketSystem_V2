@@ -28,6 +28,11 @@
     <button class="sidebar-pin-toggle d-none d-lg-flex" id="sidebarPinToggle" title="Toggle Sidebar">
       <i class="fa-solid fa-chevron-left"></i>
     </button>
+    <div class="sidebar-brand">
+      <img src="{{ asset('img/HelpTK--C.png') }}" alt="HelpTK Logo" class="sidebar-brand-logo">
+      <span class="sidebar-brand-name">HelpTK</span>
+    </div>
+
     @auth
       <div class="sidebar-user">
         <div class="user-avatar">
@@ -131,14 +136,19 @@
 
   <div class="main-wrapper">
     <header class="navbar">
-      <a href="{{ Auth::user() && Auth::user()->role == 1 ? route('admin.dashboard') : route('user.dashboard') }}"
-        class="navbar-brand">
-        <img src="{{ asset('img/HelpTK--C.png') }}" alt="Logo">
-        <span>Ticket System</span>
-      </a>
+      <nav class="navbar-breadcrumb" aria-label="breadcrumb">
+        <a href="{{ Auth::user() && Auth::user()->role == 1 ? route('admin.dashboard') : route('user.dashboard') }}"
+          class="breadcrumb-home">
+          <i class="fa-solid fa-house"></i>
+          <span>Home</span>
+        </a>
+        <i class="fa-solid fa-chevron-right breadcrumb-sep"></i>
+        <span class="breadcrumb-current">
+          @yield('breadcrumb', 'Dashboard')
+        </span>
+      </nav>
 
       <div class="navbar-actions d-flex align-items-center gap-2">
-
         <button class="sidebar-toggle" id="sidebarToggle">
           <i class="fa-solid fa-bars"></i>
         </button>
