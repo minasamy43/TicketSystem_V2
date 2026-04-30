@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gold-primary: #d4af53;
+            --gold-primary: var(--primary-color);
             --bg-light: #f8f9fa;
             --card-bg: rgba(255, 255, 255, 0.9);
             --border-soft: rgba(0, 0, 0, 0.05);

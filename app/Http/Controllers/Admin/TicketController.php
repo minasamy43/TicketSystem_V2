@@ -285,12 +285,13 @@ class TicketController extends Controller
 
         $newTickets = $query->latest()->get();
 
-        // All-time counts for the dashboard stat cards (must match DashboardController)
+        // Today's counts for the dashboard stat cards (must match DashboardController)
+        $today = now()->format('Y-m-d');
         $counts = [
-            'total' => Ticket::count(),
-            'open' => Ticket::where('status', 'open')->count(),
-            'closed' => Ticket::where('status', 'closed')->count(),
-            'in_progress' => Ticket::where('status', 'in progress')->count(),
+            'total' => Ticket::whereDate('created_at', $today)->count(),
+            'open' => Ticket::whereDate('created_at', $today)->where('status', 'open')->count(),
+            'closed' => Ticket::whereDate('created_at', $today)->where('status', 'closed')->count(),
+            'in_progress' => Ticket::whereDate('created_at', $today)->where('status', 'in progress')->count(),
         ];
 
         return response()->json([

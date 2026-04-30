@@ -7,9 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gold-primary: #d4af53;
-            --gold-light: #c9972a;
-            --gold-dark: #b8860b;
+            --gold-primary: var(--primary-color);
+            --gold-light: var(--primary-hover);
+            --gold-dark: var(--primary-hover);
             --bg-light: #f8f9fa;
             --card-bg: rgba(255, 255, 255, 0.9);
             --border-soft: rgba(0, 0, 0, 0.05);
@@ -81,7 +81,7 @@
 
         .top-performer-card.leader {
             border-left-color: var(--gold-primary);
-            background: linear-gradient(to right, rgba(212, 175, 83, 0.02), #fff);
+            background: linear-gradient(to right, var(--primary-light), #fff);
         }
 
         .rank-indicator {
@@ -104,7 +104,7 @@
             background: var(--gold-primary);
             color: #fff;
             border-color: var(--gold-primary);
-            box-shadow: 0 4px 10px rgba(212, 175, 83, 0.3);
+            box-shadow: 0 4px 10px var(--primary-light);
         }
 
         .performer-info {

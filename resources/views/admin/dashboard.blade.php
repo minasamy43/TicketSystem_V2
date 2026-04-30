@@ -488,9 +488,9 @@
                         </div>
 
                         <div class="royal-card-content">
-                            <div class="royal-card-title">Open Tickets</div>
+                            <div class="royal-card-title">Today's Open</div>
                             <div class="royal-card-value" id="open-count">{{ $openTickets }}</div>
-                            <div class="royal-card-sub">Awaiting response</div>
+                            <div class="royal-card-sub">New today</div>
                         </div>
                     </div>
                 </a>
@@ -506,9 +506,9 @@
                         </div>
 
                         <div class="royal-card-content">
-                            <div class="royal-card-title">In Progress</div>
+                            <div class="royal-card-title">Daily Progress</div>
                             <div class="royal-card-value" id="progress-count">{{ $inProgress }}</div>
-                            <div class="royal-card-sub">Being handled</div>
+                            <div class="royal-card-sub">Handled today</div>
                         </div>
                     </div>
                 </a>
@@ -524,9 +524,9 @@
                         </div>
 
                         <div class="royal-card-content">
-                            <div class="royal-card-title">Closed Tickets</div>
+                            <div class="royal-card-title">Daily Closed</div>
                             <div class="royal-card-value" id="closed-count">{{ $closedTickets }}</div>
-                            <div class="royal-card-sub">Resolved & closed</div>
+                            <div class="royal-card-sub">Resolved today</div>
                         </div>
                     </div>
                 </a>
@@ -549,9 +549,9 @@
                         </div>
 
                         <div class="royal-card-content">
-                            <div class="royal-card-title">Total Tickets</div>
+                            <div class="royal-card-title">Today's Total</div>
                             <div class="royal-card-value" id="total-count">{{ $totalTickets }}</div>
-                            <div class="royal-card-sub">All time requests</div>
+                            <div class="royal-card-sub">Requests today</div>
                         </div>
                     </div>
                 </a>

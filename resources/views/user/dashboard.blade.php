@@ -26,9 +26,9 @@
             </div>
             <div class="col-lg-4 text-lg-end">
                 <a href="{{ route('knowledge.base') }}"
-                    style="display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; background: #fff; border: 1px solid rgba(212, 175, 83, 0.2); border-radius: 14px; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(212, 175, 83, 0.1);">
+                    style="display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; background: #fff; border: 1px solid var(--primary-light); border-radius: 14px; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 4px 15px var(--primary-light);">
                     <div
-                        style="width: 40px; height: 40px; background: rgba(212, 175, 83, 0.08); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #d4af53;">
+                        style="width: 40px; height: 40px; background: var(--primary-light); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary-color);">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                             stroke-linecap="round" stroke-linejoin="round">
                             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
@@ -40,7 +40,7 @@
                             Need Help?</div>
                         <div style="font-size: 0.95rem; color: #111; font-weight: 600;">Knowledge Base</div>
                     </div>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4af53" stroke-width="3"
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="3"
                         stroke-linecap="round" stroke-linejoin="round" style="margin-left: 10px;">
                         <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
@@ -50,7 +50,7 @@
 
         <div class="card mt-4 shadow-sm border-0" style="border-radius: 16px; overflow: hidden;">
             <div class="card-header bg-white pt-4 px-3 border-bottom-0" style="padding-bottom: 20px;">
-                <div style="border-left: 4px solid #d4af53; padding-left: 12px;">
+                <div style="border-left: 4px solid var(--primary-color); padding-left: 12px;">
                     <h5 class="m-0"
                         style="font-weight: 600; color: #111; font-family: 'Inter', sans-serif; font-size: 1.15rem; letter-spacing: -0.3px;">
                         My Tickets
@@ -70,7 +70,7 @@
                                 <th>Date</th>
                                 <th class="text-center">Action</th>
                             </tr>
-                            <tr style="background: rgba(212, 175, 83, 0.08); opacity: 0.2;">
+                            <tr style="background: var(--primary-light);">
                                 <td style="padding: 10px 15px;">
                                     <input type="text" name="subject" id="filter_subject" form="filterForm"
                                         class="inline-filter-input search-icon-input" placeholder="Subject..."
