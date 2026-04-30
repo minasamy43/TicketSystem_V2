@@ -100,6 +100,7 @@ class SettingsController extends Controller
             'navbar_bg' => 'required|string|max:50',
             'sidebar_text' => 'required|string|max:50',
             'navbar_text' => 'required|string|max:50',
+            'site_name_color' => 'required|string|max:50',
             'site_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
         
@@ -124,6 +125,7 @@ class SettingsController extends Controller
         \App\Models\Setting::set('navbar_bg', $request->navbar_bg);
         \App\Models\Setting::set('sidebar_text', $request->sidebar_text);
         \App\Models\Setting::set('navbar_text', $request->navbar_text);
+        \App\Models\Setting::set('site_name_color', $request->site_name_color);
 
         return redirect()->back()->with('success', 'System preferences updated successfully.');
     }

@@ -20,6 +20,7 @@
       --navbar-bg: {{ \App\Models\Setting::get('navbar_bg', '#ffffff') }};
       --sidebar-text: {{ \App\Models\Setting::get('sidebar_text', '#6c7380') }};
       --navbar-text: {{ \App\Models\Setting::get('navbar_text', '#6c7380') }};
+      --site-name-color: {{ \App\Models\Setting::get('site_name_color', '#1a1a1a') }};
     }
   </style>
   @stack('styles')
@@ -43,7 +44,7 @@
     <a href="{{ Auth::user() && Auth::user()->role == 1 ? route('admin.dashboard') : route('user.dashboard') }}"
       class="sidebar-brand" style="text-decoration: none;">
       <img src="{{ \App\Models\Setting::get('site_logo') ? asset('storage/' . \App\Models\Setting::get('site_logo')) : asset('img/HelpTK--C.png') }}" alt="Logo" class="sidebar-brand-logo">
-      <span class="sidebar-brand-name">{{ \App\Models\Setting::get('site_name', 'HelpTK') }}</span>
+      <span class="sidebar-brand-name" style="color: var(--site-name-color);">{{ \App\Models\Setting::get('site_name', 'HelpTK') }}</span>
     </a>
 
     @auth
@@ -275,6 +276,7 @@
       }
     });
   </script>
+  @stack('scripts')
 </body>
 
 </html>
