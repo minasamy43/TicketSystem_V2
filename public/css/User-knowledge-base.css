@@ -19,7 +19,7 @@
         font-family: 'Outfit', sans-serif;
         font-size: 3.5rem;
         font-weight: 700;
-        background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 60%, #b8860b 100%);
+        background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 60%, var(--primary-color) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -56,8 +56,8 @@
     }
 
     .search-input-prem:focus {
-        border-color: #d4af53;
-        box-shadow: 0 20px 50px rgba(212, 175, 83, 0.12);
+        border-color: var(--primary-color);
+        box-shadow: 0 20px 50px var(--primary-light);
         transform: translateY(-2px);
     }
 
@@ -66,7 +66,7 @@
         left: 1.2rem;
         top: 50%;
         transform: translateY(-50%);
-        color: #d4af53;
+        color: var(--primary-color);
         pointer-events: none;
     }
 
@@ -96,13 +96,13 @@
     .category-card:hover {
         transform: translateY(-8px);
         box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
-        border-color: rgba(212, 175, 83, 0.2);
+        border-color: var(--primary-light);
     }
 
     .cat-icon-wrap {
         font-size: 2.5rem;
         margin-bottom: 1.5rem;
-        background: rgba(212, 175, 83, 0.08);
+        background: var(--primary-light);
         width: 70px;
         height: 70px;
         display: flex;
@@ -113,7 +113,7 @@
     }
 
     .category-card:hover .cat-icon-wrap {
-        background: #d4af53;
+        background: var(--primary-hover);
         color: #fff;
         transform: rotate(-10deg) scale(1.1);
     }
@@ -136,7 +136,7 @@
     .article-count {
         font-size: 0.8rem;
         font-weight: 700;
-        color: #d4af53;
+        color: var(--primary-color);
         text-transform: uppercase;
         letter-spacing: 0.05em;
         display: flex;
@@ -155,7 +155,7 @@
         font-weight: 700;
         text-align: center;
         margin-bottom: 3rem;
-        background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 60%, #b8860b 100%);
+        background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 60%, var(--primary-color) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -171,7 +171,7 @@
     }
 
     .faq-item:hover {
-        border-color: rgba(212, 175, 83, 0.15);
+        border-color: var(--primary-light);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
     }
 
@@ -201,7 +201,7 @@
     }
 
     .faq-toggle-icon {
-        color: #d4af53;
+        color: var(--primary-color);
         transition: transform 0.3s ease;
     }
 

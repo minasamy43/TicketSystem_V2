@@ -6,8 +6,15 @@
     <title>Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/x-icon" href="{{ asset('img\HelpTK--.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ \App\Models\Setting::get('site_logo') ? asset('storage/' . \App\Models\Setting::get('site_logo')) : asset('img/HelpTK--.png') }}">
     <link rel="stylesheet" href="{{ url('css/login.css') }}">
+    <style>
+        :root {
+            --primary-color: {{ \App\Models\Setting::get('primary_color', '#d4af53') }};
+            --primary-hover: color-mix(in srgb, var(--primary-color), black 10%);
+            --primary-light: color-mix(in srgb, var(--primary-color), transparent 90%);
+        }
+    </style>
 </head>
 <body>
 
@@ -19,7 +26,7 @@
 
         <div class="header">
             <div class="logo-wrap" style="width: auto; height: auto;">
-                <img src="{{ asset('img\HelpTK-.png') }}" alt="HelpTK" style="height: 120px; width: auto; object-fit: contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                <img src="{{ \App\Models\Setting::get('site_logo') ? asset('storage/' . \App\Models\Setting::get('site_logo')) : asset('img/HelpTK-.png') }}" alt="HelpTK" style="height: 120px; width: auto; object-fit: contain;" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
                 <span style="display:none">HTK</span>
             </div>
             <h1>Support Ticket System</h1>

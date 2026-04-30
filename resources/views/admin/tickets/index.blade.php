@@ -72,7 +72,7 @@
 
         @keyframes flashRow {
             0% {
-                background-color: rgba(212, 175, 83, 0.15);
+            background-color: var(--primary-light);
             }
 
             100% {
@@ -127,9 +127,9 @@
 
         .action-btn-premium:hover {
             color: #fff;
-            border-color: #d4af53;
+            border-color: var(--primary-hover);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(212, 175, 83, 0.2);
+            box-shadow: 0 5px 15px var(--primary-light);
         }
 
         /* Inline Filters */
@@ -150,7 +150,7 @@
         .inline-filter-input:focus {
             border-color: #d4af53;
             outline: none;
-            box-shadow: 0 0 0 2px rgba(212, 175, 83, 0.1);
+            box-shadow: 0 0 0 2px var(--primary-light);
         }
 
         .btn-clear-inline {
@@ -207,7 +207,7 @@
 
         .status-progress {
             background: rgba(212, 175, 83, 0.15) !important;
-            color: #b8860b !important;
+            color: var(--primary-color) !important;
         }
 
         .status-closed {
@@ -267,7 +267,7 @@
                                     <th>Date</th>
                                     <th class="text-center" width="90">Action</th>
                                 </tr>
-                                <tr style="background: rgba(212, 175, 83, 0.02);">
+                                <tr style="background: var(--primary-light);">
                                     <td style="padding: 8px 10px;">
                                         <input type="text" name="ticket_id" id="filter_ticket_id"
                                             class="inline-filter-input search-icon-input" placeholder="ID..."

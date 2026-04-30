@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard')
-@section('breadcrumb', 'Dashboard')
+@section('breadcrumb', 'Dashboard Overview')
 
 @push('styles')
     <link
@@ -70,7 +69,7 @@
 
         @keyframes flashRow {
             0% {
-                background-color: rgba(212, 175, 83, 0.15);
+                background-color: var(--primary-light);
             }
 
             100% {
@@ -229,17 +228,17 @@
             justify-content: center;
             background: #fff;
             border: 1px solid #eee;
-            color: #d4af53;
+            color: var(--primary-color);
             transition: all 0.3s ease;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
         }
 
         .action-btn-premium:hover {
-            /* background: #d4af53; */
+            /* background: var(--primary-color); */
             color: #fff;
-            border-color: #d4af53;
+            border-color: var(--primary-color);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(212, 175, 83, 0.2);
+            box-shadow: 0 5px 15px var(--primary-light);
         }
 
         /* Inline Filters */
@@ -258,9 +257,9 @@
 
         .inline-filter-select:focus,
         .inline-filter-input:focus {
-            border-color: #d4af53;
+            border-color: var(--primary-color);
             outline: none;
-            box-shadow: 0 0 0 2px rgba(212, 175, 83, 0.1);
+            box-shadow: 0 0 0 2px var(--primary-light);
         }
 
         .btn-clear-inline {
@@ -302,7 +301,7 @@
         }
 
         .status-select-badge:focus {
-            box-shadow: 0 0 0 3px rgba(212, 175, 83, 0.2);
+            box-shadow: 0 0 0 3px var(--primary-light);
         }
 
         .status-select-badge option {
@@ -316,8 +315,8 @@
         }
 
         .status-progress {
-            background: rgba(212, 175, 83, 0.15) !important;
-            color: #b8860b !important;
+            background: var(--primary-light) !important;
+            color: var(--primary-color) !important;
         }
 
         .status-closed {
@@ -412,7 +411,7 @@
 
         .analysis-title i,
         .analysis-title svg {
-            color: #d4af53;
+            color: var(--primary-color);
         }
 
         .chart-wrapper {
@@ -457,7 +456,7 @@
 
         <div class="mb-5 text-center text-md-start">
             <h2 style="font-family: 'Playfair Display', serif; font-weight: 600; color: #0a0a0a; margin-bottom: 4px;">
-                👋 Welcome, <span style="color: #d4af53;">{{ Auth::user()->name }}</span>
+                👋 Welcome, <span style="color: var(--primary-color);">{{ Auth::user()->name }}</span>
             </h2>
             <p style="color: #666; margin-top: 15px; font-size: 0.95rem; gap: 12px; flex-wrap: wrap;"
                 class="d-flex align-items-center justify-content-center justify-content-md-start text-center text-md-start">
@@ -661,7 +660,7 @@
                     labels: ['Open', 'In Progress', 'Closed'],
                     datasets: [{
                         data: [{{ $allOpen }}, {{ $allInProgress }}, {{ $allClosed }}],
-                        backgroundColor: ['#dc3545', '#d4af53', '#198754'],
+                        backgroundColor: ['#dc3545', '{{ \App\Models\Setting::get('primary_color', '#d4af53') }}', '#198754'],
                         borderWidth: 0,
                         hoverOffset: 15
                     }]
@@ -733,14 +732,14 @@
                         {
                             label: 'In Progress',
                             data: @json($chartInProgress),
-                            borderColor: '#d4af53',
+                            borderColor: '{{ \App\Models\Setting::get('primary_color', '#d4af53') }}',
                             backgroundColor: gradProgress,
                             borderWidth: 3,
                             tension: 0.4,
                             fill: true,
                             pointRadius: 0,
                             pointHoverRadius: 6,
-                            pointHoverBackgroundColor: '#d4af53',
+                            pointHoverBackgroundColor: '{{ \App\Models\Setting::get('primary_color', '#d4af53') }}',
                             pointHoverBorderColor: '#fff',
                             pointHoverBorderWidth: 3
                         },

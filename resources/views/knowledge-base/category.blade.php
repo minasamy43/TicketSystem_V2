@@ -43,7 +43,7 @@
                 <div class="article-wrapper" style="margin-bottom: 1rem;">
                     <div class="article-item" onclick="toggleArticle(this)" style="cursor: pointer;">
                         <h3 class="article-title">
-                            <span style="color: #d4af53; opacity: 0.8;">📄</span>
+                            <span style="color: var(--primary-color); opacity: 0.8;">📄</span>
                             {{ $article->title }}
                         </h3>
                         <div class="article-arrow" style="transition: transform 0.3s ease;">

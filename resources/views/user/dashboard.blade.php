@@ -13,7 +13,7 @@
         <div class="row align-items-center mb-4">
             <div class="col-lg-8 mb-4 mb-lg-0 text-center text-lg-start">
                 <h2 style="font-family: 'Playfair Display', serif; font-weight: 600; color: #0a0a0a; margin-bottom: 4px;">
-                    👋 Welcome, <span style="color: #d4af53;">{{ Auth::user()->name }}</span>
+                    👋 Welcome, <span style="color: var(--primary-color);">{{ Auth::user()->name }}</span>
                 </h2>
                 <p class="d-flex align-items-center justify-content-center justify-content-lg-start text-center text-lg-start"
                     style="color: #666; margin-top: 15px; font-size: 0.95rem; gap: 12px; flex-wrap: wrap;">
@@ -26,9 +26,9 @@
             </div>
             <div class="col-lg-4 text-lg-end">
                 <a href="{{ route('knowledge.base') }}"
-                    style="display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; background: #fff; border: 1px solid rgba(212, 175, 83, 0.25); border-radius: 14px; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(212, 175, 83, 0.08);">
+                    style="display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; background: #fff; border: 1px solid rgba(212, 175, 83, 0.2); border-radius: 14px; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(212, 175, 83, 0.1);">
                     <div
-                        style="width: 40px; height: 40px; background: rgba(212, 175, 83, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #d4af53;">
+                        style="width: 40px; height: 40px; background: rgba(212, 175, 83, 0.08); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #d4af53;">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                             stroke-linecap="round" stroke-linejoin="round">
                             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
@@ -50,7 +50,7 @@
 
         <div class="card mt-4 shadow-sm border-0" style="border-radius: 16px; overflow: hidden;">
             <div class="card-header bg-white pt-4 px-3 border-bottom-0" style="padding-bottom: 20px;">
-                <div style="border-left: 4px solid var(--accent-color, #d4af53); padding-left: 12px;">
+                <div style="border-left: 4px solid #d4af53; padding-left: 12px;">
                     <h5 class="m-0"
                         style="font-weight: 600; color: #111; font-family: 'Inter', sans-serif; font-size: 1.15rem; letter-spacing: -0.3px;">
                         My Tickets
@@ -70,7 +70,7 @@
                                 <th>Date</th>
                                 <th class="text-center">Action</th>
                             </tr>
-                            <tr style="background: rgba(212, 175, 83, 0.02);">
+                            <tr style="background: rgba(212, 175, 83, 0.08); opacity: 0.2;">
                                 <td style="padding: 10px 15px;">
                                     <input type="text" name="subject" id="filter_subject" form="filterForm"
                                         class="inline-filter-input search-icon-input" placeholder="Subject..."
@@ -117,7 +117,7 @@
                                         <span class="badge"
                                             style="padding: 0.5rem 0.8rem; border-radius: 10px; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.5px;
                                                                                                                                                                                             @if ($ticket->status == 'open') background: rgba(220, 53, 69, 0.1); color: #dc3545;
-                                                                                                                                                                                            @elseif($ticket->status == 'in progress') background: rgba(212, 175, 83, 0.15); color: #b8860b;
+                                                                                                                                                                                            @elseif($ticket->status == 'in progress') background: var(--primary-light); color: var(--primary-color);
                                                                                                                                                                                             @else background: rgba(25, 135, 84, 0.1); color: #198754; @endif">
                                             {{ ucfirst($ticket->status) }}
                                             @if ($ticket->status == 'open')
@@ -132,7 +132,7 @@
                                     <td class="text-muted">{{ $ticket->closer->name ?? '---' }}</td>
                                     <td>
                                         <div style="display:flex; align-items:center; gap:8px;">
-                                            <span style="color:#d4af53; flex-shrink:0;">
+                                            <span style="color:var(--primary-color); flex-shrink:0;">
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                                     stroke-linejoin="round">

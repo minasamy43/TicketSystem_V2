@@ -35,7 +35,7 @@
             left: 0;
             right: 0;
             height: 5px;
-            background: linear-gradient(90deg, #d4af53 0%, transparent 100%);
+            background: linear-gradient(90deg, var(--primary-color) 0%, transparent 100%);
             opacity: 0.8;
         }
 
@@ -57,10 +57,10 @@
         }
 
         .btn-back-premium:hover {
-            color: #d4af53;
-            border-color: #d4af53;
+            color: var(--primary-hover);
+            border-color: var(--primary-hover);
             transform: translateX(-3px);
-            box-shadow: 0 5px 15px rgba(212, 175, 83, 0.1);
+            box-shadow: 0 5px 15px var(--primary-light);
         }
 
         /* Header Action Form */
@@ -84,8 +84,8 @@
 
         .status-select-header:focus {
             outline: none;
-            border-color: #d4af53;
-            box-shadow: 0 0 0 3px rgba(212, 175, 83, 0.15);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--primary-light);
         }
 
         /* Ticket Header */
@@ -100,8 +100,8 @@
 
         .ticket-id-badge {
             display: inline-block;
-            background: rgba(212, 175, 83, 0.1);
-            color: #b8860b;
+            background: var(--primary-light);
+            color: var(--primary-color);
             padding: 0.35rem 1rem;
             border-radius: 6px;
             font-size: 0.8rem;
@@ -142,10 +142,10 @@
         }
 
         .meta-icon {
-            color: #d4af53;
+            color: var(--primary-color);
             display: flex;
             align-items: center;
-            background: rgba(212, 175, 83, 0.08);
+            background: var(--primary-light);
             padding: 8px;
             border-radius: 8px;
         }
@@ -156,7 +156,7 @@
             padding: 2.5rem;
             background: linear-gradient(145deg, #fdfbf7 0%, #ffffff 100%);
             border-radius: 16px;
-            border: 1px solid rgba(212, 175, 83, 0.15);
+            border: 1px solid var(--primary-light);
             position: relative;
             box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.01);
         }
@@ -168,13 +168,13 @@
             left: 25px;
             font-family: 'Playfair Display', serif;
             font-size: 5rem;
-            color: rgba(212, 175, 83, 0.15);
+            color: var(--primary-light);
             line-height: 1;
         }
 
         .orig-request-label {
             font-size: 0.8rem;
-            color: #d4af53;
+            color: var(--primary-color);
             letter-spacing: 1.5px;
             font-weight: 700;
             margin-bottom: 1.2rem;
@@ -210,9 +210,9 @@
         }
 
         .status-progress-prem {
-            background: rgba(212, 175, 83, 0.08);
-            color: #b8860b;
-            border-color: rgba(212, 175, 83, 0.2);
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-color: var(--primary-light);
         }
 
         .status-closed-prem {
@@ -259,7 +259,7 @@
         .tk-attachment-img:hover {
             transform: translateY(-5px) scale(1.02);
             box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
-            border-color: rgba(212, 175, 83, 0.4);
+            border-color: var(--primary-light);
         }
 
         /* Mobile Responsiveness */
@@ -459,7 +459,7 @@
             @if($ticket->images && count($ticket->images) > 0)
                 <h5 class="mt-5 mb-4"
                     style="font-family:'Playfair Display',serif; font-size: 1.5rem; font-weight:700; color:#111; display:flex; align-items:center; gap:10px;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d4af53" stroke-width="2.5">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2.5">
                         <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                         <circle cx="8.5" cy="8.5" r="1.5" />
                         <polyline points="21 15 16 10 5 21" />

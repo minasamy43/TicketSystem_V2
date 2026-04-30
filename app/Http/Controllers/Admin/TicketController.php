@@ -163,6 +163,9 @@ class TicketController extends Controller
             $ticket->update(['has_admin_read' => true]);
         }
         $ticket->replies()->whereNull('admin_id')->where('is_read', false)->update(['is_read' => true]);
+        
+        // Clear cached sidebar unread count
+        \Illuminate\Support\Facades\Cache::forget('admin_sidebar_unread_' . \Illuminate\Support\Facades\Auth::id());
 
         return response()->json([
             'success' => true,
@@ -322,7 +325,7 @@ class TicketController extends Controller
                 'replies as unread_count' => function ($q) {
                     $q->whereNull('admin_id')->where('is_read', 0);
                 }
-            ])->get();
+            ])->having('unread_count', '>', 0)->get();
         } else {
             // User: counts of admin replies (where admin_id is not null)
             $tickets = Ticket::where('user_id', $user->id)
@@ -330,7 +333,7 @@ class TicketController extends Controller
                     'replies as unread_count' => function ($q) {
                         $q->whereNotNull('admin_id')->where('is_read', 0);
                     }
-                ])->get();
+                ])->having('unread_count', '>', 0)->get();
         }
 
         return response()->json([

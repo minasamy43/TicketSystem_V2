@@ -7,9 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gold-primary: #d4af53;
-            --gold-light: #d4af53;
-            --gold-dark: #d4af53;
+            --gold-primary: var(--primary-color);
+            --gold-light: var(--primary-color);
+            --gold-dark: var(--primary-color);
             --bg-light: #f8f9fa;
             --card-bg: rgba(255, 255, 255, 0.9);
             --border-soft: rgba(0, 0, 0, 0.05);
@@ -61,7 +61,7 @@
             background: var(--gold-dark);
             color: #fff;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(212, 175, 83, 0.3);
+            box-shadow: 0 5px 15px var(--primary-light);
         }
 
         .table-premium {
@@ -159,7 +159,7 @@
 
         .form-control-premium:focus {
             border-color: var(--gold-primary);
-            box-shadow: 0 0 10px rgba(212, 175, 83, 0.1);
+            box-shadow: 0 0 10px var(--primary-light);
             background: #fff;
         }
 

@@ -10,7 +10,7 @@
             font-family: 'Outfit', sans-serif;
             font-size: 2rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 60%, #b8860b 100%);
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 60%, var(--primary-color) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -28,13 +28,13 @@
         }
 
         .item-card:hover {
-            border-color: rgba(212, 175, 83, 0.2);
+            border-color: var(--primary-light);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         }
 
         .btn-premium-action {
-            background: rgba(212, 175, 83, 0.1);
-            color: #b8860b;
+            background: var(--primary-light);
+            color: var(--primary-color);
             border: none;
             padding: 0.4rem 1rem;
             border-radius: 8px;
@@ -44,7 +44,7 @@
         }
 
         .btn-premium-action:hover {
-            background: #d4af53;
+            background: var(--primary-hover);
             color: #fff;
         }
 

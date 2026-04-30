@@ -65,7 +65,7 @@
         }
         
         .table-premium tbody tr:hover {
-            box-shadow: 0 5px 15px rgba(212, 175, 83, 0.1);
+            box-shadow: 0 5px 15px var(--primary-light);
             transform: translateY(-2px);
         }
 
@@ -137,9 +137,76 @@
             align-items: center;
             gap: 8px;
         }
-        .msg-time-icon { color: #d4af53; flex-shrink: 0; }
+        .msg-time-icon { color: var(--primary-color); flex-shrink: 0; }
         .msg-time-main { font-weight: 600; color: #333; font-size: 0.88rem; line-height: 1.2; }
         .msg-time-relative { font-size: 0.72rem; color: #aaa; margin-top: 2px; }
+
+        /* ── Filter Bar ── */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--primary-light);
+            border: 1px solid var(--primary-light);
+            border-radius: 14px;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-right: 0.25rem;
+            white-space: nowrap;
+        }
+
+        .date-input {
+            border: 1.5px solid var(--primary-light);
+            border-radius: 50px;
+            padding: 0.32rem 1rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color 0.18s, box-shadow 0.18s;
+            font-family: 'Outfit', sans-serif;
+            background: #fff;
+        }
+
+        .date-input:focus {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .date-btn {
+            padding: 0.32rem 1rem;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            background: var(--gold-primary);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.18s;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .date-btn:hover { opacity: 0.85; }
+
+        .clear-link {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 0.32rem 0.6rem;
+            border-radius: 50px;
+            transition: color 0.15s;
+        }
+        .clear-link:hover { color: #dc3545; text-decoration: none; }
 
         /* Mobile Responsiveness Rules */
         @media (max-width: 991px) {
@@ -232,6 +299,37 @@
                 <h1 class="page-title mb-1">Messages</h1>
                 <p class="text-muted lead mb-0" style="font-size: 1rem;">All ticket messages and conversation threads.</p>
             </div>
+        </div>
+
+        {{-- ── Date Filter Bar ── --}}
+        <div class="filter-bar">
+            <span class="filter-label">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;vertical-align:middle">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                Filter by Date
+            </span>
+
+            <form method="GET" action="{{ route('admin.messages.index') }}" class="d-flex align-items-center gap-2" id="dateFilterForm">
+                <input type="hidden" name="filter" value="custom">
+                <input
+                    type="date"
+                    name="date"
+                    id="customDateInput"
+                    class="date-input"
+                    value="{{ $date }}"
+                    max="{{ date('Y-m-d') }}"
+                    title="Pick a date"
+                >
+                <button type="submit" class="date-btn">Go</button>
+            </form>
+
+            @if($date !== date('Y-m-d'))
+                <a href="{{ route('admin.messages.index') }}" class="clear-link">↩ Today</a>
+            @endif
         </div>
 
         <div class="premium-card">

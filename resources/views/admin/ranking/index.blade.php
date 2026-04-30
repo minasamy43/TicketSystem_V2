@@ -53,7 +53,7 @@
 
         .form-select-premium {
             background: #fdfdfd;
-            border: 1px solid rgba(212, 175, 83, 0.25);
+            border: 1px solid var(--primary-light);
             color: var(--text-dark);
             border-radius: 10px;
             padding: 0.6rem 1rem;
@@ -63,7 +63,7 @@
 
         .form-select-premium:focus {
             border-color: var(--gold-primary);
-            box-shadow: 0 0 10px rgba(212, 175, 83, 0.1);
+            box-shadow: 0 0 10px var(--primary-light);
         }
 
         .top-performer-card {
@@ -157,7 +157,7 @@
             background: var(--gold-dark);
             color: #fff;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(212, 175, 83, 0.3);
+            box-shadow: 0 5px 15px var(--primary-light);
         }
 
         .empty-state {
@@ -296,8 +296,8 @@
                 const ctx = document.getElementById('performanceChart').getContext('2d');
 
                 const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-                gradient.addColorStop(0, 'rgba(212, 175, 83, 0.4)');
-                gradient.addColorStop(1, 'rgba(212, 175, 83, 0.05)');
+                gradient.addColorStop(0, '{{ \App\Models\Setting::get('primary_color', '#d4af53') }}66');
+                gradient.addColorStop(1, '{{ \App\Models\Setting::get('primary_color', '#d4af53') }}0d');
 
                 new Chart(ctx, {
                     type: 'bar',
@@ -307,7 +307,7 @@
                             label: 'Tickets Resolved',
                             data: @json($rankings->pluck('tickets_count')),
                             backgroundColor: gradient,
-                            borderColor: 'rgba(212, 175, 83, 0.8)',
+                            borderColor: '{{ \App\Models\Setting::get('primary_color', '#d4af53') }}cc',
                             borderWidth: 2,
                             borderRadius: 15,
                             borderSkipped: false,
@@ -324,7 +324,7 @@
                                 backgroundColor: '#fff',
                                 titleColor: '#000',
                                 bodyColor: '#666',
-                                borderColor: 'rgba(212, 175, 83, 0.2)',
+                                borderColor: '{{ \App\Models\Setting::get('primary_color', '#d4af53') }}33',
                                 borderWidth: 1,
                                 padding: 12,
                                 cornerRadius: 10,

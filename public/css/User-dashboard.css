@@ -77,9 +77,9 @@
 
         .inline-filter-select:focus,
         .inline-filter-input:focus {
-            border-color: #d4af53;
+            border-color: var(--primary-color);
             outline: none;
-            box-shadow: 0 0 0 2px rgba(212, 175, 83, 0.1);
+            box-shadow: 0 0 0 2px var(--primary-light);
         }
 
         .btn-clear-inline {

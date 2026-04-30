@@ -43,6 +43,11 @@ Route::middleware(['auth', 'user'])->group(function () {
     Route::post('user/tickets/{id}/reply', [TicketController::class, 'reply'])->name('tickets.reply');
     Route::post('user/tickets/{id}/close', [TicketController::class, 'close'])->name('tickets.close');
     Route::delete('user/tickets/{id}', [TicketController::class, 'destroy'])->name('tickets.destroy');
+    
+    // User Settings
+    Route::get('user/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('user.settings');
+    Route::post('user/settings/profile', [\App\Http\Controllers\SettingsController::class, 'updateProfile'])->name('user.settings.profile');
+    Route::post('user/settings/password', [\App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('user.settings.password');
 });
 
 
@@ -79,6 +84,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('admin/knowledge-base/faqs', [App\Http\Controllers\Admin\KnowledgeBaseController::class, 'storeFaq'])->name('admin.knowledge-base.faqs.store');
     Route::put('admin/knowledge-base/faqs/{id}', [App\Http\Controllers\Admin\KnowledgeBaseController::class, 'updateFaq'])->name('admin.knowledge-base.faqs.update');
     Route::delete('admin/knowledge-base/faqs/{id}', [App\Http\Controllers\Admin\KnowledgeBaseController::class, 'destroyFaq'])->name('admin.knowledge-base.faqs.destroy');
+    
+    // Admin Settings
+    Route::get('admin/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('admin.settings');
+    Route::post('admin/settings/profile', [\App\Http\Controllers\SettingsController::class, 'updateProfile'])->name('admin.settings.profile');
+    Route::post('admin/settings/password', [\App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('admin.settings.password');
+    Route::post('admin/settings/preferences', [\App\Http\Controllers\SettingsController::class, 'updatePreferences'])->name('admin.settings.preferences');
 });
 
 

@@ -541,7 +541,7 @@
             if (sidebarBadge) {
                 if (totalUnread > 0) {
                     sidebarBadge.textContent = totalUnread > 99 ? '99+' : totalUnread;
-                    sidebarBadge.style.display = 'inline-block';
+                    sidebarBadge.style.display = '';
                 } else {
                     sidebarBadge.style.display = 'none';
                 }
