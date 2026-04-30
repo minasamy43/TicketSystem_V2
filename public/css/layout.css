@@ -833,3 +833,26 @@ body.sidebar-collapsed .sidebar-pin-toggle i {
     width: 16px;
     height: 16px;
 }
+
+.btn-gold {
+    background-color: var(--primary-color);
+    color: white !important;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-family: 'Outfit', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-gold:hover {
+    background-color: var(--primary-hover);
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px var(--primary-light);
+}

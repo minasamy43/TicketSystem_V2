@@ -28,8 +28,7 @@
             <div class="modal-footer border-0 pt-0">
                 <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal"
                     style="border-radius: 10px; font-weight: 600;">Cancel</button>
-                <button type="submit" form="changePasswordForm" class="btn-gold-action shadow-none"
-                    style="background: #1a5131;">Verify & Update</button>
+                <button type="submit" form="changePasswordForm" class="btn-gold-action shadow-none">Verify & Update</button>
             </div>
         </div>
     </div>

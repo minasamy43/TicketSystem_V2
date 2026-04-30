@@ -78,22 +78,7 @@
             box-shadow: 0 0 0 0.25rem var(--primary-light);
         }
 
-        .btn-gold {
-            background-color: var(--primary-color, #d4af53);
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
 
-        .btn-gold:hover {
-            background-color: var(--primary-hover);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px var(--primary-light);
-        }
 
         .avatar-upload {
             position: relative;

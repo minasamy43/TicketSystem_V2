@@ -39,8 +39,8 @@
             @error('role')<span class="text-danger">{{ $message }}</span>@enderror
         </div>
 
-        <button type="submit" class="btn btn-success">Create User</button>
-        <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn-gold">Create User</button>
+        <a href="{{ route('admin.users.index') }}" class="btn btn-secondary" style="border-radius: 10px; padding: 10px 25px;">Cancel</a>
     </form>
 </div>
 @endsection
