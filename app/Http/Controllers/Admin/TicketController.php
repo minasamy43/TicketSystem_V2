@@ -294,6 +294,15 @@ class TicketController extends Controller
             'in_progress' => Ticket::whereDate('created_at', $today)->where('status', 'in progress')->count(),
         ];
 
+        // Monthly totals for the distribution chart
+        $monthStart = now()->startOfMonth();
+        $monthEnd = now()->endOfMonth();
+        $monthly_counts = [
+            'open' => Ticket::whereBetween('created_at', [$monthStart, $monthEnd])->where('status', 'open')->count(),
+            'in_progress' => Ticket::whereBetween('created_at', [$monthStart, $monthEnd])->where('status', 'in progress')->count(),
+            'closed' => Ticket::whereBetween('created_at', [$monthStart, $monthEnd])->where('status', 'closed')->count(),
+        ];
+
         return response()->json([
             'success' => true,
             'new_tickets' => $newTickets->map(function ($t) {
@@ -308,10 +317,12 @@ class TicketController extends Controller
                     'time' => $t->created_at->format('g:i A'),
                     'relative_time' => $t->created_at->diffForHumans(),
                     'unread_count' => $t->unread_replies_count,
-                    'can_reopen' => true, // New tickets are usually open anyway
+                    'can_reopen' => true, 
                 ];
             }),
             'counts' => $counts,
+            'monthly_counts' => $monthly_counts,
+            'today_label' => now()->format('M d'),
             'new_highest_id' => $newTickets->max('id') ?: $lastId
         ]);
     }
