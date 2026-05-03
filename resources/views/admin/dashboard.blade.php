@@ -315,8 +315,8 @@
         }
 
         .status-progress {
-            background: var(--primary-light) !important;
-            color: var(--primary-color) !important;
+            background: rgba(212, 175, 83, 0.15) !important;
+            color: #d4af53 !important;
         }
 
         .status-closed {
@@ -654,13 +654,13 @@
 
             // 1. Distribution Chart
             const distCtx = document.getElementById('distributionChart').getContext('2d');
-            new Chart(distCtx, {
+            window.distributionChart = new Chart(distCtx, {
                 type: 'doughnut',
                 data: {
                     labels: ['Open', 'In Progress', 'Closed'],
                     datasets: [{
                         data: [{{ $allOpen }}, {{ $allInProgress }}, {{ $allClosed }}],
-                        backgroundColor: ['#dc3545', '{{ \App\Models\Setting::get('primary_color', '#d4af53') }}', '#198754'],
+                        backgroundColor: ['#dc3545', '#d4af53', '#198754'],
                         borderWidth: 0,
                         hoverOffset: 15
                     }]
@@ -710,7 +710,7 @@
             gradClosed.addColorStop(0, 'rgba(25, 135, 84, 0.15)');
             gradClosed.addColorStop(1, 'rgba(25, 135, 84, 0)');
 
-            new Chart(trendCtx, {
+            window.trendChart = new Chart(trendCtx, {
                 type: 'line',
                 data: {
                     labels: @json($chartLabels),
@@ -732,14 +732,14 @@
                         {
                             label: 'In Progress',
                             data: @json($chartInProgress),
-                            borderColor: '{{ \App\Models\Setting::get('primary_color', '#d4af53') }}',
+                            borderColor: '#d4af53',
                             backgroundColor: gradProgress,
                             borderWidth: 3,
                             tension: 0.4,
                             fill: true,
                             pointRadius: 0,
                             pointHoverRadius: 6,
-                            pointHoverBackgroundColor: '{{ \App\Models\Setting::get('primary_color', '#d4af53') }}',
+                            pointHoverBackgroundColor: '#d4af53',
                             pointHoverBorderColor: '#fff',
                             pointHoverBorderWidth: 3
                         },
@@ -803,6 +803,33 @@
                     updateValueWithEffect('progress-count', counts.in_progress);
                     updateValueWithEffect('closed-count', counts.closed);
                     updateValueWithEffect('total-count', counts.total);
+
+                    // Real-time Chart Updates (Only if viewing current month/year)
+                    const isCurrentMonth = {{ $month }} == {{ now()->month }} && {{ $year }} == {{ now()->year }};
+                    
+                    if (isCurrentMonth) {
+                        if (window.distributionChart && data.monthly_counts) {
+                            const m = data.monthly_counts;
+                            distributionChart.data.datasets[0].data = [m.open, m.in_progress, m.closed];
+                            distributionChart.update();
+                            
+                            // Update center total
+                            const centerVal = document.querySelector('.stat-center-value');
+                            if (centerVal) {
+                                centerVal.textContent = m.open + m.in_progress + m.closed;
+                            }
+                        }
+
+                        if (window.trendChart && data.today_label) {
+                            const todayIdx = trendChart.data.labels.indexOf(data.today_label);
+                            if (todayIdx !== -1) {
+                                trendChart.data.datasets[0].data[todayIdx] = counts.open;
+                                trendChart.data.datasets[1].data[todayIdx] = counts.in_progress;
+                                trendChart.data.datasets[2].data[todayIdx] = counts.closed;
+                                trendChart.update('none'); // Update without animation for smoothness
+                            }
+                        }
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching summary data:', error);

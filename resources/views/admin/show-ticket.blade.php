@@ -210,9 +210,9 @@
         }
 
         .status-progress-prem {
-            background: var(--primary-light);
-            color: var(--primary-color);
-            border-color: var(--primary-light);
+            background: rgba(212, 175, 83, 0.1) !important;
+            color: #d4af53 !important;
+            border-color: rgba(212, 175, 83, 0.2) !important;
         }
 
         .status-closed-prem {
