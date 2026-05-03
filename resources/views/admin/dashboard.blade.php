@@ -315,8 +315,8 @@
         }
 
         .status-progress {
-            background: var(--primary-light) !important;
-            color: var(--primary-color) !important;
+            background: rgba(212, 175, 83, 0.15) !important;
+            color: #d4af53 !important;
         }
 
         .status-closed {
@@ -660,7 +660,7 @@
                     labels: ['Open', 'In Progress', 'Closed'],
                     datasets: [{
                         data: [{{ $allOpen }}, {{ $allInProgress }}, {{ $allClosed }}],
-                        backgroundColor: ['#dc3545', '{{ \App\Models\Setting::get('primary_color', '#d4af53') }}', '#198754'],
+                        backgroundColor: ['#dc3545', '#d4af53', '#198754'],
                         borderWidth: 0,
                         hoverOffset: 15
                     }]
@@ -732,14 +732,14 @@
                         {
                             label: 'In Progress',
                             data: @json($chartInProgress),
-                            borderColor: '{{ \App\Models\Setting::get('primary_color', '#d4af53') }}',
+                            borderColor: '#d4af53',
                             backgroundColor: gradProgress,
                             borderWidth: 3,
                             tension: 0.4,
                             fill: true,
                             pointRadius: 0,
                             pointHoverRadius: 6,
-                            pointHoverBackgroundColor: '{{ \App\Models\Setting::get('primary_color', '#d4af53') }}',
+                            pointHoverBackgroundColor: '#d4af53',
                             pointHoverBorderColor: '#fff',
                             pointHoverBorderWidth: 3
                         },

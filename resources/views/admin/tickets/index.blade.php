@@ -207,7 +207,7 @@
 
         .status-progress {
             background: rgba(212, 175, 83, 0.15) !important;
-            color: var(--primary-color) !important;
+            color: #d4af53 !important;
         }
 
         .status-closed {

@@ -108,7 +108,7 @@
         padding: 2px 8px; border-radius: 6px; margin-left: 8px; vertical-align: middle;
     }
     .status-open-lite { background: rgba(220,53,69,0.1); color: #dc3545; }
-    .status-progress-lite { background: rgba(212,175,83,0.15); color: #b8860b; }
+    .status-progress-lite { background: rgba(212, 175, 83, 0.15); color: #d4af53; }
     .status-closed-lite { background: rgba(25,135,84,0.1); color: #198754; }
 
     .chat-messages { 
