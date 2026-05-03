@@ -90,6 +90,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('admin/settings/profile', [\App\Http\Controllers\SettingsController::class, 'updateProfile'])->name('admin.settings.profile');
     Route::post('admin/settings/password', [\App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('admin.settings.password');
     Route::post('admin/settings/preferences', [\App\Http\Controllers\SettingsController::class, 'updatePreferences'])->name('admin.settings.preferences');
+    Route::post('admin/settings/preferences/undo/{key}', [\App\Http\Controllers\SettingsController::class, 'undoSinglePreference'])->name('admin.settings.preferences.undo');
+    Route::post('admin/settings/themes/save', [\App\Http\Controllers\SettingsController::class, 'saveTheme'])->name('admin.settings.themes.save');
+    Route::post('admin/settings/themes/delete/{id}', [\App\Http\Controllers\SettingsController::class, 'deleteTheme'])->name('admin.settings.themes.delete');
 });
 
 

@@ -8,19 +8,41 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="icon" type="image/png" href="{{ \App\Models\Setting::get('site_logo') ? asset('storage/' . \App\Models\Setting::get('site_logo')) : asset('img/HelpTK--.png') }}?v=2">
+  <link rel="icon" type="image/png"
+    href="{{ \App\Models\Setting::get('site_logo') ? asset('storage/' . \App\Models\Setting::get('site_logo')) : asset('img/HelpTK--.png') }}?v=2">
   <link rel="preload" as="image" href="{{ asset('img/HelpTK-.png') }}">
   <link rel="stylesheet" href="{{ url('css/layout.css') }}">
   <style>
     :root {
-      --primary-color: {{ \App\Models\Setting::get('primary_color', '#d4af53') }};
+      --primary-color:
+        {{ \App\Models\Setting::get('primary_color', '#d4af53') }}
+      ;
       --primary-hover: color-mix(in srgb, var(--primary-color), black 10%);
       --primary-light: color-mix(in srgb, var(--primary-color), transparent 90%);
-      --sidebar-bg: {{ \App\Models\Setting::get('sidebar_bg', '#ffffff') }};
-      --navbar-bg: {{ \App\Models\Setting::get('navbar_bg', '#ffffff') }};
-      --sidebar-text: {{ \App\Models\Setting::get('sidebar_text', '#6c7380') }};
-      --navbar-text: {{ \App\Models\Setting::get('navbar_text', '#6c7380') }};
-      --site-name-color: {{ \App\Models\Setting::get('site_name_color', '#1a1a1a') }};
+      --sidebar-bg:
+        {{ \App\Models\Setting::get('sidebar_bg', '#ffffff') }}
+      ;
+      --navbar-bg:
+        {{ \App\Models\Setting::get('navbar_bg', '#ffffff') }}
+      ;
+      --sidebar-text:
+        {{ \App\Models\Setting::get('sidebar_text', '#6c7380') }}
+      ;
+      --navbar-text:
+        {{ \App\Models\Setting::get('navbar_text', '#6c7380') }}
+      ;
+      --site-name-color:
+        {{ \App\Models\Setting::get('site_name_color', '#1a1a1a') }}
+      ;
+      --sidebar-separator:
+        {{ \App\Models\Setting::get('sidebar_separator', '#e6e9f4') }}
+      ;
+      --user-name-color:
+        {{ \App\Models\Setting::get('user_name_color', '#6c7380') }}
+      ;
+      --menu-title-color:
+        {{ \App\Models\Setting::get('menu_title_color', '#828795') }}
+      ;
     }
   </style>
   @stack('styles')
@@ -43,15 +65,19 @@
     </button>
     <a href="{{ Auth::user() && Auth::user()->role == 1 ? route('admin.dashboard') : route('user.dashboard') }}"
       class="sidebar-brand" style="text-decoration: none;">
-      <img src="{{ \App\Models\Setting::get('site_logo') ? asset('storage/' . \App\Models\Setting::get('site_logo')) : asset('img/HelpTK--C.png') }}" alt="Logo" class="sidebar-brand-logo">
-      <span class="sidebar-brand-name" style="color: var(--site-name-color);">{{ \App\Models\Setting::get('site_name', 'HelpTK') }}</span>
+      <img
+        src="{{ \App\Models\Setting::get('site_logo') ? asset('storage/' . \App\Models\Setting::get('site_logo')) : asset('img/HelpTK--C.png') }}"
+        alt="Logo" class="sidebar-brand-logo">
+      <span class="sidebar-brand-name"
+        style="color: var(--site-name-color);">{{ \App\Models\Setting::get('site_name', 'HelpTK') }}</span>
     </a>
 
     @auth
       <div class="sidebar-user">
         <div class="user-avatar" style="overflow: hidden;">
           @if(Auth::user()->avatar)
-            <img src="{{ asset('storage/'.Auth::user()->avatar) }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar"
+              style="width: 100%; height: 100%; object-fit: cover;">
           @else
             {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
           @endif
@@ -66,10 +92,17 @@
     <div class="nav-menu">
       @auth
         @if(Auth::user()->role == 1)
+          <div class="nav-label"
+            style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
+            Overview</div>
           <a href="{{ route('admin.dashboard') }}"
             class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
             <i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span>
           </a>
+
+          <div class="nav-label"
+            style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
+            Management</div>
           <a href="{{ route('admin.tickets.index') }}"
             class="nav-item {{ request()->routeIs('admin.tickets.*') ? 'active' : '' }}">
             <i class="fa-solid fa-ticket"></i><span class="nav-text">Tickets</span>
@@ -98,6 +131,8 @@
               {{ $totalUnread > 99 ? '99+' : ($totalUnread > 0 ? $totalUnread : '') }}
             </span>
           </a>
+
+
           <a href="{{ route('admin.knowledge-base.index') }}"
             class="nav-item {{ request()->routeIs('admin.knowledge-base.*') ? 'active' : '' }}">
             <i class="fa-solid fa-book"></i><span class="nav-text">Knowledge Base</span>
@@ -110,25 +145,35 @@
             class="nav-item {{ request()->routeIs('admin.ranking.*') ? 'active' : '' }}">
             <i class="fa-solid fa-chart-line"></i><span class="nav-text">Ranking</span>
           </a>
-          <a href="{{ route('admin.settings') }}" class="nav-item {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
+
+          <div class="nav-label"
+            style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
+            System</div>
+          <a href="{{ route('admin.settings') }}"
+            class="nav-item {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
             <i class="fa-solid fa-gear"></i><span class="nav-text">Settings</span>
           </a>
 
         @else
           <div class="nav-label"
-            style="color: var(--gray-dark, #888); font-size: 11px; font-weight: 700; letter-spacing: 1px; margin: 15px 20px 5px; text-transform: uppercase;">
-            Main Menu</div>
+            style="color: var(--menu-title-color); font-size: 11px; font-weight: 700; letter-spacing: 1px; margin: 15px 20px 5px; text-transform: uppercase;">
+            Overview</div>
           <a href="{{ route('user.dashboard') }}"
             class="nav-item {{ request()->routeIs('user.dashboard') || request()->routeIs('tickets.show') ? 'active' : '' }}">
             <i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span>
           </a>
+
+          <div class="nav-label"
+            style="color: var(--menu-title-color); font-size: 11px; font-weight: 700; letter-spacing: 1px; margin: 15px 20px 5px; text-transform: uppercase;">
+            Ticket Management</div>
           <a href="{{ route('tickets.create') }}"
             class="nav-item {{ request()->routeIs('tickets.create') ? 'active' : '' }}">
             <i class="fa-solid fa-plus"></i><span class="nav-text">Create Ticket</span>
           </a>
+
           <div class="nav-label"
-            style="color: var(--gray-dark, #888); font-size: 11px; font-weight: 700; letter-spacing: 1px; margin: 15px 20px 5px; text-transform: uppercase;">
-            System</div>
+            style="color: var(--menu-title-color); font-size: 11px; font-weight: 700; letter-spacing: 1px; margin: 15px 20px 5px; text-transform: uppercase;">
+            Account Preferences</div>
           <a href="{{ route('user.settings') }}" class="nav-item {{ request()->routeIs('user.settings') ? 'active' : '' }}">
             <i class="fa-solid fa-gear"></i><span class="nav-text">Settings</span>
           </a>
@@ -150,10 +195,7 @@
             <div class="accent-dot"></div>
           </div>
         </div>
-        <div
-          style="text-align: center; margin-top: 10px; font-family: 'Playfair Display', serif; font-size: 0.65rem; color: var(--primary-color, #d4af53); opacity: 0.6; letter-spacing: 2px;">
-          {{ strtoupper(\App\Models\Setting::get('site_name', 'HELPTK')) }}
-        </div>
+
       </div>
     </div>
   </div>
@@ -180,7 +222,8 @@
               <div class="user-avatar-nav shadow-sm"
                 style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary-color, #d4af53); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; border: 2px solid #fff; overflow: hidden;">
                 @if(Auth::user()->avatar)
-                  <img src="{{ asset('storage/'.Auth::user()->avatar) }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                  <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar"
+                    style="width: 100%; height: 100%; object-fit: cover;">
                 @else
                   {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                 @endif
@@ -188,8 +231,12 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown"
               style="min-width: 200px; border-radius: 10px;">
-              <li><a class="dropdown-item py-2" href="{{ Auth::user()->role == 1 ? route('admin.settings') : route('user.settings') }}"><i class="fa-solid fa-user me-2 text-muted"></i> My Profile</a></li>
-              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item py-2"
+                  href="{{ Auth::user()->role == 1 ? route('admin.settings') : route('user.settings') }}"><i
+                    class="fa-solid fa-user me-2 text-muted"></i> My Profile</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
               <li>
                 <form method="POST" action="{{ route('logout') }}">
                   @csrf
@@ -211,7 +258,9 @@
     </main>
 
     <footer class="footer-pro">
-      <div>&copy; {{ date('Y') }} <span style="color: var(--primary-color); font-weight: 600;">{{ \App\Models\Setting::get('site_name', 'HelpTK') }}</span>. All rights
+      <div>&copy; {{ date('Y') }} <span
+          style="color: var(--site-name-color, var(--primary-color)); font-weight: 600;">{{ \App\Models\Setting::get('site_name', 'HelpTK') }}</span>.
+        All rights
         reserved.</div>
     </footer>
   </div>
