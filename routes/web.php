@@ -25,7 +25,7 @@ Route::get('login', [App\Http\Controllers\AuthController::class, 'showLoginForm'
 Route::post('login', [App\Http\Controllers\AuthController::class, 'login']);
 Route::post('logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 Route::get('tickets/unread-counts', [App\Http\Controllers\Admin\TicketController::class, 'getUnreadCounts'])->name('tickets.unread-counts')->middleware('auth');
-Route::get('admin/tickets/new-data', [App\Http\Controllers\Admin\TicketController::class, 'getNewTicketsData'])->name('admin.tickets.new-data')->middleware(['auth', 'admin']);
+Route::get('admin/tickets/new-data', [App\Http\Controllers\Admin\TicketController::class, 'getNewTicketsData'])->name('admin.tickets.new-data')->middleware(['auth', 'admin']); //for ajax for realtime data update
 // Knowledge Base routes accessible to both User and Admin (for Preview only)
 Route::middleware('auth')->group(function () {
     Route::get('user/knowledge-base', [App\Http\Controllers\User\KnowledgeBaseController::class, 'index'])->name('knowledge.base');
@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
 // (User dashboard) 
 Route::middleware(['auth', 'user'])->group(function () {
     Route::get('user/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
+    Route::get('user/dashboard/new-data', [DashboardController::class, 'getNewTicketsData'])->name('user.dashboard.new-data'); //for ajax for realtime data update
     Route::get('user/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
     Route::post('user/tickets/store', [TicketController::class, 'store'])->name('tickets.store');
     Route::get('user/tickets/{id}', [TicketController::class, 'show'])->name('tickets.show');
@@ -69,7 +70,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('admin/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.users.destroy');
     // Admin Messages
     Route::get('admin/messages', [App\Http\Controllers\Admin\MessageController::class, 'index'])->name('admin.messages.index');
-    Route::get('admin/messages/new-data', [App\Http\Controllers\Admin\MessageController::class, 'getNewMessagesData'])->name('admin.messages.new-data');
+    Route::get('admin/messages/new-data', [App\Http\Controllers\Admin\MessageController::class, 'getNewMessagesData'])->name('admin.messages.new-data'); //for ajax for realtime data update
     // Admin Ranking
     Route::get('admin/ranking', [App\Http\Controllers\Admin\RankingController::class, 'index'])->name('admin.ranking.index');
     // Admin Knowledge Base

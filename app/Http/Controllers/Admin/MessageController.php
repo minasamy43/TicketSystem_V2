@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
-    /** List messages from tickets the authenticated admin is involved in */
     public function index(Request $request)
     {
         $adminId = Auth::id();

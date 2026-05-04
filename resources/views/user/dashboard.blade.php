@@ -241,49 +241,10 @@
     </div>
     @include('admin.partials._chat')
     <script>
-        // Automatic Filtering Logic
-        let timeout = null;
-        function debounceSubmit() {
-            clearTimeout(timeout);
-            // Store the ID of the element currently in focus
-            if (document.activeElement && document.activeElement.id) {
-                sessionStorage.setItem('lastFocusedUserFilter', document.activeElement.id);
-            }
-            timeout = setTimeout(() => {
-                document.getElementById('filterForm').submit();
-            }, 600); // 600ms delay to feel natural
-        }
-        // Restore focus on page load
-        window.onload = function () {
-            const lastFocusedId = sessionStorage.getItem('lastFocusedUserFilter');
-            if (lastFocusedId) {
-                const element = document.getElementById(lastFocusedId);
-                if (element) {
-                    // Set focus and move cursor to the end
-                    element.focus();
-                    const val = element.value;
-                    element.value = '';
-                    element.value = val;
-                }
-                sessionStorage.removeItem('lastFocusedUserFilter');
-            }
+        const DASHBOARD_CONFIG = {
+            highestTicketId: {{ $tickets->first()->id ?? 0 }},
+            newDataUrl: '{{ route("user.dashboard.new-data") }}'
         };
-        // Make table rows clickable (safe mode - matches Admin)
-        document.querySelectorAll('table tbody tr:not(.empty-state-row)').forEach(row => {
-            row.addEventListener('click', function (e) {
-                // Don't navigate if clicking on interactive elements
-                const isInteractive = e.target.closest('a') ||
-                    e.target.closest('button') ||
-                    e.target.closest('input') ||
-                    e.target.closest('select');
-
-                if (isInteractive) return;
-
-                const ticketId = this.getAttribute('data-ticket-id');
-                if (ticketId) {
-                    window.location.href = `/user/tickets/${ticketId}`;
-                }
-            });
-        });
     </script>
+    <script src="{{ asset('js/user-dashboard.js') }}"></script>
 @endsection

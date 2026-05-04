@@ -71,13 +71,16 @@ class TicketController extends Controller
             }
         ])->findOrFail($id);
 
-        // User doesn't want to mark as read when full page is opened, only when icon is clicked
-        // if (!$ticket->has_admin_read) {
-        //     $ticket->update(['has_admin_read' => true]);
-        // }
-        // $ticket->replies()->whereNull('admin_id')->where('is_read', false)->update(['is_read' => true]);
+        // Mark as read when the full page is opened
+        if (!$ticket->has_admin_read) {
+            $ticket->update(['has_admin_read' => true]);
+        }
+        $ticket->replies()->whereNull('admin_id')->where('is_read', false)->update(['is_read' => true]);
+        
+        // Clear cached sidebar unread count
+        \Illuminate\Support\Facades\Cache::forget('admin_sidebar_unread_' . \Illuminate\Support\Facades\Auth::id());
 
-        return view('admin.show-ticket', compact('ticket'));
+        return view('admin.tickets.show-ticket', compact('ticket'));
     }
 
     /** Update the ticket status. */
