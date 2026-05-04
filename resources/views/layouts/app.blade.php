@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +10,11 @@
   <link rel="icon" type="image/png"
     href="{{ \App\Models\Setting::get('site_logo') ? asset('storage/' . \App\Models\Setting::get('site_logo')) : asset('img/HelpTK--.png') }}?v=2">
   <link rel="preload" as="image" href="{{ asset('img/HelpTK-.png') }}">
+  @auth
+    @if(Auth::user()->avatar)
+      <link rel="preload" as="image" href="{{ asset('storage/' . Auth::user()->avatar) }}">
+    @endif
+  @endauth
   <link rel="stylesheet" href="{{ url('css/layout.css') }}">
   <style>
     :root {
@@ -49,6 +53,17 @@
 </head>
 
 <body>
+  @php
+    $avatarBase64 = null;
+    if (Auth::check() && Auth::user()->avatar) {
+      $avatarPath = storage_path('app/public/' . Auth::user()->avatar);
+      if (file_exists($avatarPath)) {
+        $avatarType = pathinfo($avatarPath, PATHINFO_EXTENSION);
+        $avatarData = file_get_contents($avatarPath);
+        $avatarBase64 = 'data:image/' . $avatarType . ';base64,' . base64_encode($avatarData);
+      }
+    }
+  @endphp
   <script>
     (function () {
       if (localStorage.getItem('sidebar-collapsed') === 'true' && window.innerWidth >= 992) {
@@ -74,12 +89,11 @@
 
     @auth
       <div class="sidebar-user">
-        <div class="user-avatar" style="overflow: hidden;">
+        <div class="user-avatar" style="position: relative; overflow: hidden;">
+          {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
           @if(Auth::user()->avatar)
-            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar"
-              style="width: 100%; height: 100%; object-fit: cover;">
-          @else
-            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+            <img src="{{ $avatarBase64 ?? asset('storage/' . Auth::user()->avatar) }}" alt="Avatar"
+              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
           @endif
         </div>
         <div class="user-info">
@@ -132,7 +146,6 @@
             </span>
           </a>
 
-
           <a href="{{ route('admin.knowledge-base.index') }}"
             class="nav-item {{ request()->routeIs('admin.knowledge-base.*') ? 'active' : '' }}">
             <i class="fa-solid fa-book"></i><span class="nav-text">Knowledge Base</span>
@@ -174,8 +187,6 @@
         @endif
       @endauth
 
-
-
       <div class="sidebar-accent-container">
         <div class="accent-crown-mini">
           <i class="fa-solid fa-crown"></i>
@@ -214,12 +225,11 @@
             <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown"
               data-bs-toggle="dropdown" aria-expanded="false" style="color: inherit;">
               <div class="user-avatar-nav shadow-sm"
-                style="width: 38px; height: 38px; border-radius: 50%; background: var(--primary-color, #d4af53); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; border: 2px solid #fff; overflow: hidden;">
+                style="position: relative; width: 38px; height: 38px; border-radius: 50%; background: var(--primary-color, #d4af53); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; border: 2px solid #fff; overflow: hidden;">
+                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                 @if(Auth::user()->avatar)
-                  <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar"
-                    style="width: 100%; height: 100%; object-fit: cover;">
-                @else
-                  {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                  <img src="{{ $avatarBase64 ?? asset('storage/' . Auth::user()->avatar) }}" alt="Avatar"
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
                 @endif
               </div>
             </a>

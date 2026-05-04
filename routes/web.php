@@ -33,6 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::get('user/knowledge-base/article/{slug}', [App\Http\Controllers\User\KnowledgeBaseController::class, 'showArticle'])->name('knowledge.article');
 });
 
+
+
 //User dashboard
 Route::middleware(['auth', 'user'])->group(function () {
     Route::get('user/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
@@ -43,7 +45,6 @@ Route::middleware(['auth', 'user'])->group(function () {
     Route::post('user/tickets/{id}/reply', [TicketController::class, 'reply'])->name('tickets.reply');
     Route::post('user/tickets/{id}/close', [TicketController::class, 'close'])->name('tickets.close');
     Route::delete('user/tickets/{id}', [TicketController::class, 'destroy'])->name('tickets.destroy');
-    
     // User Settings
     Route::get('user/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('user.settings');
     Route::post('user/settings/profile', [\App\Http\Controllers\SettingsController::class, 'updateProfile'])->name('user.settings.profile');
@@ -66,11 +67,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('admin/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('admin.users.update');
     Route::post('admin/users/{user}/update-password', [App\Http\Controllers\Admin\UserController::class, 'updatePassword'])->name('admin.users.update-password');
     Route::delete('admin/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.users.destroy');
-
     // Admin Messages
     Route::get('admin/messages', [App\Http\Controllers\Admin\MessageController::class, 'index'])->name('admin.messages.index');
     Route::get('admin/messages/new-data', [App\Http\Controllers\Admin\MessageController::class, 'getNewMessagesData'])->name('admin.messages.new-data');
-
     // Admin Ranking
     Route::get('admin/ranking', [App\Http\Controllers\Admin\RankingController::class, 'index'])->name('admin.ranking.index');
     // Admin Knowledge Base
@@ -84,7 +83,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('admin/knowledge-base/faqs', [App\Http\Controllers\Admin\KnowledgeBaseController::class, 'storeFaq'])->name('admin.knowledge-base.faqs.store');
     Route::put('admin/knowledge-base/faqs/{id}', [App\Http\Controllers\Admin\KnowledgeBaseController::class, 'updateFaq'])->name('admin.knowledge-base.faqs.update');
     Route::delete('admin/knowledge-base/faqs/{id}', [App\Http\Controllers\Admin\KnowledgeBaseController::class, 'destroyFaq'])->name('admin.knowledge-base.faqs.destroy');
-    
     // Admin Settings
     Route::get('admin/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('admin.settings');
     Route::post('admin/settings/profile', [\App\Http\Controllers\SettingsController::class, 'updateProfile'])->name('admin.settings.profile');

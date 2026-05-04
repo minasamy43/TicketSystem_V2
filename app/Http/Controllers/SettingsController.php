@@ -1,39 +1,20 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class SettingsController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('auth');
     }
 
-    /**
-     * Show the application settings.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function index()
     {
         $user = Auth::user();
         return view('settings.index', compact('user'));
     }
-
-    /**
-     * Update the user's profile information.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
@@ -48,25 +29,17 @@ class SettingsController extends Controller
         $user->email = $request->email;
 
         if ($request->hasFile('avatar')) {
-            // Delete old avatar if it exists (optional but good practice)
+            // Delete old avatar if it exists
             if ($user->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
             }
             $path = $request->file('avatar')->store('avatars', 'public');
             $user->avatar = $path;
         }
-
         $user->save();
-
         return redirect()->back()->with('success', 'Profile updated successfully.');
     }
 
-    /**
-     * Update the user's password.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function updatePassword(Request $request)
     {
         $request->validate([
@@ -81,12 +54,6 @@ class SettingsController extends Controller
         return redirect()->back()->with('success', 'Password updated successfully.');
     }
 
-    /**
-     * Update the system preferences (admin only).
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function updatePreferences(Request $request)
     {
         if (Auth::user()->role != 1) {
@@ -106,7 +73,7 @@ class SettingsController extends Controller
             'menu_title_color' => 'required|string|max:50',
             'site_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-        
+
         if ($request->hasFile('site_logo')) {
             $oldLogo = \App\Models\Setting::get('site_logo');
             if ($oldLogo && \Illuminate\Support\Facades\Storage::disk('public')->exists($oldLogo)) {
@@ -121,11 +88,17 @@ class SettingsController extends Controller
             }
             \App\Models\Setting::set('site_logo', null);
         }
-
         $keys = [
-            'site_name', 'primary_color', 'sidebar_bg', 'navbar_bg', 
-            'sidebar_text', 'navbar_text', 'site_name_color', 
-            'user_name_color', 'sidebar_separator', 'menu_title_color'
+            'site_name',
+            'primary_color',
+            'sidebar_bg',
+            'navbar_bg',
+            'sidebar_text',
+            'navbar_text',
+            'site_name_color',
+            'user_name_color',
+            'sidebar_separator',
+            'menu_title_color'
         ];
 
         // Save current state for undo
@@ -149,18 +122,14 @@ class SettingsController extends Controller
         return redirect()->back()->with('success', 'System preferences updated successfully.');
     }
 
-    /**
-     * Undo a single preference update.
-     */
+    // Undo a single preference update.
     public function undoSinglePreference(Request $request, $key)
     {
         if (session()->has('undo_preferences') && isset(session('undo_preferences')[$key])) {
             $oldValue = session('undo_preferences')[$key];
             \App\Models\Setting::set($key, $oldValue);
-            
-            // Optionally remove this specific key from session so it can't be undone again,
-            // or clear the whole undo session if you only want 1 strict undo step.
-            // We'll just clear the session to mimic a 1-step global undo that was consumed.
+
+            //  remove this specific key from session so it can't be undone again, or clear the whole undo session if you only want 1 strict undo step.
             session()->forget('undo_preferences');
 
             return redirect()->back()->with('success', 'Color change undone successfully.');
@@ -169,9 +138,7 @@ class SettingsController extends Controller
         return redirect()->back()->with('error', 'Nothing to undo.');
     }
 
-    /**
-     * Save current theme configuration as a preset.
-     */
+    // Save current theme configuration as a preset.
     public function saveTheme(Request $request)
     {
         $request->validate([
@@ -216,9 +183,7 @@ class SettingsController extends Controller
         return redirect()->back()->with('success', 'Custom design "' . $request->theme_name . '" saved successfully.');
     }
 
-    /**
-     * Delete a saved theme preset.
-     */
+    // Delete a saved theme preset.
     public function deleteTheme($id)
     {
         $savedThemesJson = \App\Models\Setting::get('saved_themes', '[]');
@@ -227,7 +192,7 @@ class SettingsController extends Controller
             $savedThemes = [];
         }
 
-        $filteredThemes = array_filter($savedThemes, function($theme) use ($id) {
+        $filteredThemes = array_filter($savedThemes, function ($theme) use ($id) {
             return isset($theme['id']) && $theme['id'] !== $id;
         });
 
