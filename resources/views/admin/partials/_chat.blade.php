@@ -125,7 +125,15 @@
     /* 'them' appears on the right in White */
     .bubble.them { align-self: flex-end; align-items: flex-end; }
 
-    .bubble-content { padding: 0.6rem 1rem; border-radius: 18px; font-size: 0.95rem; line-height: 1.5; position: relative; }
+    .bubble-content { 
+        padding: 0.6rem 1rem; 
+        border-radius: 18px; 
+        font-size: 0.95rem; 
+        line-height: 1.5; 
+        position: relative;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
     
     .bubble.me .bubble-content { 
         background: #0084ff; 

@@ -63,6 +63,8 @@
         color: #111;
         margin-bottom: 0.5rem;
         line-height: 1.2;
+        overflow-wrap: break-word;
+        word-break: break-word;
     }
 
     .ticket-id-badge {
@@ -155,6 +157,8 @@
         color: #444;
         line-height: 1.8;
         white-space: pre-wrap;
+        overflow-wrap: break-word;
+        word-break: break-word;
     }
 
     /* Status Pills */
