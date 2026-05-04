@@ -119,6 +119,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
 
                     if (initial) initial.style.display = 'none';
+
+                    const removeInput = document.getElementById('removeAvatarInput');
+                    if (removeInput) removeInput.value = '0';
+                    
+                    const removeBtn = document.getElementById('avatarRemoveBtn');
+                    if (removeBtn) removeBtn.style.display = 'block';
                 }
                 reader.readAsDataURL(e.target.files[0]);
             }

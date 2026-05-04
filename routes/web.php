@@ -35,7 +35,7 @@ Route::middleware('auth')->group(function () {
 
 
 
-//User dashboard
+// (User dashboard) 
 Route::middleware(['auth', 'user'])->group(function () {
     Route::get('user/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
     Route::get('user/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
@@ -52,7 +52,7 @@ Route::middleware(['auth', 'user'])->group(function () {
 });
 
 
-// Admin dashboard
+// (Admin dashboard)
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('admin/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('admin/tickets', [App\Http\Controllers\Admin\TicketController::class, 'index'])->name('admin.tickets.index');

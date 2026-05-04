@@ -63,7 +63,7 @@
                             <div class="row mb-4">
                                 <div class="col-12">
                                     <label class="form-label fw-semibold">Profile Photo</label>
-                                    <div class="avatar-upload">
+                                    <div class="avatar-upload" style="position: relative; width: max-content;">
                                         <div class="avatar-preview" id="avatarPreviewContainer"
                                             style="{{ $user->avatar ? 'background-image: url(' . asset('storage/' . $user->avatar) . '); background-size: cover; background-position: center; color: transparent;' : '' }}">
                                             <span id="avatarInitial"
@@ -72,11 +72,20 @@
                                         <div class="avatar-edit">
                                             <input type="file" id="avatarInput" name="avatar" accept="image/*"
                                                 style="display: none;">
+                                            <input type="hidden" name="remove_avatar" id="removeAvatarInput" value="0">
                                             <button type="button" class="btn" title="Upload new photo"
                                                 onclick="document.getElementById('avatarInput').click()">
                                                 <i class="fa-solid fa-camera"></i>
                                             </button>
                                         </div>
+                                        @if($user->avatar)
+                                        <div class="avatar-remove" id="avatarRemoveBtn" style="position: absolute; top: -5px; right: -5px; z-index: 10;">
+                                            <button type="button" class="btn btn-sm btn-danger rounded-circle" title="Remove photo"
+                                                onclick="document.getElementById('removeAvatarInput').value='1'; document.getElementById('avatarPreviewContainer').style.backgroundImage='none'; document.getElementById('avatarPreviewContainer').style.color=''; document.getElementById('avatarInitial').style.display='inline'; this.parentElement.style.display='none'; document.getElementById('avatarInput').value='';" style="width: 24px; height: 24px; padding: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                                <i class="fa-solid fa-xmark" style="font-size: 12px;"></i>
+                                            </button>
+                                        </div>
+                                        @endif
                                     </div>
                                     <div class="form-text">Allowed formats: JPEG, PNG, JPG, GIF. Max size 2MB.</div>
                                     @error('avatar') <div class="text-danger small mt-1">{{ $message }}</div> @enderror

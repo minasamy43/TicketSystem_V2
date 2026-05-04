@@ -28,7 +28,12 @@ class SettingsController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
 
-        if ($request->hasFile('avatar')) {
+        if ($request->remove_avatar == '1') {
+            if ($user->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            }
+            $user->avatar = null;
+        } elseif ($request->hasFile('avatar')) {
             // Delete old avatar if it exists
             if ($user->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
