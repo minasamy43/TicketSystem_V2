@@ -113,7 +113,8 @@
 
     .chat-messages { 
         flex: 1; overflow-y: auto; padding: 1.25rem; background: #fff; 
-        display: flex; flex-direction: column; gap: 0.85rem; 
+        display: flex; flex-direction: column; gap: 0.85rem;
+        scroll-behavior: smooth;
     }
 
     /* Facebook-style Bubbles */
@@ -274,7 +275,7 @@
                     {{ isset($ticket) ? ucfirst($ticket->status) : '' }}
                 </span>
             </div>
-            <div class="d-flex align-items-center gap-2 small text-muted" style="font-size: 0.75rem; margin-top: 2px;">
+            <div class="d-flex align-items-center gap-2 small text-muted" style="font-size: 0.75rem; margin-top: 4px;">
                 <span id="chatUserName">{{ isset($ticket) ? ($ticket->user->name ?? 'User') : '' }}</span>
                 @if(Auth::check() && Auth::user()->role == 1)
                      <span class="text-muted">·</span>
@@ -587,10 +588,10 @@
             const floatingBadge = document.getElementById('floatingChatBadge');
             if (floatingBadge) floatingBadge.remove();
             
-            const ticketRow = document.querySelector(`tr[data-ticket-id="${ticketId}"]`);
+            const ticketRow = document.querySelector(`tr[data-ticket-id="${ticketId}"], .chat-item[data-ticket-id="${ticketId}"]`);
             if (ticketRow) {
                 ticketRow.classList.remove('unread-row');
-                const dot = ticketRow.querySelector('.unread-indicator-dot');
+                const dot = ticketRow.querySelector('.unread-indicator-dot, .unread-dot');
                 if (dot) dot.remove();
                 const msgBadge = ticketRow.querySelector('.msg-unread-badge');
                 if (msgBadge) msgBadge.remove();

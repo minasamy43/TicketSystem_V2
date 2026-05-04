@@ -155,17 +155,11 @@
           </a>
 
         @else
-          <div class="nav-label"
-            style="color: var(--menu-title-color); font-size: 11px; font-weight: 700; letter-spacing: 1px; margin: 15px 20px 5px; text-transform: uppercase;">
-            Overview</div>
           <a href="{{ route('user.dashboard') }}"
             class="nav-item {{ request()->routeIs('user.dashboard') || request()->routeIs('tickets.show') ? 'active' : '' }}">
             <i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span>
           </a>
 
-          <div class="nav-label"
-            style="color: var(--menu-title-color); font-size: 11px; font-weight: 700; letter-spacing: 1px; margin: 15px 20px 5px; text-transform: uppercase;">
-            Ticket Management</div>
           <a href="{{ route('tickets.create') }}"
             class="nav-item {{ request()->routeIs('tickets.create') ? 'active' : '' }}">
             <i class="fa-solid fa-plus"></i><span class="nav-text">Create Ticket</span>
@@ -173,7 +167,7 @@
 
           <div class="nav-label"
             style="color: var(--menu-title-color); font-size: 11px; font-weight: 700; letter-spacing: 1px; margin: 15px 20px 5px; text-transform: uppercase;">
-            Account Preferences</div>
+            System</div>
           <a href="{{ route('user.settings') }}" class="nav-item {{ request()->routeIs('user.settings') ? 'active' : '' }}">
             <i class="fa-solid fa-gear"></i><span class="nav-text">Settings</span>
           </a>
