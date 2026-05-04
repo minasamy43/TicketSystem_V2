@@ -164,9 +164,11 @@
                                 enctype="multipart/form-data" id="preferencesForm">
                                 @csrf
                                 <input type="hidden" name="restore_logo" id="restore_logo" value="0">
+                                <input type="hidden" name="applied_logo" id="applied_logo" value="">
+                                <input type="hidden" id="current_logo_path" value="{{ \App\Models\Setting::get('site_logo', '') }}">
 
                                 <div class="p-4 border rounded mb-4 shadow-sm" style="background-color: #fafbfe;">
-                                    <h5 class="mb-4 fw-bold text-muted d-flex align-items-center gap-2" style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px;">
+                                    <h5 class="mb-4 fw-bold text-muted d-flex align-items-center gap-2" style="font-size: 1rem; letter-spacing: 1px;">
                                         <i class="fa-solid fa-palette"></i> General Branding
                                     </h5>
                                     <div class="row g-3">
@@ -220,7 +222,7 @@
                                 </div>
 
                                 <div class="p-4 border rounded mb-4 shadow-sm" style="background-color: #fafbfe;">
-                                    <h5 class="mb-4 fw-bold text-muted d-flex align-items-center gap-2" style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px;">
+                                    <h5 class="mb-4 fw-bold text-muted d-flex align-items-center gap-2" style="font-size: 1rem; letter-spacing: 1px;">
                                         <i class="fa-solid fa-list"></i> Sidebar Appearance
                                     </h5>
                                     <div class="row g-3">
@@ -259,7 +261,7 @@
                                             </div>
                                             @error('sidebar_text') <div class="text-danger small mt-1">{{ $message }}</div>
                                             @enderror
-                                        </div>
+                                        </div><hr>
                                         <div class="col-md-6 mt-4">
                                             <label for="site_name_color" class="form-label fw-semibold">System Name Color</label>
                                             <div class="d-flex align-items-center gap-3">
@@ -333,7 +335,7 @@
                                 </div>
 
                                 <div class="p-4 border rounded mb-4 shadow-sm" style="background-color: #fafbfe;">
-                                    <h5 class="mb-4 fw-bold text-muted d-flex align-items-center gap-2" style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px;">
+                                    <h5 class="mb-4 fw-bold text-muted d-flex align-items-center gap-2" style="font-size: 1rem; letter-spacing: 1px;">
                                         <i class="fa-solid fa-window-maximize"></i> Navbar Appearance
                                     </h5>
                                     <div class="row g-3">
@@ -380,7 +382,7 @@
 
                                 @if(!empty($savedThemes))
                                 <div class="p-4 border rounded mb-4 shadow-sm" style="background-color: #fff;">
-                                    <h5 class="mb-3 fw-bold text-muted d-flex align-items-center gap-2" style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px;">
+                                    <h5 class="mb-3 fw-bold text-muted d-flex align-items-center gap-2" style="font-size: 1rem; letter-spacing: 1px;">
                                         <i class="fa-solid fa-bookmark"></i> Saved Designs
                                     </h5>
                                     <div class="row g-3">
@@ -457,6 +459,7 @@
                         <input type="hidden" name="user_name_color" id="hidden_user_name_color">
                         <input type="hidden" name="sidebar_separator" id="hidden_sidebar_separator">
                         <input type="hidden" name="menu_title_color" id="hidden_menu_title_color">
+                        <input type="hidden" name="site_logo" id="hidden_site_logo">
                     </div>
                     <div class="modal-footer border-top-0 pt-0">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>

@@ -27,6 +27,21 @@ function applyTheme(colors) {
     if(colors.user_name_color) document.getElementById('user_name_color').value = colors.user_name_color;
     if(colors.sidebar_separator) document.getElementById('sidebar_separator').value = colors.sidebar_separator;
     if(colors.menu_title_color) document.getElementById('menu_title_color').value = colors.menu_title_color;
+    if(colors.site_logo) {
+        document.getElementById('applied_logo').value = colors.site_logo;
+        // Update preview immediately if possible
+        const logoPreview = document.getElementById('logoPreview');
+        if (logoPreview) {
+            // Note: We use a simple path here, server reload will fix the absolute path if needed
+            logoPreview.src = '/storage/' + colors.site_logo;
+        }
+    } else {
+        document.getElementById('applied_logo').value = "";
+        const logoPreview = document.getElementById('logoPreview');
+        if (logoPreview) {
+            logoPreview.src = '/img/HelpTK--C.png';
+        }
+    }
     
     // Auto-submit the form to apply changes immediately
     const form = document.getElementById('preferencesForm');
@@ -55,7 +70,14 @@ function submitThemeForm() {
     });
     
     const form = document.getElementById('saveThemeForm');
-    if (form) form.submit();
+    if (form) {
+        const currentLogo = document.getElementById('current_logo_path');
+        const hiddenLogo = document.getElementById('hidden_site_logo');
+        if (currentLogo && hiddenLogo) {
+            hiddenLogo.value = currentLogo.value;
+        }
+        form.submit();
+    }
 }
 
 function switchTab(tabId, element) {

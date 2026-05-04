@@ -86,6 +86,9 @@ class SettingsController extends Controller
             }
             $path = $request->file('site_logo')->store('logos', 'public');
             \App\Models\Setting::set('site_logo', $path);
+        } elseif ($request->filled('applied_logo')) {
+            // Apply logo from a saved design
+            \App\Models\Setting::set('site_logo', $request->applied_logo);
         } elseif ($request->restore_logo == '1') {
             $oldLogo = \App\Models\Setting::get('site_logo');
             if ($oldLogo && \Illuminate\Support\Facades\Storage::disk('public')->exists($oldLogo)) {
@@ -157,6 +160,7 @@ class SettingsController extends Controller
             'user_name_color' => 'required|string|max:50',
             'sidebar_separator' => 'required|string|max:50',
             'menu_title_color' => 'required|string|max:50',
+            'site_logo' => 'nullable|string|max:255',
         ]);
 
         $savedThemesJson = \App\Models\Setting::get('saved_themes', '[]');
@@ -178,6 +182,7 @@ class SettingsController extends Controller
                 'user_name_color' => $request->user_name_color,
                 'sidebar_separator' => $request->sidebar_separator,
                 'menu_title_color' => $request->menu_title_color,
+                'site_logo' => $request->site_logo,
             ],
             'created_at' => now()->toDateTimeString(),
         ];
