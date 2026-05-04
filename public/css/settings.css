@@ -1,0 +1,136 @@
+.settings-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.settings-sidebar {
+    background: white;
+    border-radius: 15px;
+    padding: 20px 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    height: 100%;
+}
+
+.settings-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 25px;
+    color: var(--gray-dark, #555);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+}
+
+.settings-nav-item i {
+    width: 25px;
+    font-size: 1.1rem;
+}
+
+.settings-nav-item:hover {
+    background: var(--primary-light);
+    color: var(--primary-hover);
+}
+
+.settings-nav-item.active {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    border-left-color: var(--primary-color);
+    font-weight: 600;
+}
+
+.settings-content-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    min-height: 500px;
+}
+
+.settings-section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color, #333);
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-control {
+    border-radius: 8px;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem var(--primary-light);
+}
+
+
+
+.avatar-upload {
+    position: relative;
+    max-width: 120px;
+    margin-bottom: 20px;
+}
+
+.avatar-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    box-shadow: 0 4px 15px var(--primary-light);
+}
+
+.avatar-edit {
+    position: absolute;
+    right: 15px;
+    bottom: 0;
+}
+
+.avatar-edit .btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 2px solid #eee;
+    color: #555;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Tab hiding/showing */
+.settings-tab-pane {
+    display: none;
+}
+
+.settings-tab-pane.active {
+    display: block;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

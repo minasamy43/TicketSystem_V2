@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('title', 'User Dashboard')
 @section('breadcrumb', 'Dashboard')
 @push('styles')
@@ -8,7 +7,6 @@
 @endpush
 
 @section('content')
-
     <div class="container mt-4">
         <div class="row align-items-center mb-4">
             <div class="col-lg-8 mb-4 mb-lg-0 text-center text-lg-start">
@@ -40,8 +38,8 @@
                             Need Help?</div>
                         <div style="font-size: 0.95rem; color: #111; font-weight: 600;">Knowledge Base</div>
                     </div>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="3"
-                        stroke-linecap="round" stroke-linejoin="round" style="margin-left: 10px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)"
+                        stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 10px;">
                         <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
                 </a>
@@ -116,9 +114,7 @@
                                     <td>
                                         <span class="badge"
                                             style="padding: 0.5rem 0.8rem; border-radius: 10px; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.5px;
-                                                                                                                                                                                            @if ($ticket->status == 'open') background: rgba(220, 53, 69, 0.1); color: #dc3545;
-                                                                                                                                                                                            @elseif($ticket->status == 'in progress') background: rgba(212, 175, 83, 0.15); color: #d4af53;
-                                                                                                                                                                                            @else background: rgba(25, 135, 84, 0.1); color: #198754; @endif">
+                                            @if ($ticket->status == 'open') background: rgba(220, 53, 69, 0.1); color: #dc3545;@elseif($ticket->status == 'in progress') background: rgba(212, 175, 83, 0.15); color: #d4af53;@else background: rgba(25, 135, 84, 0.1); color: #198754; @endif">
                                             {{ ucfirst($ticket->status) }}
                                             @if ($ticket->status == 'open')
                                                 🎟️
@@ -243,9 +239,7 @@
             </div>
         </div>
     </div>
-
     @include('admin.partials._chat')
-
     <script>
         // Automatic Filtering Logic
         let timeout = null;
@@ -259,7 +253,6 @@
                 document.getElementById('filterForm').submit();
             }, 600); // 600ms delay to feel natural
         }
-
         // Restore focus on page load
         window.onload = function () {
             const lastFocusedId = sessionStorage.getItem('lastFocusedUserFilter');
@@ -275,7 +268,6 @@
                 sessionStorage.removeItem('lastFocusedUserFilter');
             }
         };
-
         // Make table rows clickable (safe mode - matches Admin)
         document.querySelectorAll('table tbody tr:not(.empty-state-row)').forEach(row => {
             row.addEventListener('click', function (e) {
@@ -294,5 +286,4 @@
             });
         });
     </script>
-
 @endsection

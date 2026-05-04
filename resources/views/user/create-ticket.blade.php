@@ -60,7 +60,7 @@
                         }
                     </style>
 
-                    <button class="btn-gold" id="submitTicketBtn">Submit Ticket</button>
+                    <button class="btn btn-success" id="submitTicketBtn">Submit Ticket</button>
 
                 </form>
 

@@ -1,152 +1,12 @@
 @extends('layouts.app')
-
 @section('title', 'Settings - HelpTK')
 @section('breadcrumb', 'Settings')
-
 @push('styles')
-    <style>
-        .settings-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .settings-sidebar {
-            background: white;
-            border-radius: 15px;
-            padding: 20px 0;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-            height: 100%;
-        }
-
-        .settings-nav-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 25px;
-            color: var(--gray-dark, #555);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
-            cursor: pointer;
-        }
-
-        .settings-nav-item i {
-            width: 25px;
-            font-size: 1.1rem;
-        }
-
-        .settings-nav-item:hover {
-            background: var(--primary-light);
-            color: var(--primary-hover);
-        }
-
-        .settings-nav-item.active {
-            background: var(--primary-light);
-            color: var(--primary-color);
-            border-left-color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .settings-content-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-            min-height: 500px;
-        }
-
-        .settings-section-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-color, #333);
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .form-control {
-            border-radius: 8px;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem var(--primary-light);
-        }
-
-
-
-        .avatar-upload {
-            position: relative;
-            max-width: 120px;
-            margin-bottom: 20px;
-        }
-
-        .avatar-preview {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            font-weight: bold;
-            box-shadow: 0 4px 15px var(--primary-light);
-        }
-
-        .avatar-edit {
-            position: absolute;
-            right: 15px;
-            bottom: 0;
-        }
-
-        .avatar-edit .btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            border: 2px solid #eee;
-            color: #555;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Tab hiding/showing */
-        .settings-tab-pane {
-            display: none;
-        }
-
-        .settings-tab-pane.active {
-            display: block;
-            animation: fadeIn 0.4s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/settings.css') }}">
 @endpush
 
 @section('content')
     <div class="settings-container px-3 py-4">
-
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="fa-solid fa-check-circle me-2"></i> {{ session('success') }}
@@ -295,8 +155,6 @@
                                 enctype="multipart/form-data" id="preferencesForm">
                                 @csrf
                                 <input type="hidden" name="restore_logo" id="restore_logo" value="0">
-
-
 
                                 <div class="p-4 border rounded mb-4 shadow-sm" style="background-color: #fafbfe;">
                                     <h5 class="mb-4 fw-bold text-muted d-flex align-items-center gap-2" style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px;">
@@ -558,10 +416,8 @@
             </div>
         </div>
     </div>
-
-    <!-- Modals and Hidden Forms -->
+    <!-- hidden for user interfaces -->
     @if(Auth::user()->role == 1)
-    <!-- Save Theme Modal -->
     <div class="modal fade" id="saveThemeModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content border-0 shadow">
@@ -577,7 +433,6 @@
                             <label class="form-label fw-semibold">Design Name</label>
                             <input type="text" name="theme_name" class="form-control" placeholder="e.g., Dark Mode Gold" required>
                         </div>
-                        
                         <!-- Hidden inputs to grab current colors from main form -->
                         <input type="hidden" name="primary_color" id="hidden_primary_color">
                         <input type="hidden" name="sidebar_bg" id="hidden_sidebar_bg">
@@ -597,12 +452,10 @@
             </div>
         </div>
     </div>
-
     <!-- Hidden form for deleting theme -->
     <form id="deleteThemeForm" method="POST" style="display: none;">
         @csrf
-    </form>
-    
+    </form> 
     <!-- Hidden form for single undo -->
     <form id="undoSingleForm" method="POST" style="display: none;">
         @csrf
@@ -612,134 +465,9 @@
 
 @push('scripts')
     <script>
-        function undoSingle(key) {
-            const form = document.getElementById('undoSingleForm');
-            form.action = '/admin/settings/preferences/undo/' + key;
-            form.submit();
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Auto-submit preferences form when a color is selected
-            const colorPickers = document.querySelectorAll('#preferencesForm input[type="color"]');
-            colorPickers.forEach(picker => {
-                picker.addEventListener('change', function() {
-                    document.getElementById('preferencesForm').submit();
-                });
-            });
-        });
-        @if(Auth::user()->role == 1)
-        function applyTheme(colors) {
-            if(colors.primary_color) document.getElementById('primary_color').value = colors.primary_color;
-            if(colors.sidebar_bg) document.getElementById('sidebar_bg').value = colors.sidebar_bg;
-            if(colors.navbar_bg) document.getElementById('navbar_bg').value = colors.navbar_bg;
-            if(colors.sidebar_text) document.getElementById('sidebar_text').value = colors.sidebar_text;
-            if(colors.navbar_text) document.getElementById('navbar_text').value = colors.navbar_text;
-            if(colors.site_name_color) document.getElementById('site_name_color').value = colors.site_name_color;
-            if(colors.user_name_color) document.getElementById('user_name_color').value = colors.user_name_color;
-            if(colors.sidebar_separator) document.getElementById('sidebar_separator').value = colors.sidebar_separator;
-            if(colors.menu_title_color) document.getElementById('menu_title_color').value = colors.menu_title_color;
-            
-            // Auto-submit the form to apply changes immediately
-            document.getElementById('preferencesForm').submit();
-        }
-
-        function deleteTheme(id) {
-            if(confirm('Are you sure you want to delete this design?')) {
-                const form = document.getElementById('deleteThemeForm');
-                form.action = '/admin/settings/themes/delete/' + id;
-                form.submit();
-            }
-        }
-
-        function submitThemeForm() {
-            // copy values from main form to hidden form
-            document.getElementById('hidden_primary_color').value = document.getElementById('primary_color').value;
-            document.getElementById('hidden_sidebar_bg').value = document.getElementById('sidebar_bg').value;
-            document.getElementById('hidden_navbar_bg').value = document.getElementById('navbar_bg').value;
-            document.getElementById('hidden_sidebar_text').value = document.getElementById('sidebar_text').value;
-            document.getElementById('hidden_navbar_text').value = document.getElementById('navbar_text').value;
-            document.getElementById('hidden_site_name_color').value = document.getElementById('site_name_color').value;
-            document.getElementById('hidden_user_name_color').value = document.getElementById('user_name_color').value;
-            document.getElementById('hidden_sidebar_separator').value = document.getElementById('sidebar_separator').value;
-            document.getElementById('hidden_menu_title_color').value = document.getElementById('menu_title_color').value;
-            
-            document.getElementById('saveThemeForm').submit();
-        }
-        @endif
-
-        function switchTab(tabId, element) {
-            // Remove active class from all nav items
-            document.querySelectorAll('.settings-nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-
-            // Add active class to clicked item
-            element.classList.add('active');
-
-            // Hide all tab panes
-            document.querySelectorAll('.settings-tab-pane').forEach(pane => {
-                pane.classList.remove('active');
-            });
-
-            // Show target tab pane
-            document.getElementById('tab-' + tabId).classList.add('active');
-
-            // Save to session storage
-            sessionStorage.setItem('settingsActiveTab', tabId);
-        }
-
-        // Keep active tab on validation failure or reload
-        document.addEventListener('DOMContentLoaded', function () {
-            // Restore active tab from session storage
-            const savedTab = sessionStorage.getItem('settingsActiveTab');
-            if (savedTab) {
-                const tabElement = document.querySelector(`[onclick="switchTab('${savedTab}', this)"]`);
-                if (tabElement) {
-                    switchTab(savedTab, tabElement);
-                }
-            }
-
-            @if($errors->has('current_password') || $errors->has('password'))
-                // If password errors exist, switch to security tab
-                const securityTab = document.querySelector('[onclick="switchTab(\'security\', this)"]');
-                if (securityTab) switchTab('security', securityTab);
-            @endif
-
-                // Avatar Image Preview
-                const avatarInput = document.getElementById('avatarInput');
-            if (avatarInput) {
-                avatarInput.addEventListener('change', function (e) {
-                    if (e.target.files && e.target.files[0]) {
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            const previewContainer = document.getElementById('avatarPreviewContainer');
-                            const initial = document.getElementById('avatarInitial');
-
-                            previewContainer.style.backgroundImage = `url(${e.target.result})`;
-                            previewContainer.style.backgroundSize = 'cover';
-                            previewContainer.style.backgroundPosition = 'center';
-                            previewContainer.style.color = 'transparent';
-
-                            if (initial) initial.style.display = 'none';
-                        }
-                        reader.readAsDataURL(e.target.files[0]);
-                    }
-                });
-            }
-
-            // Logo Image Preview
-            const logoInput = document.getElementById('site_logo');
-            if (logoInput) {
-                logoInput.addEventListener('change', function (e) {
-                    if (e.target.files && e.target.files[0]) {
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            document.getElementById('logoPreview').src = e.target.result;
-                        }
-                        reader.readAsDataURL(e.target.files[0]);
-                    }
-                });
-            }
-        });
+        window.SettingsConfig = {
+            hasPasswordErrors: {{ ($errors->has('current_password') || $errors->has('password')) ? 'true' : 'false' }}
+        };
     </script>
+    <script src="{{ asset('js/settings.js') }}"></script>
 @endpush
