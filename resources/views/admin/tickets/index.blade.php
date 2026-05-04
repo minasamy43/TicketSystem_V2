@@ -9,11 +9,15 @@
         rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/Admin-tickets-index.css') }}">
 @endpush
-
+ 
 @section('content')
 
 
     <div class="container mt-4">
+        <div class="d-none d-lg-flex flex-column mb-4">
+            <h1 class="page-title mb-1">Tickets Management</h1>
+            <p class="text-muted lead mb-0">Track and manage all customer support tickets across the platform.</p>
+        </div>
 
 
         <div class="card shadow-sm border-0" style="border-radius: 16px; overflow: hidden;">

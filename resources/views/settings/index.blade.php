@@ -108,7 +108,7 @@
                             </div>
 
                             <div class="mt-4 pt-3 border-top text-end">
-                                <button type="submit" class="btn btn-gold px-4">Save Changes</button>
+                                <button type="submit" class="btn btn-gold px-4 w-100 w-sm-auto">Save Changes</button>
                             </div>
                         </form>
                     </div>
@@ -149,7 +149,7 @@
                             </div>
 
                             <div class="mt-4 pt-3 border-top text-end">
-                                <button type="submit" class="btn btn-gold px-4">Update Password</button>
+                                <button type="submit" class="btn btn-gold px-4 w-100 w-sm-auto">Update Password</button>
                             </div>
                         </form>
                     </div>
@@ -405,16 +405,15 @@
                                 </div>
                                 @endif
 
-                                <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
-                                    <button type="button" class="btn btn-outline-primary px-4" data-bs-toggle="modal" data-bs-target="#saveThemeModal">
+                                <div class="mt-4 pt-3 border-top d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                                    <button type="button" class="btn btn-outline-primary px-4 w-100 w-md-auto" data-bs-toggle="modal" data-bs-target="#saveThemeModal">
                                         <i class="fa-solid fa-bookmark"></i> Save as New Design
                                     </button>
-                                    <div>
-
-                                        <button type="button" class="btn btn-outline-secondary px-4 me-2"
+                                    <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
+                                        <button type="button" class="btn btn-outline-secondary px-4 w-100 w-sm-auto"
                                             onclick="document.getElementById('site_name').value='HelpTK'; document.getElementById('primary_color').value='#d4af53'; document.getElementById('sidebar_bg').value='#ffffff'; document.getElementById('navbar_bg').value='#ffffff'; document.getElementById('sidebar_text').value='#6c7380'; document.getElementById('navbar_text').value='#6c7380'; document.getElementById('site_name_color').value='#1a1a1a'; document.getElementById('user_name_color').value='#6c7380'; document.getElementById('sidebar_separator').value='#e6e9f4'; document.getElementById('menu_title_color').value='#828795'; document.getElementById('restore_logo').value='1'; document.getElementById('site_logo').value=''; document.getElementById('logoPreview').src='{{ asset('img/HelpTK--C.png') }}'; document.getElementById('preferencesForm').submit();">Restore
                                             Defaults</button>
-                                        <button type="submit" class="btn btn-gold px-4">Save Preferences</button>
+                                        <button type="submit" class="btn btn-gold px-4 w-100 w-sm-auto">Save Preferences</button>
                                     </div>
                                 </div>
                             </form>

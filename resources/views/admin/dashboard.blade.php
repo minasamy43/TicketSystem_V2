@@ -1,9 +1,11 @@
 @extends('layouts.app')
 
-@section('breadcrumb', 'Dashboard Overview')
+@section('breadcrumb', 'Dashboard')
 
 @push('styles')
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/Admin-dashboard.css') }}">
 @endpush
 @section('content')
@@ -208,7 +210,7 @@
                 allOpen: {{ $allOpen }},
                 allInProgress: {{ $allInProgress }},
                 allClosed: {{ $allClosed }}
-            },
+                },
             chartData: {
                 labels: @json($chartLabels),
                 open: @json($chartOpen),
@@ -222,11 +224,11 @@
                 date: '{{ request("date") }}',
                 month: {{ $month }},
                 year: {{ $year }}
-            },
+                },
             currentDate: {
                 month: {{ now()->month }},
                 year: {{ now()->year }}
-            }
+                }
         };
     </script>
     <script src="{{ asset('js/admin-dashboard.js') }}"></script>

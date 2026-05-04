@@ -170,3 +170,51 @@
         transform: translateX(0);
     }
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .premium-container {
+        padding: 1.25rem 0.5rem;
+    }
+
+    .premium-card {
+        padding: 1.25rem;
+    }
+
+    .page-title {
+        font-size: 1.6rem;
+        text-align: center;
+    }
+
+    .text-muted.lead {
+        text-align: center;
+        font-size: 0.9rem;
+    }
+
+    .top-performer-card {
+        padding: 1rem;
+        gap: 0.8rem;
+    }
+
+    .rank-indicator {
+        width: 34px;
+        height: 34px;
+        font-size: 0.95rem;
+        margin-right: 0.5rem;
+        border-radius: 10px;
+    }
+
+    .performer-info h4 {
+        font-size: 0.95rem;
+    }
+
+    .ticket-count-badge {
+        padding: 0.4rem 0.7rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+
+    .chart-container {
+        height: 280px;
+    }
+}

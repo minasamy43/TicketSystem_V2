@@ -228,3 +228,22 @@
         height: 32px;
     }
 }
+
+.page-title {
+    font-weight: 700;
+    font-size: 2.2rem;
+    background: linear-gradient(135deg, var(--text-dark, #1a1a1a) 0%, var(--primary-color, #d4af53) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent; /* Fallback for transparency */
+    margin-bottom: 0.3rem;
+    display: block;
+    width: fit-content;
+}
+
+.text-muted.lead {
+    font-size: 1.1rem;
+    font-weight: 400;
+    margin-bottom: 2rem;
+}
