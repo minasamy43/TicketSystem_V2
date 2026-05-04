@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Settings - HelpTK')
+@section('title', 'Settings')
 @section('breadcrumb', 'Settings')
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/settings.css') }}">
