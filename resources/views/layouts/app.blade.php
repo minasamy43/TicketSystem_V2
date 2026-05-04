@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -180,7 +181,7 @@
 
           <div class="nav-label"
             style="color: var(--menu-title-color); font-size: 11px; font-weight: 700; letter-spacing: 1px; margin: 15px 20px 5px; text-transform: uppercase;">
-            System</div>
+            Account</div>
           <a href="{{ route('user.settings') }}" class="nav-item {{ request()->routeIs('user.settings') ? 'active' : '' }}">
             <i class="fa-solid fa-gear"></i><span class="nav-text">Settings</span>
           </a>
