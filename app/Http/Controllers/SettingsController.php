@@ -79,22 +79,20 @@ class SettingsController extends Controller
             'site_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+        $oldLogo = \App\Models\Setting::get('site_logo');
+        $newLogo = $oldLogo;
+
         if ($request->hasFile('site_logo')) {
-            $oldLogo = \App\Models\Setting::get('site_logo');
-            if ($oldLogo && \Illuminate\Support\Facades\Storage::disk('public')->exists($oldLogo)) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($oldLogo);
-            }
-            $path = $request->file('site_logo')->store('logos', 'public');
-            \App\Models\Setting::set('site_logo', $path);
+            $newLogo = $request->file('site_logo')->store('logos', 'public');
         } elseif ($request->filled('applied_logo')) {
-            // Apply logo from a saved design
-            \App\Models\Setting::set('site_logo', $request->applied_logo);
+            $newLogo = $request->applied_logo;
         } elseif ($request->restore_logo == '1') {
-            $oldLogo = \App\Models\Setting::get('site_logo');
-            if ($oldLogo && \Illuminate\Support\Facades\Storage::disk('public')->exists($oldLogo)) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($oldLogo);
-            }
-            \App\Models\Setting::set('site_logo', null);
+            $newLogo = null;
+        }
+
+        if ($newLogo !== $oldLogo) {
+            $this->deleteLogoIfNotUsed($oldLogo);
+            \App\Models\Setting::set('site_logo', $newLogo);
         }
         $keys = [
             'site_name',
@@ -160,6 +158,7 @@ class SettingsController extends Controller
             'user_name_color' => 'required|string|max:50',
             'sidebar_separator' => 'required|string|max:50',
             'menu_title_color' => 'required|string|max:50',
+            'site_name' => 'required|string|max:255',
             'site_logo' => 'nullable|string|max:255',
         ]);
 
@@ -182,6 +181,7 @@ class SettingsController extends Controller
                 'user_name_color' => $request->user_name_color,
                 'sidebar_separator' => $request->sidebar_separator,
                 'menu_title_color' => $request->menu_title_color,
+                'site_name' => $request->site_name,
                 'site_logo' => $request->site_logo,
             ],
             'created_at' => now()->toDateTimeString(),
@@ -209,5 +209,32 @@ class SettingsController extends Controller
         \App\Models\Setting::set('saved_themes', json_encode(array_values($filteredThemes)));
 
         return redirect()->back()->with('success', 'Saved design deleted successfully.');
+    }
+
+    /**
+     * Delete a logo file only if it's not being used in any saved theme presets.
+     */
+    private function deleteLogoIfNotUsed($logoPath)
+    {
+        if (!$logoPath) return;
+
+        // Check if this logo is used in any saved theme
+        $savedThemesJson = \App\Models\Setting::get('saved_themes', '[]');
+        $savedThemes = json_decode($savedThemesJson, true);
+
+        if (is_array($savedThemes)) {
+            foreach ($savedThemes as $theme) {
+                if (isset($theme['colors']['site_logo']) && $theme['colors']['site_logo'] === $logoPath) {
+                    return; // Logo is used in a theme, don't delete
+                }
+            }
+        }
+
+        // Also check if it's the default logo path (if applicable)
+        if ($logoPath === 'img/HelpTK--C.png') return;
+
+        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($logoPath)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($logoPath);
+        }
     }
 }

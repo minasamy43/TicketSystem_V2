@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function applyTheme(colors) {
+    if(colors.site_name) document.getElementById('site_name').value = colors.site_name;
     if(colors.primary_color) document.getElementById('primary_color').value = colors.primary_color;
     if(colors.sidebar_bg) document.getElementById('sidebar_bg').value = colors.sidebar_bg;
     if(colors.navbar_bg) document.getElementById('navbar_bg').value = colors.navbar_bg;
@@ -60,7 +61,7 @@ function deleteTheme(id) {
 
 function submitThemeForm() {
     // copy values from main form to hidden form
-    const ids = ['primary_color', 'sidebar_bg', 'navbar_bg', 'sidebar_text', 'navbar_text', 'site_name_color', 'user_name_color', 'sidebar_separator', 'menu_title_color'];
+    const ids = ['site_name', 'primary_color', 'sidebar_bg', 'navbar_bg', 'sidebar_text', 'navbar_text', 'site_name_color', 'user_name_color', 'sidebar_separator', 'menu_title_color'];
     ids.forEach(id => {
         const el = document.getElementById(id);
         const hiddenEl = document.getElementById('hidden_' + id);

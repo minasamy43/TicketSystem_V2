@@ -459,6 +459,7 @@
                         <input type="hidden" name="user_name_color" id="hidden_user_name_color">
                         <input type="hidden" name="sidebar_separator" id="hidden_sidebar_separator">
                         <input type="hidden" name="menu_title_color" id="hidden_menu_title_color">
+                        <input type="hidden" name="site_name" id="hidden_site_name">
                         <input type="hidden" name="site_logo" id="hidden_site_logo">
                     </div>
                     <div class="modal-footer border-top-0 pt-0">
