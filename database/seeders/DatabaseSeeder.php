@@ -29,5 +29,8 @@ class DatabaseSeeder extends Seeder
                 'role' => 1,
             ]
         );
+
+        // System Preferences
+        $this->call(SettingsSeeder::class);
     }
 }
