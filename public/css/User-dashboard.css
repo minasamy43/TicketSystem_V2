@@ -1,4 +1,4 @@
-        /* Standard Table Overrides to match Admin View */
+﻿        /* Standard Table Overrides to match Admin View */
         .table-bordered {
             background: #fff;
             border-radius: 12px;
@@ -146,6 +146,6 @@
 
         .col-lg-4 a:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(212, 175, 83, 0.15);
-            border-color: #d4af53;
+            box-shadow: 0 8px 25px rgba(201, 153, 26, 0.15);
+            border-color: #C9991A;
         }

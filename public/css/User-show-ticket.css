@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
 
     .tk-wrap {
         max-width: 900px;
@@ -181,9 +181,9 @@
     }
 
     .status-progress-prem {
-        background: rgba(212, 175, 83, 0.1) !important;
-        color: #d4af53 !important;
-        border-color: rgba(212, 175, 83, 0.2) !important;
+        background: rgba(201, 153, 26, 0.1) !important;
+        color: #C9991A !important;
+        border-color: rgba(201, 153, 26, 0.2) !important;
     }
 
     .status-closed-prem {
@@ -311,3 +311,4 @@
             justify-content: center;
         }
     }
+

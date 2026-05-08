@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --chat-sidebar-width: 380px;
     --gold-primary: var(--primary-color);
     --bg-light: #f8f9fa;
@@ -22,7 +22,7 @@
     margin-top: 1rem;
 }
 
-/* ── Sidebar ── */
+/* â”€â”€ Sidebar â”€â”€ */
 .chat-sidebar {
     width: var(--chat-sidebar-width);
     border-right: 1px solid var(--border-soft);
@@ -152,7 +152,7 @@
     box-shadow: 0 0 0 2px #fff;
 }
 
-/* ── Main Area ── */
+/* â”€â”€ Main Area â”€â”€ */
 .chat-main {
     flex: 1;
     display: flex;
@@ -299,7 +299,7 @@
 .page-title {
     font-weight: 700;
     font-size: 2.2rem;
-    background: linear-gradient(135deg, var(--text-dark, #1a1a1a) 0%, var(--primary-color, #d4af53) 100%);
+    background: linear-gradient(135deg, var(--text-dark, #1a1a1a) 0%, var(--primary-color, #C9991A) 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -308,3 +308,4 @@
     display: block;
     width: fit-content;
 }
+

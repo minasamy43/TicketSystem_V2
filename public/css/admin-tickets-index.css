@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Admin Tickets Index Styles
  */
 
@@ -102,7 +102,7 @@
     justify-content: center;
     background: #fff;
     border: 1px solid #eee;
-    color: #d4af53;
+    color: #C9991A;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
@@ -130,7 +130,7 @@
 
 .inline-filter-select:focus,
 .inline-filter-input:focus {
-    border-color: #d4af53;
+    border-color: #C9991A;
     outline: none;
     box-shadow: 0 0 0 2px var(--primary-light);
 }
@@ -174,7 +174,7 @@
 }
 
 .status-select-badge:focus {
-    box-shadow: 0 0 0 3px rgba(212, 175, 83, 0.2);
+    box-shadow: 0 0 0 3px rgba(201, 153, 26, 0.2);
 }
 
 .status-select-badge option {
@@ -188,8 +188,8 @@
 }
 
 .status-progress {
-    background: rgba(212, 175, 83, 0.15) !important;
-    color: #d4af53 !important;
+    background: rgba(201, 153, 26, 0.15) !important;
+    color: #C9991A !important;
 }
 
 .status-closed {
@@ -232,7 +232,7 @@
 .page-title {
     font-weight: 700;
     font-size: 2.2rem;
-    background: linear-gradient(135deg, var(--text-dark, #1a1a1a) 0%, var(--primary-color, #d4af53) 100%);
+    background: linear-gradient(135deg, var(--text-dark, #1a1a1a) 0%, var(--primary-color, #C9991A) 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -247,3 +247,4 @@
     font-weight: 400;
     margin-bottom: 2rem;
 }
+

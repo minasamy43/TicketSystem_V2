@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'user@example.com'],
             [
-                'name' => 'User',
+                'name' => 'Mark',
                 'password' => Hash::make('password'),
                 'role' => 0,
             ]
@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'admin@example.com'],
             [
-                'name' => 'Admin',
+                'name' => 'Mina',
                 'password' => Hash::make('password'),
                 'role' => 1,
             ]
@@ -32,5 +32,8 @@ class DatabaseSeeder extends Seeder
 
         // System Preferences
         $this->call(SettingsSeeder::class);
+
+        // Knowledge Base
+        $this->call(KnowledgeBaseSeeder::class);
     }
 }

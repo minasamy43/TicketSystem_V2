@@ -84,6 +84,24 @@ class SettingsSeeder extends Seeder
                 ],
                 'created_at' => '2026-05-05 12:24:51',
             ],
+            [
+                'id' => 'theme_69f9b900a1234',
+                'name' => 'Red Design',
+                'colors' => [
+                    'primary_color' => '#e53935',
+                    'sidebar_bg' => '#ffffff',
+                    'navbar_bg' => '#ffffff',
+                    'sidebar_text' => '#3b1010',
+                    'navbar_text' => '#6c7380',
+                    'site_name_color' => '#030303ff',
+                    'user_name_color' => '#6c7380',
+                    'sidebar_separator' => '#fde8e8',
+                    'menu_title_color' => '#c0736f',
+                    'site_name' => 'RedTK',
+                    'site_logo' => 'logos/KWK6D3VanXOmeUrBouz0sGye0rbhluy8KdeJgEdp.png',
+                ],
+                'created_at' => '2026-05-08 17:00:00',
+            ],
         ];
 
         Setting::set('saved_themes', json_encode($savedThemes));

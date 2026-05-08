@@ -1,4 +1,4 @@
-        * {
+﻿        * {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -93,7 +93,7 @@
             left: 0;
             bottom: 0;
             width: 4px;
-            background: var(--accent-color, #d4af53);
+            background: var(--accent-color, #C9991A);
             border-radius: 4px 0 0 4px;
         }
 
@@ -105,7 +105,7 @@
             left: 4px;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, var(--accent-color, #d4af53) 0%, transparent 100%);
+            background: linear-gradient(90deg, var(--accent-color, #C9991A) 0%, transparent 100%);
             opacity: 0.18;
             border-radius: 0 18px 0 0;
         }
@@ -114,7 +114,7 @@
             position: absolute;
             right: -8px;
             bottom: -8px;
-            color: var(--accent-color, #d4af53);
+            color: var(--accent-color, #C9991A);
             opacity: 0.19;
             transform: rotate(-15deg);
             z-index: 0;
@@ -157,12 +157,12 @@
             right: 1.4rem;
             width: 52px;
             height: 52px;
-            background: var(--icon-bg, rgba(212, 175, 83, 0.08));
+            background: var(--icon-bg, rgba(201, 153, 26, 0.08));
             border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--accent-color, #d4af53);
+            color: var(--accent-color, #C9991A);
             font-size: 1.45rem;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
@@ -190,7 +190,7 @@
             font-size: 0.88rem;
             padding: 12px 15px;
             border-bottom: 2px solid #e8eaed !important;
-            /* border-bottom: 2px solid rgba(212, 175, 83, 0.15); */
+            /* border-bottom: 2px solid rgba(201, 153, 26, 0.15); */
 
         }
 
@@ -301,8 +301,8 @@
         }
 
         .status-progress {
-            background: rgba(212, 175, 83, 0.15) !important;
-            color: #d4af53 !important;
+            background: rgba(201, 153, 26, 0.15) !important;
+            color: #C9991A !important;
         }
 
         .status-closed {
