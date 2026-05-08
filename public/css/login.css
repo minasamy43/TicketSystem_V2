@@ -92,16 +92,20 @@ body::after {
         }
 
         .logo-wrap {
-            width: 64px; height: 64px;
-            border-radius: 14px;
+            width: auto;
+            max-width: 200px;
+            height: auto;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
-        .logo-wrap img {
-            width: 94px; height: 84px;
+        .login-logo {
+            max-height: 80px;
+            max-width: 160px;
+            width: auto;
+            height: auto;
             object-fit: contain;
         }
 
@@ -289,8 +293,8 @@ body::after {
             .card-inner { padding: 24px 20px 28px; }
             .header { margin-bottom: 24px; }
             .header h1 { font-size: 1.15rem; }
-            .logo-wrap { width: 56px; height: 56px; margin-bottom: 12px; }
-            .logo-wrap img { width: 36px; }
+            .logo-wrap { margin-bottom: 12px; }
+            .login-logo { max-height: 60px; max-width: 140px; }
             body::before { width: 400px; height: 400px; }
             body::after { width: 250px; height: 250px; }
         }

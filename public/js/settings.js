@@ -33,8 +33,12 @@ function applyTheme(colors) {
         // Update preview immediately if possible
         const logoPreview = document.getElementById('logoPreview');
         if (logoPreview) {
-            // Note: We use a simple path here, server reload will fix the absolute path if needed
-            logoPreview.src = '/storage/' + colors.site_logo;
+            // Note: We check if it starts with img/ to use direct asset path
+            if (colors.site_logo.startsWith('img/')) {
+                logoPreview.src = '/' + colors.site_logo;
+            } else {
+                logoPreview.src = '/storage/' + colors.site_logo;
+            }
         }
     } else {
         document.getElementById('applied_logo').value = "";

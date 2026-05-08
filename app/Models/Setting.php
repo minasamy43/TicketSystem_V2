@@ -37,4 +37,21 @@ class Setting extends Model
         
         return $setting;
     }
+
+    /**
+     * Get the full URL for the site logo.
+     */
+    public static function getLogoUrl()
+    {
+        $logo = self::get('site_logo');
+        if (!$logo) {
+            return asset('img/HelpTK--C.png');
+        }
+
+        if (str_starts_with($logo, 'img/')) {
+            return asset($logo);
+        }
+
+        return asset('storage/' . $logo);
+    }
 }

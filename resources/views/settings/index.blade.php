@@ -177,7 +177,7 @@
                                             <div class="d-flex align-items-center gap-4">
                                                 <div class="p-3 border rounded bg-white text-center shadow-sm" style="width: 150px;">
                                                     <img id="logoPreview"
-                                                        src="{{ \App\Models\Setting::get('site_logo') ? asset('storage/' . \App\Models\Setting::get('site_logo')) : asset('img/HelpTK--C.png') }}"
+                                                        src="{{ \App\Models\Setting::getLogoUrl() }}"
                                                         alt="Logo" style="max-height: 40px; max-width: 100%;">
                                                 </div>
                                                 <div>
