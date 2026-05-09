@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="{{ \App\Models\Setting::getLogoUrl() }}">
@@ -29,8 +29,8 @@
                 <img src="{{ \App\Models\Setting::getLogoUrl() }}" alt="HelpTK" class="login-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
                 <span style="display:none">HTK</span>
             </div>
-            <h1>Support Ticket System</h1>
-            <p>Welcome back — sign in to continue</p>
+            <h1>Create Account</h1>
+            <p>Join our Support Ticket System</p>
         </div>
 
         <div class="divider">
@@ -39,13 +39,6 @@
             <div class="divider-line"></div>
         </div>
 
-        @if (session('success'))
-            <div class="alert success" style="background: rgba(16, 185, 129, 0.1); border-color: #10b981; color: #10b981;">
-                <i class="fas fa-check-circle"></i>
-                {{ session('success') }}
-            </div>
-        @endif
-
         @if ($errors->any())
             <div class="alert">
                 <i class="fas fa-exclamation-circle"></i>
@@ -53,8 +46,19 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('login') }}" id="loginForm">
+        <form method="POST" action="{{ route('register') }}" id="registerForm">
             @csrf
+
+            <div class="field">
+                <label for="name">Full Name</label>
+                <div class="field-wrap">
+                    <i class="fas fa-user icon"></i>
+                    <input type="text" id="name" name="name"
+                        value="{{ old('name') }}" placeholder="John Doe"
+                        class="{{ $errors->has('name') ? 'is-error' : '' }}"
+                        required autofocus autocomplete="name">
+                </div>
+            </div>
 
             <div class="field">
                 <label for="email">Email Address</label>
@@ -63,7 +67,7 @@
                     <input type="email" id="email" name="email"
                         value="{{ old('email') }}" placeholder="you@example.com"
                         class="{{ $errors->has('email') ? 'is-error' : '' }}"
-                        required autofocus autocomplete="email">
+                        required autocomplete="email">
                 </div>
             </div>
 
@@ -74,22 +78,31 @@
                     <input type="password" id="password" name="password"
                         placeholder="••••••••"
                         class="{{ $errors->has('password') ? 'is-error' : '' }}"
-                        required autocomplete="current-password">
+                        required autocomplete="new-password">
                     <button type="button" class="toggle-pwd" id="togglePwd">
                         <i class="fas fa-eye" id="toggleIcon"></i>
                     </button>
                 </div>
             </div>
 
+            <div class="field">
+                <label for="password_confirmation">Confirm Password</label>
+                <div class="field-wrap">
+                    <i class="fas fa-shield-halved icon"></i>
+                    <input type="password" id="password_confirmation" name="password_confirmation"
+                        placeholder="••••••••"
+                        required autocomplete="new-password">
+                </div>
+            </div>
 
             <button type="submit" class="btn-submit" id="submitBtn">
-                <i class="fas fa-right-to-bracket"></i> Sign In
+                <i class="fas fa-user-plus"></i> Register
             </button>
         </form>
 
         <div style="text-align: center; margin-top: 1.5rem;">
             <p style="color: #6c7380; font-size: 0.9rem;">
-                Don't have an account? <a href="{{ route('register') }}" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">Register Now</a>
+                Already have an account? <a href="{{ route('login') }}" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">Sign In</a>
             </p>
         </div>
 
@@ -106,10 +119,10 @@
         icon.className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
     });
 
-    document.getElementById('loginForm').addEventListener('submit', function () {
+    document.getElementById('registerForm').addEventListener('submit', function () {
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in…';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering…';
     });
 </script>
 </body>

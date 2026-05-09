@@ -11,12 +11,12 @@ class SettingsSeeder extends Seeder
     {
         // 1. Seed the Active Preferences (Current state)
         $settings = [
-            'site_name' => 'PurTK',
-            'site_logo' => 'img/PurpleLogo.png',
-            'primary_color' => '#a600ff',
+            'site_name' => 'HelpTK',
+            'site_logo' => 'img/HelpTK--C.png',
+            'primary_color' => '#d4af53',
             'sidebar_bg' => '#ffffff',
             'navbar_bg' => '#ffffff',
-            'sidebar_text' => '#0d0c0c',
+            'sidebar_text' => '#6c7380',
             'navbar_text' => '#6c7380',
             'site_name_color' => '#1a1a1a',
             'user_name_color' => '#6c7380',
@@ -85,23 +85,42 @@ class SettingsSeeder extends Seeder
                 'created_at' => '2026-05-05 12:24:51',
             ],
             [
-                'id' => 'theme_69f9b900a1234',
+                'id' => 'theme_69ff4bc58afe1',
                 'name' => 'Red Design',
                 'colors' => [
                     'primary_color' => '#e53935',
                     'sidebar_bg' => '#ffffff',
                     'navbar_bg' => '#ffffff',
-                    'sidebar_text' => '#3b1010',
+                    'sidebar_text' => '#000000',
                     'navbar_text' => '#6c7380',
-                    'site_name_color' => '#030303ff',
+                    'site_name_color' => '#030303',
                     'user_name_color' => '#6c7380',
                     'sidebar_separator' => '#fde8e8',
-                    'menu_title_color' => '#c0736f',
+                    'menu_title_color' => '#828795',
                     'site_name' => 'RedTK',
                     'site_logo' => 'img/RedLogo.png',
                 ],
-                'created_at' => '2026-05-08 17:00:00',
+                'created_at' => '2026-05-09 17:59:17',
             ],
+            [
+                'id' => 'theme_69fe189c707c6',
+                'name' => 'Dark-Gold Design',
+                'colors' => [
+                    'primary_color' => '#e0a100',
+                    'sidebar_bg' => '#25231e',
+                    'navbar_bg' => '#ffffff',
+                    'sidebar_text' => '#ffffff',
+                    'navbar_text' => '#6c7380',
+                    'site_name_color' => '#e0a100',
+                    'user_name_color' => '#f7eea6',
+                    'sidebar_separator' => '#503a02',
+                    'menu_title_color' => '#928e7c',
+                    'site_name' => 'HelpTK',
+                    'site_logo' => null,
+                ],
+                'created_at' => '2026-05-08 20:08:44',
+            ],
+
         ];
 
         Setting::set('saved_themes', json_encode($savedThemes));
