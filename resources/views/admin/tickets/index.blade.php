@@ -29,7 +29,7 @@
                                 <tr>
                                     <th width="80">Id</th>
                                     <th>User</th>
-                                    <th>Subject</th>
+                                    <th width="200">Subject</th>
                                     <th>Status</th>
                                     <th>In Progress By</th>
                                     <th>Closed By</th>
@@ -107,7 +107,7 @@
                                                 <span class="new-badge rounded-pill ms-2"><span class="pulse-dot"></span> New</span>
                                             @endif
                                         </td>
-                                        <td>{{ $ticket->subject }}</td>
+                                        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $ticket->subject }}">{{ $ticket->subject }}</td>
                                         <td>
                                             @php
                                                 $ticketOwnerId = $ticket->inprogress_by ?: $ticket->closed_by;
