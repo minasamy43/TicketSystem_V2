@@ -856,3 +856,111 @@ body.no-sidebar .main-wrapper {
   letter-spacing: 0.5px;
   color: var(--gray-dark);
 }
+
+/* Toast Notifications */
+.toast-container {
+  position: fixed;
+  top: 85px;
+  right: 25px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.custom-toast {
+  pointer-events: auto;
+  min-width: 320px;
+  max-width: 400px;
+  background: white;
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  position: relative;
+  overflow: hidden;
+  animation: toastSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  transition: all 0.3s ease;
+}
+
+@keyframes toastSlideIn {
+  from { transform: translateX(120%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.custom-toast.hide {
+  transform: translateX(120%);
+  opacity: 0;
+  margin-top: -80px; /* Collapse space */
+}
+
+.toast-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.2rem;
+}
+
+.toast-success .toast-icon { background: #e6f7ef; color: #2dbf78; }
+.toast-error .toast-icon { background: #fef0f0; color: #f36c6c; }
+
+.toast-content {
+  flex-grow: 1;
+  padding-top: 2px;
+}
+
+.toast-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 3px;
+  color: #111;
+}
+
+.toast-message {
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.toast-close:hover { color: #666; }
+
+.toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: rgba(0,0,0,0.05);
+}
+
+.toast-progress-bar {
+  height: 100%;
+  width: 100%;
+  animation: toastProgress 3s linear forwards;
+}
+
+@keyframes toastProgress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+.toast-success .toast-progress-bar { background: #2dbf78; }
+.toast-error .toast-progress-bar { background: #f36c6c; }

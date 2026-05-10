@@ -38,20 +38,7 @@
             </div>
         </div>
 
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert"
-                style="background: #e8f5e9; border: 1px solid #c8e6c9; color: #2e7d32; border-radius: 12px;">
-                <div class="d-flex align-items-center gap-2">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                    </svg>
-                    <strong>{{ session('success') }}</strong>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" style="opacity: 0.6;"></button>
-            </div>
-        @endif
+
 
         {{-- Main Section: Ticket Info --}}
         <div class="premium-card main-card">

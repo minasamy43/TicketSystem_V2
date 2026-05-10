@@ -7,13 +7,7 @@
 @endpush
 @section('content')
     <div class="container mt-4 manage-container">
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert"
-                style="border-radius: 12px; font-weight: 500;">
-                ✅ {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
+
 
         <!-- Categories Section -->
         <div

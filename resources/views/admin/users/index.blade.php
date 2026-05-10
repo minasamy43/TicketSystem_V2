@@ -22,12 +22,7 @@
             </a>
         </div>
 
-        @if (session('success'))
-            <div class="alert alert-success border-0 shadow-sm mb-4"
-                style="border-radius: 12px; background: #e7f5ed; color: #1a5131;">
-                <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
-            </div>
-        @endif
+
 
         <div class="premium-card">
             <div class="table-responsive" style="overflow: visible;">

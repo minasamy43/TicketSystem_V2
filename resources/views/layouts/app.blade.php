@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -262,12 +261,13 @@
     </header>
 
     <main class="content-area">
+      @include('layouts._alerts')
       @yield('content')
     </main>
 
     <footer class="footer-pro">
       <div>&copy; {{ date('Y') }} <span
-          style="color: var(--site-name-color, var(--primary-color)); font-weight: 600;">{{ \App\Models\Setting::get('site_name', 'HelpTK') }}</span>.
+          style="color: var(--site-name-color, var(--primary-color)); font-weight: 600;">HelpTK</span>.
         All rights
         reserved.</div>
     </footer>
