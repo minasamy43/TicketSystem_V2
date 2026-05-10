@@ -210,12 +210,16 @@ body.sidebar-collapsed .sidebar-pin-toggle i {
   overflow-x: hidden;
 }
 
+body.no-sidebar .main-wrapper {
+  margin-left: 0;
+}
+
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 30px;
-  height: 65px;
+  height: 75px;
   background-color: var(--navbar-bg);
   border-bottom: 1px solid var(--gray-medium);
   position: sticky;
@@ -267,24 +271,6 @@ body.sidebar-collapsed .sidebar-pin-toggle i {
   opacity: 0.75;
 }
 
-.navbar-logout-btn {
-  background: transparent;
-  border: none;
-  color: var(--navbar-text);
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.navbar-logout-btn:hover {
-  background: rgba(220, 53, 69, 0.08);
-  color: #dc3545;
-}
 
 .content-area {
   padding: 5px 20px;
@@ -298,6 +284,46 @@ body.sidebar-collapsed .sidebar-pin-toggle i {
   text-align: center;
   color: var(--text-secondary);
   font-size: 0.875rem;
+}
+
+/* Nav Premium Buttons for No-Sidebar Layout */
+.btn-nav-premium {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.btn-nav-premium i {
+  font-size: 1rem;
+  color: var(--gray-dark);
+  transition: color 0.2s ease;
+}
+
+.btn-nav-premium:hover {
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+}
+
+.btn-nav-premium:hover i {
+  color: var(--primary-color);
+}
+
+.btn-nav-premium.active {
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  border-color: var(--primary-light);
+}
+
+.btn-nav-premium.active i {
+  color: var(--primary-color);
 }
 
 
@@ -655,81 +681,6 @@ body.sidebar-collapsed .sidebar-pin-toggle i {
   color: #aaa;
 }
 
-
-/* Sidebar Premium Decorative Box */
-.sidebar-footer {
-  padding: 20px;
-  margin-top: auto;
-}
-
-
-
-/* Gold Metallic Widget */
-.gold-widget {
-  background: #1a1a1a;
-  border: 1px solid var(--primary-color);
-  border-radius: 12px;
-  padding: 15px;
-  margin: 15px 15px 5px;
-  position: relative;
-  box-shadow: 0 4px 20px var(--primary-light);
-}
-
-.gold-widget::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #d4af53, transparent);
-}
-
-.gold-widget-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-
-.gold-widget-dot {
-  width: 8px;
-  height: 8px;
-  background: #d4af53;
-  border-radius: 50%;
-  box-shadow: 0 0 10px #d4af53;
-  animation: goldPulse 2s infinite;
-}
-
-@keyframes goldPulse {
-  0% {
-    opacity: 0.4;
-  }
-
-  50% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0.4;
-  }
-}
-
-.gold-widget-title {
-  color: var(--primary-color);
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  font-family: 'Outfit', sans-serif;
-}
-
-.gold-widget-content {
-  color: #bbb;
-  font-size: 0.65rem;
-  line-height: 1.5;
-  font-family: 'Inter', sans-serif;
-}
-
 /* Sidebar Geometric Accent (Lines & Dots) */
 .sidebar-accent-container {
   padding: 10px 15px 5px;
@@ -800,8 +751,7 @@ body.sidebar-collapsed .sidebar-pin-toggle i {
 }
 
 /* Navbar Buttons */
-.btn-create,
-.btn-logout {
+.btn-create {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -830,21 +780,9 @@ body.sidebar-collapsed .sidebar-pin-toggle i {
   border-color: var(--primary-color);
 }
 
-.btn-logout {
-  background: #fff;
-  color: #888;
-  border: 1px solid #eee;
-}
 
-.btn-logout:hover {
-  background: rgba(220, 53, 69, 0.05);
-  color: #dc3545;
-  border-color: rgba(220, 53, 69, 0.2);
-  transform: translateY(-2px);
-}
 
-.btn-create svg,
-.btn-logout svg {
+.btn-create svg {
   width: 16px;
   height: 16px;
 }
@@ -872,25 +810,49 @@ body.sidebar-collapsed .sidebar-pin-toggle i {
   box-shadow: 0 4px 15px var(--primary-light);
 }
 
-.btn-green {
-  background-color: var(--success);
-  color: white !important;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 10px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  font-family: 'Outfit', sans-serif;
-  display: inline-flex;
+
+
+/* Navbar Logo & Site Name */
+.navbar-brand-custom {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  gap: 12px;
+  margin-left: 20px;
   text-decoration: none;
+  transition: opacity 0.2s ease;
 }
 
-.btn-green:hover {
-  background-color: color-mix(in srgb, var(--success), black 10%);
-  color: white !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(45, 191, 120, 0.2);
+.navbar-brand-custom:hover {
+  opacity: 0.85;
+}
+
+.navbar-logo {
+  height: 35px;
+  width: auto;
+  object-fit: contain;
+}
+
+.navbar-site-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--site-name-color, var(--primary-color));
+  letter-spacing: 1px;
+}
+
+/* Thin Tables */
+.table {
+  font-size: 0.82rem !important;
+}
+
+.table > :not(caption) > * > * {
+  padding: 0.4rem 0.6rem !important;
+}
+
+.table thead th {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+  color: var(--gray-dark);
 }

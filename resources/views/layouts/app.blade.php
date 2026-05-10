@@ -52,7 +52,7 @@
   @stack('styles')
 </head>
 
-<body>
+<body class="{{ Auth::user() && Auth::user()->role == 1 ? 'has-sidebar' : 'no-sidebar' }}">
   @php
     $avatarBase64 = null;
     if (Auth::check() && Auth::user()->avatar) {
@@ -73,12 +73,12 @@
   </script>
 
   <div class="mobile-sheet-overlay" id="sheetOverlay"></div>
-  <!-- New Sidebar -->
+  @if(Auth::user() && Auth::user()->role == 1)
   <div class="sidebar" id="sidebar">
     <button class="sidebar-pin-toggle d-none d-lg-flex" id="sidebarPinToggle" title="Toggle Sidebar">
       <i class="fa-solid fa-chevron-left"></i>
     </button>
-    <a href="{{ Auth::user() && Auth::user()->role == 1 ? route('admin.dashboard') : route('user.dashboard') }}"
+    <a href="{{ route('admin.dashboard') }}"
       class="sidebar-brand" style="text-decoration: none;">
       <img src="{{ \App\Models\Setting::getLogoUrl() }}" alt="Logo" class="sidebar-brand-logo">
       <span class="sidebar-brand-name"
@@ -96,94 +96,72 @@
         </div>
         <div class="user-info">
           <div class="user-info-name">{{ Auth::user()->name }}</div>
-          <div class="user-info-role">{{ Auth::user()->role == 1 ? 'Administrator' : 'User Account' }}</div>
+          <div class="user-info-role">Administrator</div>
         </div>
       </div>
     @endauth
 
     <div class="nav-menu">
-      @auth
-        @if(Auth::user()->role == 1)
-          <div class="nav-label"
-            style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
-            Overview</div>
-          <a href="{{ route('admin.dashboard') }}"
-            class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-            <i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span>
-          </a>
+      <div class="nav-label"
+        style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
+        Overview</div>
+      <a href="{{ route('admin.dashboard') }}"
+        class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+        <i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span>
+      </a>
 
-          <div class="nav-label"
-            style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
-            Management</div>
-          <a href="{{ route('admin.tickets.index') }}"
-            class="nav-item {{ request()->routeIs('admin.tickets.*') ? 'active' : '' }}">
-            <i class="fa-solid fa-ticket"></i><span class="nav-text">Tickets</span>
-          </a>
-          <a href="{{ route('admin.messages.index') }}"
-            class="nav-item {{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">
-            <i class="fa-solid fa-envelope"></i><span class="nav-text">Messages</span>
-            @php
-              $adminId = Auth::id();
-              $totalUnread = \Illuminate\Support\Facades\Cache::remember('admin_sidebar_unread_' . $adminId, 60, function () use ($adminId) {
-                return \App\Models\Reply::whereNull('admin_id')
-                  ->where('is_read', 0)
-                  ->whereIn('ticket_id', function ($query) use ($adminId) {
-                    $query->select('id')->from('tickets')
-                      ->where('inprogress_by', $adminId)
-                      ->orWhere('closed_by', $adminId)
-                      ->orWhereNull('inprogress_by')
-                      ->orWhereIn('id', function ($sub) use ($adminId) {
-                        $sub->select('ticket_id')->from('replies')->where('admin_id', $adminId);
-                      });
-                  })->count();
-              });
-            @endphp
-            <span id="sidebar-messages-badge" class="badge bg-danger rounded-pill ms-auto"
-              style="{{ $totalUnread > 0 ? '' : 'display: none;' }} font-size: 0.7rem;">
-              {{ $totalUnread > 99 ? '99+' : ($totalUnread > 0 ? $totalUnread : '') }}
-            </span>
-          </a>
+      <div class="nav-label"
+        style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
+        Management</div>
+      <a href="{{ route('admin.tickets.index') }}"
+        class="nav-item {{ request()->routeIs('admin.tickets.*') ? 'active' : '' }}">
+        <i class="fa-solid fa-ticket"></i><span class="nav-text">Tickets</span>
+      </a>
+      <a href="{{ route('admin.messages.index') }}"
+        class="nav-item {{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">
+        <i class="fa-solid fa-envelope"></i><span class="nav-text">Messages</span>
+        @php
+          $adminId = Auth::id();
+          $totalUnread = \Illuminate\Support\Facades\Cache::remember('admin_sidebar_unread_' . $adminId, 60, function () use ($adminId) {
+            return \App\Models\Reply::whereNull('admin_id')
+              ->where('is_read', 0)
+              ->whereIn('ticket_id', function ($query) use ($adminId) {
+                $query->select('id')->from('tickets')
+                  ->where('inprogress_by', $adminId)
+                  ->orWhere('closed_by', $adminId)
+                  ->orWhereNull('inprogress_by')
+                  ->orWhereIn('id', function ($sub) use ($adminId) {
+                    $sub->select('ticket_id')->from('replies')->where('admin_id', $adminId);
+                  });
+              })->count();
+          });
+        @endphp
+        <span id="sidebar-messages-badge" class="badge bg-danger rounded-pill ms-auto"
+          style="{{ $totalUnread > 0 ? '' : 'display: none;' }} font-size: 0.7rem;">
+          {{ $totalUnread > 99 ? '99+' : ($totalUnread > 0 ? $totalUnread : '') }}
+        </span>
+      </a>
 
-          <a href="{{ route('admin.knowledge-base.index') }}"
-            class="nav-item {{ request()->routeIs('admin.knowledge-base.*') ? 'active' : '' }}">
-            <i class="fa-solid fa-book"></i><span class="nav-text">Knowledge Base</span>
-          </a>
-          <a href="{{ route('admin.users.index') }}"
-            class="nav-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-            <i class="fa-solid fa-users"></i><span class="nav-text">Users</span>
-          </a>
-          <a href="{{ route('admin.ranking.index') }}"
-            class="nav-item {{ request()->routeIs('admin.ranking.*') ? 'active' : '' }}">
-            <i class="fa-solid fa-chart-line"></i><span class="nav-text">Ranking</span>
-          </a>
+      <a href="{{ route('admin.knowledge-base.index') }}"
+        class="nav-item {{ request()->routeIs('admin.knowledge-base.*') ? 'active' : '' }}">
+        <i class="fa-solid fa-book"></i><span class="nav-text">Knowledge Base</span>
+      </a>
+      <a href="{{ route('admin.users.index') }}"
+        class="nav-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+        <i class="fa-solid fa-users"></i><span class="nav-text">Users</span>
+      </a>
+      <a href="{{ route('admin.ranking.index') }}"
+        class="nav-item {{ request()->routeIs('admin.ranking.*') ? 'active' : '' }}">
+        <i class="fa-solid fa-chart-line"></i><span class="nav-text">Ranking</span>
+      </a>
 
-          <div class="nav-label"
-            style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
-            System</div>
-          <a href="{{ route('admin.settings') }}"
-            class="nav-item {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
-            <i class="fa-solid fa-gear"></i><span class="nav-text">Settings</span>
-          </a>
-
-        @else
-          <a href="{{ route('user.dashboard') }}"
-            class="nav-item {{ request()->routeIs('user.dashboard') || request()->routeIs('tickets.show') ? 'active' : '' }}">
-            <i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span>
-          </a>
-
-          <a href="{{ route('tickets.create') }}"
-            class="nav-item {{ request()->routeIs('tickets.create') ? 'active' : '' }}">
-            <i class="fa-solid fa-plus"></i><span class="nav-text">Create Ticket</span>
-          </a>
-
-          <div class="nav-label"
-            style="color: var(--menu-title-color); font-size: 11px; font-weight: 700; letter-spacing: 1px; margin: 15px 20px 5px; text-transform: uppercase;">
-            Account</div>
-          <a href="{{ route('user.settings') }}" class="nav-item {{ request()->routeIs('user.settings') ? 'active' : '' }}">
-            <i class="fa-solid fa-gear"></i><span class="nav-text">Settings</span>
-          </a>
-        @endif
-      @endauth
+      <div class="nav-label"
+        style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
+        System</div>
+      <a href="{{ route('admin.settings') }}"
+        class="nav-item {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
+        <i class="fa-solid fa-gear"></i><span class="nav-text">Settings</span>
+      </a>
 
       <div class="sidebar-accent-container">
         <div class="accent-crown-mini">
@@ -198,26 +176,47 @@
             <div class="accent-dot"></div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
+  @endif
 
   <div class="main-wrapper">
     <header class="navbar">
-      <nav class="navbar-breadcrumb" aria-label="breadcrumb">
-        <a href="{{ Auth::user() && Auth::user()->role == 1 ? route('admin.dashboard') : route('user.dashboard') }}"
-          class="breadcrumb-home">
-          <i class="fa-solid fa-house"></i>
-          <span>Home</span>
-        </a>
-        <i class="fa-solid fa-chevron-right breadcrumb-sep"></i>
-        <span class="breadcrumb-current">
-          @yield('breadcrumb', 'Dashboard')
-        </span>
-      </nav>
+      <div class="d-flex align-items-center">
+        @if(Auth::user() && Auth::user()->role == 0)
+          <a href="{{ route('user.dashboard') }}" class="navbar-brand-custom me-4">
+            <img src="{{ \App\Models\Setting::getLogoUrl() }}" alt="Logo" class="navbar-logo">
+            <span class="navbar-site-name">{{ \App\Models\Setting::get('site_name', 'HelpTK') }}</span>
+          </a>
+        @endif
+
+        @if(Auth::user() && Auth::user()->role == 1)
+          <nav class="navbar-breadcrumb" aria-label="breadcrumb">
+            <a href="{{ route('admin.dashboard') }}" class="breadcrumb-home">
+              <i class="fa-solid fa-house"></i>
+              <span>Home</span>
+            </a>
+            <i class="fa-solid fa-chevron-right breadcrumb-sep"></i>
+            <span class="breadcrumb-current">
+              @yield('breadcrumb', 'Dashboard')
+            </span>
+          </nav>
+        @endif
+      </div>
 
       <div class="navbar-actions d-flex align-items-center gap-3">
+        @if(Auth::user() && Auth::user()->role == 0)
+          <div class="user-nav-links d-none d-md-flex align-items-center gap-2 me-3">
+            <a href="{{ route('user.dashboard') }}" class="btn-nav-premium {{ request()->routeIs('user.dashboard') ? 'active' : '' }}">
+              <i class="fa-solid fa-house"></i> Dashboard
+            </a>
+            <a href="{{ route('tickets.create') }}" class="btn-nav-premium {{ request()->routeIs('tickets.create') ? 'active' : '' }}">
+              <i class="fa-solid fa-plus"></i> Create Ticket
+            </a>
+          </div>
+        @endif
+
         @auth
           <div class="dropdown">
             <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown"
@@ -233,6 +232,10 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown"
               style="min-width: 200px; border-radius: 10px;">
+              @if(Auth::user()->role == 0)
+                <li><a class="dropdown-item py-2 d-md-none" href="{{ route('user.dashboard') }}"><i class="fa-solid fa-house me-2 text-muted"></i> Dashboard</a></li>
+                <li><a class="dropdown-item py-2 d-md-none" href="{{ route('tickets.create') }}"><i class="fa-solid fa-plus me-2 text-muted"></i> Create Ticket</a></li>
+              @endif
               <li><a class="dropdown-item py-2"
                   href="{{ Auth::user()->role == 1 ? route('admin.settings') : route('user.settings') }}"><i
                     class="fa-solid fa-user me-2 text-muted"></i> My Profile</a></li>
@@ -249,9 +252,12 @@
             </ul>
           </div>
         @endauth
-        <button class="sidebar-toggle" id="sidebarToggle">
-          <i class="fa-solid fa-bars"></i>
-        </button>
+
+        @if(Auth::user() && Auth::user()->role == 1)
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+        @endif
       </div>
     </header>
 
