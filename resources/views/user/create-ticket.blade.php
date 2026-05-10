@@ -14,22 +14,31 @@
 
                     <div class="mb-3">
                         <label class="form-label">Subject</label>
-                        <input type="text" name="subject" class="form-control" required>
+                        <input type="text" name="subject" value="{{ old('subject') }}" class="form-control @error('subject') is-invalid @enderror" required>
+                        @error('subject')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Message</label>
-                        <textarea name="message" rows="5" class="form-control" required></textarea>
+                        <textarea name="message" rows="5" class="form-control @error('message') is-invalid @enderror" required>{{ old('message') }}</textarea>
+                        @error('message')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Upload Images (Optional)</label>
                         <div class="images-container">
                             <div class="image-input mb-2">
-                                <input type="file" name="images[]" class="form-control" accept="image/*">
+                                <input type="file" name="images[]" class="form-control @error('images.*') is-invalid @enderror" accept="image/*">
                                 <div class="image-preview-wrap" style="display:none; margin-top:8px;"></div>
                             </div>
                         </div>
+                        @error('images.*')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
                         <button type="button" class="btn btn-sm btn-outline-primary" id="addImage">Add Another
                             Image</button>
                         <small class="form-text text-muted">Accepted formats: JPEG, PNG, JPG, GIF (Max 2MB each)</small>

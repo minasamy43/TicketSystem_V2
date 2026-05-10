@@ -40,10 +40,18 @@ class TicketController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'subject' => 'required|max:255',
-            'message' => 'required',
+            'subject' => 'required|max:64',
+            'message' => 'required|max:1000',
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+        ], [
+            'subject.required' => 'The subject is required and cannot be empty.',
+            'subject.max' => 'The subject may not be greater than 64 characters.',
+            'message.required' => 'The message is required and cannot be empty.',
+            'message.max' => 'The message may not be greater than 1000 characters.',
+            'images.*.image' => 'The file must be an image.',
+            'images.*.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif.',
+            'images.*.max' => 'The image may not be greater than 2048 kilobytes.',
         ]);
 
         $imagePaths = [];
