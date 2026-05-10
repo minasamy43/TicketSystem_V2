@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tickets Management')
+@section('title', 'Tickets')
 @section('breadcrumb', 'Tickets')
 
 @push('styles')

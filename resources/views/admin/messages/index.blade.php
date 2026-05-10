@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Support Messages')
+@section('title', 'Messages')
 @section('breadcrumb', 'Messages')
 
 @push('styles')

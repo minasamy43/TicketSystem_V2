@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'User Dashboard')
+@section('title', 'Dashboard')
 @section('breadcrumb', 'Dashboard')
 @push('styles')
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600&display=swap" rel="stylesheet">

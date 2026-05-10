@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Create New Ticket')
+@section('title', 'Create Ticket')
 @section('breadcrumb', 'Create Ticket')
 @section('content')
 

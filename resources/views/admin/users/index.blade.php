@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Users Management')
+@section('title', 'Users')
 @section('breadcrumb', 'Users')
 @push('styles')
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">

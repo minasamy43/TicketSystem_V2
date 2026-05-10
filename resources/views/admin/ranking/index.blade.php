@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Ranking')
+@section('title', 'Ranking')
 @section('breadcrumb', 'Ranking')
 
 @push('styles')
