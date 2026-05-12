@@ -208,6 +208,49 @@
     }
     .remove-preview:hover { background: #f0f2f5; color: #dc3545; transform: scale(1.1); }
 
+    /* Sending indicator styles */
+    .bubble.sending { opacity: 0.7; }
+    .bubble-image-container {
+        position: relative;
+        display: inline-block;
+        margin-top: 6px;
+        min-width: 100px;
+        min-height: 60px;
+        background: #f0f2f5;
+        border-radius: 14px;
+        overflow: hidden;
+    }
+    .image-loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+    }
+    .spinner-border-sm-custom {
+        width: 1.2rem;
+        height: 1.2rem;
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-top: 2px solid #0084ff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .sending-status {
+        font-size: 0.65rem;
+        color: #65676b;
+        margin-top: 2px;
+        font-style: italic;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .bubble.me .sending-status { justify-content: flex-start; }
+    .bubble.them .sending-status { justify-content: flex-end; }
+
     /* Scrollbar */
     .chat-messages::-webkit-scrollbar { width: 6px; }
 
@@ -321,7 +364,15 @@
                     @endif
                     <div class="bubble {{ $bubbleClass }}" data-id="{{ $reply->id }}">
                         @if($reply->image)
-                            <img src="{{ asset('storage/' . $reply->image) }}" class="bubble-image" onclick="openGlobalLightbox(this.src)" alt="Attachment">
+                            <div class="bubble-image-container">
+                                <div class="image-loader"><div class="spinner-border-sm-custom"></div></div>
+                                <img src="{{ asset('storage/' . $reply->image) }}" 
+                                     class="bubble-image" 
+                                     style="margin-top: 0; opacity: 0; transition: opacity 0.3s;"
+                                     onload="this.style.opacity='1'; this.previousElementSibling.style.display='none'; window.scrollToBottom(50);" 
+                                     onclick="openGlobalLightbox(this.src)" 
+                                     alt="Attachment">
+                            </div>
                         @endif
                         @if($reply->body)
                             <div class="bubble-content {{ $reply->image ? 'mt-1' : '' }}">
@@ -706,13 +757,35 @@
             const senderLabel = isUserContext 
                 ? (reply.is_admin ? (reply.sender || 'Support') : 'You')
                 : (reply.is_admin ? (reply.sender || 'Admin') : (reply.sender || 'User'));
+            
+            const isSending = reply.is_sending || false;
+            const bubbleIdAttr = reply.id ? `data-id="${reply.id}"` : '';
+            const tempIdAttr = reply.temp_id ? `data-temp-id="${reply.temp_id}"` : '';
+
+            let imageHtml = '';
+            if (reply.image) {
+                imageHtml = `
+                    <div class="bubble-image-container">
+                        <div class="image-loader"><div class="spinner-border-sm-custom"></div></div>
+                        <img src="${reply.image}" 
+                             class="bubble-image" 
+                             style="margin-top:0; opacity: 0; transition: opacity 0.3s;" 
+                             onload="this.style.opacity='1'; this.previousElementSibling.style.display='none'; window.scrollToBottom(50);"
+                             onclick="openGlobalLightbox(this.src)" 
+                             alt="Attachment">
+                    </div>
+                `;
+            }
 
             return `
                 ${reply.is_first_unread ? `<div class="unread-divider"><span>${unreadCount} New Coming</span></div>` : ''}
-                <div class="bubble ${bubbleClass}" data-id="${reply.id}">
-                    ${reply.image ? `<img src="${reply.image}" class="bubble-image" onload="window.scrollToBottom(50)" onclick="openGlobalLightbox(this.src)" alt="Attachment">` : ''}
+                <div class="bubble ${bubbleClass} ${isSending ? 'sending' : ''}" ${bubbleIdAttr} ${tempIdAttr}>
+                    ${imageHtml}
                     ${reply.body ? `<div class="bubble-content ${reply.image ? 'mt-1' : ''}">${reply.body}</div>` : ''}
-                    <div class="bubble-info">${senderLabel} · ${reply.time}</div>
+                    <div class="bubble-info">
+                        ${senderLabel} · ${reply.time}
+                        ${isSending ? `<span class="sending-status"><div class="spinner-border-sm-custom" style="width:10px;height:10px;border-width:1px;"></div> Sending...</span>` : ''}
+                    </div>
                 </div>
             `;
         }
@@ -729,6 +802,23 @@
             submitBtn.style.opacity = '0.5';
 
             const formData = new FormData(this);
+            
+            // Immediate feedback for image
+            let tempId = null;
+            if (imageInput.files.length > 0) {
+                tempId = 'temp_' + Date.now();
+                const tempReply = {
+                    temp_id: tempId,
+                    body: chatInput.value.trim(),
+                    image: URL.createObjectURL(imageInput.files[0]),
+                    is_admin: !isUserContext,
+                    sender: isUserContext ? 'You' : 'Admin',
+                    time: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }),
+                    is_sending: true
+                };
+                appendMessages([tempReply]);
+            }
+
             try {
                 const response = await fetch(this.action, {
                     method: 'POST',
@@ -741,8 +831,12 @@
 
                 const data = await response.json();
                 if (data.success) {
-                    // Temporarily stop polling to prevent duplicate message if polling hits right now
-                    // actually, the last_id will handle it, but it's cleaner to just append
+                    // Remove temporary bubble if it exists
+                    if (tempId) {
+                        const tempBubble = chatMessages.querySelector(`[data-temp-id="${tempId}"]`);
+                        if (tempBubble) tempBubble.remove();
+                    }
+
                     appendMessages([data.reply]);
                     
                     chatInput.value = '';
@@ -755,9 +849,17 @@
                         countEl.textContent = (currentCount + 1) + ' messages';
                     }
                 } else {
+                    if (tempId) {
+                        const tempBubble = chatMessages.querySelector(`[data-temp-id="${tempId}"]`);
+                        if (tempBubble) tempBubble.remove();
+                    }
                     alert(data.message || 'Submission failed');
                 }
             } catch (error) {
+                if (tempId) {
+                    const tempBubble = chatMessages.querySelector(`[data-temp-id="${tempId}"]`);
+                    if (tempBubble) tempBubble.remove();
+                }
                 console.error('Submission failed:', error);
                 alert('Connection error. Please try again.');
             } finally {
