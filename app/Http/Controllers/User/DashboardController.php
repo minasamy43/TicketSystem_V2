@@ -36,7 +36,7 @@ class DashboardController extends Controller
             });
         }
 
-        $tickets = $query->latest()->paginate(10);
+        $tickets = $query->latest()->paginate(10)->withQueryString();
 
         return view('user.dashboard',compact(
             'tickets',

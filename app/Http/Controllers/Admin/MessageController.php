@@ -57,7 +57,7 @@ class MessageController extends Controller
                 break;
         }
 
-        $messages = $messagesQuery->latest()->paginate(20)->appends($request->only(['filter', 'date']));
+        $messages = $messagesQuery->latest()->paginate(20)->withQueryString();
 
         return view('admin.messages.index', compact('messages', 'filter', 'date'));
     }

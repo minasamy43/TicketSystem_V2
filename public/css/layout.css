@@ -218,7 +218,7 @@ body.no-sidebar .main-wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 30px;
+  padding: 0 45px 0 30px;
   height: 75px;
   background-color: var(--navbar-bg);
   border-bottom: 1px solid var(--gray-medium);
@@ -845,7 +845,7 @@ body.no-sidebar .main-wrapper {
   font-size: 0.82rem !important;
 }
 
-.table > :not(caption) > * > * {
+.table> :not(caption)>*>* {
   padding: 0.4rem 0.6rem !important;
 }
 
@@ -876,7 +876,7 @@ body.no-sidebar .main-wrapper {
   background: white;
   border-radius: 16px;
   padding: 16px 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
   display: flex;
   align-items: flex-start;
   gap: 15px;
@@ -887,14 +887,22 @@ body.no-sidebar .main-wrapper {
 }
 
 @keyframes toastSlideIn {
-  from { transform: translateX(120%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .custom-toast.hide {
   transform: translateX(120%);
   opacity: 0;
-  margin-top: -80px; /* Collapse space */
+  margin-top: -80px;
+  /* Collapse space */
 }
 
 .toast-icon {
@@ -908,8 +916,15 @@ body.no-sidebar .main-wrapper {
   font-size: 1.2rem;
 }
 
-.toast-success .toast-icon { background: #e6f7ef; color: #2dbf78; }
-.toast-error .toast-icon { background: #fef0f0; color: #f36c6c; }
+.toast-success .toast-icon {
+  background: #e6f7ef;
+  color: #2dbf78;
+}
+
+.toast-error .toast-icon {
+  background: #fef0f0;
+  color: #f36c6c;
+}
 
 .toast-content {
   flex-grow: 1;
@@ -940,7 +955,9 @@ body.no-sidebar .main-wrapper {
   transition: color 0.2s;
 }
 
-.toast-close:hover { color: #666; }
+.toast-close:hover {
+  color: #666;
+}
 
 .toast-progress {
   position: absolute;
@@ -948,7 +965,7 @@ body.no-sidebar .main-wrapper {
   left: 0;
   height: 3px;
   width: 100%;
-  background: rgba(0,0,0,0.05);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .toast-progress-bar {
@@ -958,9 +975,19 @@ body.no-sidebar .main-wrapper {
 }
 
 @keyframes toastProgress {
-  from { width: 100%; }
-  to { width: 0%; }
+  from {
+    width: 100%;
+  }
+
+  to {
+    width: 0%;
+  }
 }
 
-.toast-success .toast-progress-bar { background: #2dbf78; }
-.toast-error .toast-progress-bar { background: #f36c6c; }
+.toast-success .toast-progress-bar {
+  background: #2dbf78;
+}
+
+.toast-error .toast-progress-bar {
+  background: #f36c6c;
+}

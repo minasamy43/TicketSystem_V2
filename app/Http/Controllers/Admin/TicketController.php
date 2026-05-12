@@ -58,7 +58,7 @@ class TicketController extends Controller
             });
         }
 
-        $tickets = $query->latest()->paginate(10);
+        $tickets = $query->latest()->paginate(10)->withQueryString();
 
         return view('admin.tickets.index', compact('tickets', 'date'));
     }

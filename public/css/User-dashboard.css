@@ -1,4 +1,13 @@
-﻿        /* Standard Table Overrides to match Admin View */
+        .container-dashboard {
+            width: 100%;
+            max-width: 1100px;
+            margin-right: auto;
+            margin-left: auto;
+            padding-right: var(--bs-gutter-x, .75rem);
+            padding-left: var(--bs-gutter-x, .75rem);
+        }
+
+        /* Standard Table Overrides to match Admin View */
         .table-bordered {
             background: #fff;
             border-radius: 12px;
