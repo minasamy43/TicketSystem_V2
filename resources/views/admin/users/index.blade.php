@@ -44,8 +44,15 @@
                                 </td>
                                 <td data-label="User">
                                     <div class="d-flex align-items-center">
-
-                                        <div class="text-end text-md-start">
+                                        @if ($user->avatar)
+                                            <img src="{{ asset('storage/' . $user->avatar) }}" class="user-avatar-premium"
+                                                alt="{{ $user->name }}">
+                                        @else
+                                            <div class="user-avatar-placeholder">
+                                                {{ substr($user->name, 0, 1) }}
+                                            </div>
+                                        @endif
+                                        <div class="text-start">
                                             <div class="fw-bold">{{ $user->name }}</div>
                                             <div class="text-muted small" style="font-size: 0.8rem;">{{ $user->email }}</div>
                                         </div>
