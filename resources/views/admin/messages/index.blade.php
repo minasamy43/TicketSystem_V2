@@ -156,7 +156,7 @@
         // Real-time updates for sidebar
         setInterval(async () => {
             try {
-                const response = await fetch(`{{ route('admin.messages.new-data') }}?last_reply_id=${lastReplyId}`);
+                const response = await fetch(`{{ route('admin.messages.new-data') }}?last_reply_id=${lastReplyId}&filter={{ $filter }}&date={{ $date }}`);
                 const data = await response.json();
 
                 if (data.success && data.new_messages.length > 0) {

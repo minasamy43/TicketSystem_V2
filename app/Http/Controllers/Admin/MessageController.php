@@ -13,8 +13,8 @@ class MessageController extends Controller
     public function index(Request $request)
     {
         $adminId = Auth::id();
-        $filter = $request->get('filter', 'all');   // all|today|yesterday|week|month|custom
-        $date = $request->get('date');             // YYYY-MM-DD for custom filter
+        $filter = $request->get('filter', 'today');   // all|today|yesterday|week|month|custom
+        $date = $request->get('date', now()->format('Y-m-d'));             // YYYY-MM-DD for custom filter
 
         // Get IDs of tickets this admin is involved in or that are unassigned
         $ticketIds = Ticket::where('inprogress_by', $adminId)
@@ -77,15 +77,40 @@ class MessageController extends Controller
             })
             ->pluck('id');
 
+        $date = $request->get('date', now()->format('Y-m-d'));
+        $filter = $request->get('filter', 'today');
+
         // Get the latest reply for each ticket that has a new reply
-        $newReplies = Reply::whereIn('id', function ($query) use ($ticketIds, $lastReplyId) {
+        $query = Reply::whereIn('id', function ($query) use ($ticketIds, $lastReplyId) {
             $query->selectRaw('max(id)')
                 ->from('replies')
                 ->whereIn('ticket_id', $ticketIds)
                 ->where('id', '>', $lastReplyId)
                 ->groupBy('ticket_id');
-        })
-            ->with(['ticket.user', 'user', 'admin'])
+        });
+
+        // Apply same date filters as index
+        switch ($filter) {
+            case 'today':
+                $query->whereDate('created_at', today());
+                break;
+            case 'yesterday':
+                $query->whereDate('created_at', today()->subDay());
+                break;
+            case 'week':
+                $query->whereBetween('created_at', [now()->subDays(6)->startOfDay(), now()->endOfDay()]);
+                break;
+            case 'month':
+                $query->whereBetween('created_at', [now()->subDays(29)->startOfDay(), now()->endOfDay()]);
+                break;
+            case 'custom':
+                if ($date) {
+                    $query->whereDate('created_at', $date);
+                }
+                break;
+        }
+
+        $newReplies = $query->with(['ticket.user', 'user', 'admin'])
             ->latest()
             ->get();
 

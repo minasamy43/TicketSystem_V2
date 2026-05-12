@@ -57,7 +57,7 @@ class TicketController extends Controller
         $imagePaths = [];
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $index => $image) {
-                $filename = date('Y-m-d_(H-i)') . '_' . $index . '.' . $image->getClientOriginalExtension();
+                $filename = date('Y-m-d_H-i-s') . '_' . uniqid() . '_' . $index . '.' . $image->getClientOriginalExtension();
                 $path = $image->storeAs('tickets', $filename, 'public');
                 $imagePaths[] = $path;
             }
@@ -95,7 +95,7 @@ class TicketController extends Controller
         $imagePath = null;
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $filename = date('Y-m-d_(H-i)') . '.' . $image->getClientOriginalExtension();
+            $filename = date('Y-m-d_H-i-s') . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
             $imagePath = $image->storeAs('tickets', $filename, 'public');
         }
 

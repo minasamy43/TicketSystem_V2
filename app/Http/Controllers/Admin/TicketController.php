@@ -217,7 +217,7 @@ class TicketController extends Controller
         $imagePath = null;
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $filename = date('Y-m-d_(H-i)') . '.' . $image->getClientOriginalExtension();
+            $filename = date('Y-m-d_H-i-s') . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
             $imagePath = $image->storeAs('tickets', $filename, 'public');
         }
 
