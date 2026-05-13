@@ -312,6 +312,7 @@ class TicketController extends Controller
                 return [
                     'id' => $t->id,
                     'user_name' => $t->user->name ?? 'N/A',
+                    'user_role' => $t->user->role ?? 2,
                     'subject' => $t->subject,
                     'status' => $t->status,
                     'status_label' => ucfirst($t->status) . ($t->status == 'open' ? ' 🎟️' : ($t->status == 'closed' ? ' ✅️' : ' 👍🏻')),

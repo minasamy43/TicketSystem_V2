@@ -328,6 +328,15 @@
             </div>
             <div class="d-flex align-items-center gap-2 small text-muted" style="font-size: 0.75rem; margin-top: 4px;">
                 <span id="chatUserName">{{ isset($ticket) ? ($ticket->user->name ?? 'User') : '' }}</span>
+                <span id="chatUserRoleBadge">
+                    @if(isset($ticket))
+                        @if($ticket->user->role == 0)
+                            <span class="badge" style="font-size: 0.6rem; background: rgba(59, 111, 212, 0.1); color: #3b6fd4; border: 1px solid rgba(59, 111, 212, 0.2); padding: 1px 4px;">Agent</span>
+                        @else
+                            <span class="badge" style="font-size: 0.6rem; background: rgba(212, 175, 83, 0.1); color: #d4af53; border: 1px solid rgba(212, 175, 83, 0.2); padding: 1px 4px;">User</span>
+                        @endif
+                    @endif
+                </span>
                 @if(Auth::check() && Auth::user()->role == 1)
                      <span class="text-muted">·</span>
                      <span id="chatUserEmail">{{ isset($ticket) ? ($ticket->user->email ?? '') : '' }}</span>
@@ -384,6 +393,11 @@
                                 <span style="font-weight: 700; color: #3b6fd4;">Support</span> · {{ $reply->admin->name ?? 'Admin' }}
                             @else
                                 {{ $isMe ? 'You' : ($reply->user->name ?? 'User') }}
+                                @if($reply->user->role == 0)
+                                    <span class="badge ms-1" style="font-size: 0.6rem; background: rgba(59, 111, 212, 0.1); color: #3b6fd4; border: 1px solid rgba(59, 111, 212, 0.2); padding: 1px 4px;">Agent👤</span>
+                                @else
+                                    <span class="badge ms-1" style="font-size: 0.6rem; background: rgba(212, 175, 83, 0.1); color: #d4af53; border: 1px solid rgba(212, 175, 83, 0.2); padding: 1px 4px;">User👥</span>
+                                @endif
                             @endif
                             · {{ $reply->created_at->format('g:i A') }}
                         </div>

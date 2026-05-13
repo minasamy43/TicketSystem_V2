@@ -52,7 +52,14 @@
                             </div>
                             <div class="chat-info">
                                 <div class="chat-info-top">
-                                    <span class="chat-name">{{ $message->ticket->user->name ?? 'Unknown User' }}</span>
+                                    <span class="chat-name">
+                                        {{ $message->ticket->user->name ?? 'Unknown User' }}
+                                        @if($message->ticket->user->role == 0)
+                                            <span class="badge ms-1" style="font-size: 0.6rem; background: rgba(59, 111, 212, 0.1); color: #3b6fd4; border: 1px solid rgba(59, 111, 212, 0.2); padding: 1px 4px;">Agent👤</span>
+                                        @else
+                                            <span class="badge ms-1" style="font-size: 0.6rem; background: rgba(212, 175, 83, 0.1); color: #d4af53; border: 1px solid rgba(212, 175, 83, 0.2); padding: 1px 4px;">User👥</span>
+                                        @endif
+                                    </span>
                                     <span class="chat-time">{{ $message->created_at->diffForHumans(null, true) }}</span>
                                 </div>
                                 <div class="chat-preview">
