@@ -76,12 +76,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('admin/tickets/{id}/comment', [App\Http\Controllers\Admin\TicketController::class, 'storeComment'])->name('admin.tickets.comment');
     Route::get('admin/tickets/{id}/chat-data', [App\Http\Controllers\Admin\TicketController::class, 'getChatData'])->name('admin.tickets.chat-data');
     // admin user management
-    Route::get('admin/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
-    Route::get('admin/users/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.users.create');
-    Route::post('admin/users/store', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store');
-    Route::put('admin/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('admin.users.update');
-    Route::post('admin/users/{user}/update-password', [App\Http\Controllers\Admin\UserController::class, 'updatePassword'])->name('admin.users.update-password');
-    Route::delete('admin/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.users.destroy');
+    // admin user management
+    Route::get('admin/agents', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.agents.index');
+    Route::get('admin/agents/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.agents.create');
+    Route::post('admin/agents/store', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.agents.store');
+    Route::put('admin/agents/{user}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('admin.agents.update');
+    Route::post('admin/agents/{user}/update-password', [App\Http\Controllers\Admin\UserController::class, 'updatePassword'])->name('admin.agents.update-password');
+    Route::delete('admin/agents/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.agents.destroy');
     // Admin Messages
     Route::get('admin/messages', [App\Http\Controllers\Admin\MessageController::class, 'index'])->name('admin.messages.index');
     Route::get('admin/messages/new-data', [App\Http\Controllers\Admin\MessageController::class, 'getNewMessagesData'])->name('admin.messages.new-data'); //for ajax for realtime data update

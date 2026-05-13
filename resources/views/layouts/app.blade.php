@@ -141,7 +141,7 @@
         <a href="{{ route('admin.knowledge-base.index') }}" class="nav-item {{ request()->routeIs('admin.knowledge-base.*') ? 'active' : '' }}">
           <i class="fa-solid fa-book"></i><span class="nav-text">Knowledge Base</span>
         </a>
-        <a href="{{ route('admin.users.index') }}" class="nav-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+        <a href="{{ route('admin.agents.index') }}" class="nav-item {{ request()->routeIs('admin.agents.*') ? 'active' : '' }}">
           <i class="fa-solid fa-users"></i><span class="nav-text">Agents</span>
         </a>
         <a href="{{ route('admin.ranking.index') }}" class="nav-item {{ request()->routeIs('admin.ranking.*') ? 'active' : '' }}">

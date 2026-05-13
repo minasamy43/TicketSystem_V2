@@ -5,7 +5,7 @@
     <div class="container mt-4">
         <h2>Add New Member</h2>
 
-        <form method="POST" action="{{ route('admin.users.store') }}">
+        <form method="POST" action="{{ route('admin.agents.store') }}">
             @csrf
 
             <div class="mb-3">

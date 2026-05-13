@@ -218,13 +218,16 @@ body.no-sidebar .main-wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 45px 0 30px;
-  height: 75px;
-  background-color: var(--navbar-bg);
-  border-bottom: 1px solid var(--gray-medium);
+  padding: 0 40px;
+  height: 70px;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border-bottom: 1px solid rgba(230, 233, 244, 0.5);
   position: sticky;
   top: 0;
-  z-index: 90;
+  z-index: 900;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02), 0 1px 0 rgba(255, 255, 255, 0.2) inset;
 }
 
 /* Navbar breadcrumb (Home → Dashboard) */

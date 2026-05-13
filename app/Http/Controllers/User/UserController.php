@@ -12,7 +12,7 @@ class UserController extends Controller
     public function dashboard(Request $request)
     {
         $userId = Auth::id();
-        $date = $request->query('date', date('Y-m-d'));
+        $date = $request->query('date');
 
         $ticketsQuery = Ticket::where('user_id', $userId)
                         ->withCount(['replies as unread_replies_count' => function($query) {
@@ -32,10 +32,15 @@ class UserController extends Controller
         $tickets = $ticketsQuery->latest()->paginate(10);
 
         // Stats for the cards
-        $openTickets = Ticket::where('user_id', $userId)->where('status', 'open')->whereDate('created_at', $date)->count();
-        $inProgress = Ticket::where('user_id', $userId)->where('status', 'in progress')->whereDate('created_at', $date)->count();
-        $closedTickets = Ticket::where('user_id', $userId)->where('status', 'closed')->whereDate('created_at', $date)->count();
-        $totalTickets = Ticket::where('user_id', $userId)->whereDate('created_at', $date)->count();
+        $statsQuery = Ticket::where('user_id', $userId);
+        if ($date) {
+            $statsQuery->whereDate('created_at', $date);
+        }
+        
+        $openTickets = (clone $statsQuery)->where('status', 'open')->count();
+        $inProgress = (clone $statsQuery)->where('status', 'in progress')->count();
+        $closedTickets = (clone $statsQuery)->where('status', 'closed')->count();
+        $totalTickets = $statsQuery->count();
 
         return view('user.dashboard', compact('tickets', 'openTickets', 'inProgress', 'closedTickets', 'totalTickets', 'date'));
     }
@@ -44,16 +49,19 @@ class UserController extends Controller
     {
         $userId = Auth::id();
         $lastId = $request->get('last_id', 0);
-        $date = $request->get('date', now()->format('Y-m-d'));
+        $date = $request->get('date');
         $existingIds = $request->get('existing_ids', []);
 
         $query = Ticket::with(['closer'])
             ->where('user_id', $userId)
-            ->whereDate('created_at', $date)
             ->where('id', '>', $lastId)
             ->withCount(['replies as unread_replies_count' => function($query) {
                 $query->whereNotNull('admin_id')->where('is_read', 0);
             }]);
+
+        if ($date) {
+            $query->whereDate('created_at', $date);
+        }
 
         if ($subject = $request->get('subject')) {
             $query->where('subject', 'like', '%' . $subject . '%');
