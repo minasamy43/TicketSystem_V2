@@ -9,7 +9,7 @@
         <div class="card mt-3">
             <div class="card-body">
 
-                <form method="POST" action="{{ route('tickets.store') }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('user.tickets.store') }}" enctype="multipart/form-data">
                     @csrf
 
                     <div class="mb-3">
@@ -80,7 +80,7 @@
 
     <script>
         // Prevent double / triple submission
-        document.querySelector('form[action="{{ route('tickets.store') }}"]').addEventListener('submit', function () {
+        document.querySelector('form[action="{{ route('user.tickets.store') }}"]').addEventListener('submit', function () {
             const btn = document.getElementById('submitTicketBtn');
             btn.disabled = true;
             btn.textContent = 'Submitting…';

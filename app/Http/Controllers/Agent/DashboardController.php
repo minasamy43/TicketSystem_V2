@@ -1,7 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\User;
-
+namespace App\Http\Controllers\Agent;
+ 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Ticket;
@@ -38,9 +38,19 @@ class DashboardController extends Controller
 
         $tickets = $query->latest()->paginate(10)->withQueryString();
 
-        return view('user.dashboard',compact(
+        // Status cards — Today's totals (respecting date filter)
+        $totalTickets = Ticket::where('user_id', $userId)->whereDate('created_at', $date)->count();
+        $openTickets  = Ticket::where('user_id', $userId)->whereDate('created_at', $date)->where('status', 'open')->count();
+        $closedTickets = Ticket::where('user_id', $userId)->whereDate('created_at', $date)->where('status', 'closed')->count();
+        $inProgress   = Ticket::where('user_id', $userId)->whereDate('created_at', $date)->where('status', 'in progress')->count();
+
+        return view('agent.dashboard',compact(
             'tickets',
-            'date'
+            'date',
+            'totalTickets',
+            'openTickets',
+            'closedTickets',
+            'inProgress'
         ));
     }
 

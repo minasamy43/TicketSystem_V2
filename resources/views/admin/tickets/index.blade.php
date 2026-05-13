@@ -28,7 +28,7 @@
                             <thead>
                                 <tr>
                                     <th width="80">Id</th>
-                                    <th>User</th>
+                                    <th>Agent</th>
                                     <th width="200">Subject</th>
                                     <th>Status</th>
                                     <th>In Progress By</th>
@@ -44,7 +44,7 @@
                                     </td>
                                     <td style="padding: 8px 10px;">
                                         <input type="text" name="user_name" id="filter_user_name"
-                                            class="inline-filter-input search-icon-input" placeholder="User..."
+                                            class="inline-filter-input search-icon-input" placeholder="Agent..."
                                             value="{{ request('user_name') }}" oninput="debounceSubmit()">
                                     </td>
                                     <td style="padding: 8px 10px;">

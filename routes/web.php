@@ -1,8 +1,7 @@
 <?php
 
-use App\Http\Controllers\User\KnowledgeBaseController;
-use App\Http\Controllers\User\DashboardController;
-use App\Http\Controllers\User\TicketController;
+use App\Http\Controllers\Agent\DashboardController;
+use App\Http\Controllers\Agent\TicketController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,28 +29,41 @@ Route::get('tickets/unread-counts', [App\Http\Controllers\Admin\TicketController
 Route::get('admin/tickets/new-data', [App\Http\Controllers\Admin\TicketController::class, 'getNewTicketsData'])->name('admin.tickets.new-data')->middleware(['auth', 'admin']); //for ajax for realtime data update
 // Knowledge Base routes accessible to both User and Admin (for Preview only)
 Route::middleware('auth')->group(function () {
-    Route::get('user/knowledge-base', [App\Http\Controllers\User\KnowledgeBaseController::class, 'index'])->name('knowledge.base');
-    Route::get('user/knowledge-base/category/{slug}', [App\Http\Controllers\User\KnowledgeBaseController::class, 'showCategory'])->name('knowledge.category');
-    Route::get('user/knowledge-base/article/{slug}', [App\Http\Controllers\User\KnowledgeBaseController::class, 'showArticle'])->name('knowledge.article');
+    Route::get('agent/knowledge-base', [App\Http\Controllers\Agent\KnowledgeBaseController::class, 'index'])->name('knowledge.base');
+    Route::get('agent/knowledge-base/category/{slug}', [App\Http\Controllers\Agent\KnowledgeBaseController::class, 'showCategory'])->name('knowledge.category');
+    Route::get('agent/knowledge-base/article/{slug}', [App\Http\Controllers\Agent\KnowledgeBaseController::class, 'showArticle'])->name('knowledge.article');
 });
 
 
 
-// (User dashboard) 
+// (Agent dashboard)  
+Route::middleware(['auth', 'agent'])->group(function () {
+    Route::get('agent/dashboard', [DashboardController::class, 'index'])->name('agent.dashboard');
+    Route::get('agent/dashboard/new-data', [DashboardController::class, 'getNewTicketsData'])->name('agent.dashboard.new-data'); //for ajax for realtime data update
+    Route::get('agent/tickets/create', [TicketController::class, 'create'])->name('agent.tickets.create');
+    Route::post('agent/tickets/store', [TicketController::class, 'store'])->name('agent.tickets.store');
+    Route::get('agent/tickets/{id}', [TicketController::class, 'show'])->name('agent.tickets.show');
+    Route::get('agent/tickets/{id}/chat-data', [TicketController::class, 'getChatData'])->name('agent.tickets.chat-data');
+    Route::post('agent/tickets/{id}/reply', [TicketController::class, 'reply'])->name('agent.tickets.reply');
+    Route::post('agent/tickets/{id}/close', [TicketController::class, 'close'])->name('agent.tickets.close');
+    Route::delete('agent/tickets/{id}', [TicketController::class, 'destroy'])->name('agent.tickets.destroy');
+    // Agent Messages
+    Route::get('agent/messages', [\App\Http\Controllers\Agent\MessageController::class, 'index'])->name('agent.messages.index');
+    Route::get('agent/messages/new-data', [\App\Http\Controllers\Agent\MessageController::class, 'getNewMessagesData'])->name('agent.messages.new-data');
+    // Agent Settings
+    Route::get('agent/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('agent.settings');
+    Route::post('agent/settings/profile', [\App\Http\Controllers\SettingsController::class, 'updateProfile'])->name('agent.settings.profile');
+    Route::post('agent/settings/password', [\App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('agent.settings.password');
+});
+
+// (User dashboard)
 Route::middleware(['auth', 'user'])->group(function () {
-    Route::get('user/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
-    Route::get('user/dashboard/new-data', [DashboardController::class, 'getNewTicketsData'])->name('user.dashboard.new-data'); //for ajax for realtime data update
-    Route::get('user/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
-    Route::post('user/tickets/store', [TicketController::class, 'store'])->name('tickets.store');
-    Route::get('user/tickets/{id}', [TicketController::class, 'show'])->name('tickets.show');
-    Route::get('user/tickets/{id}/chat-data', [TicketController::class, 'getChatData'])->name('tickets.chat-data');
-    Route::post('user/tickets/{id}/reply', [TicketController::class, 'reply'])->name('tickets.reply');
-    Route::post('user/tickets/{id}/close', [TicketController::class, 'close'])->name('tickets.close');
-    Route::delete('user/tickets/{id}', [TicketController::class, 'destroy'])->name('tickets.destroy');
-    // User Settings
-    Route::get('user/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('user.settings');
-    Route::post('user/settings/profile', [\App\Http\Controllers\SettingsController::class, 'updateProfile'])->name('user.settings.profile');
-    Route::post('user/settings/password', [\App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('user.settings.password');
+    Route::get('user/dashboard', [App\Http\Controllers\User\UserController::class, 'dashboard'])->name('user.dashboard');
+    Route::get('user/dashboard/new-data', [App\Http\Controllers\User\UserController::class, 'getNewTicketsData'])->name('user.dashboard.new-data');
+    Route::get('user/tickets/create', [App\Http\Controllers\User\UserController::class, 'createTicket'])->name('user.tickets.create');
+    Route::post('user/tickets/store', [App\Http\Controllers\User\UserController::class, 'storeTicket'])->name('user.tickets.store');
+    Route::get('user/tickets/{id}', [App\Http\Controllers\User\UserController::class, 'showTicket'])->name('user.tickets.show');
+    Route::post('user/tickets/{id}/reply', [App\Http\Controllers\User\UserController::class, 'replyTicket'])->name('user.tickets.reply');
 });
 
 

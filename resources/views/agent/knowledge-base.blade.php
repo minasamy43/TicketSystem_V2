@@ -3,7 +3,7 @@
 @section('title', 'Knowledge Base')
 @section('breadcrumb', 'Knowledge Base')
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/User-knowledge-base.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/Agent-knowledge-base.css') }}">
 @endpush
 
 @section('content')

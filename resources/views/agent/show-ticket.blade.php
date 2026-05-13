@@ -3,13 +3,13 @@
 @section('title', 'View Ticket')
 @section('breadcrumb', 'View Ticket')
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/User-show-ticket.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/Agent-show-ticket.css') }}">
 @endpush
 
 @section('content')
     <div class="tk-wrap">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <a href="{{ route('user.dashboard') }}" class="btn-back-premium">
+            <a href="{{ route('agent.dashboard') }}" class="btn-back-premium">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                     stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -19,7 +19,7 @@
             </a>
 
             @if($ticket->status !== 'closed')
-                <form method="POST" action="{{ route('tickets.close', $ticket->id) }}"
+                <form method="POST" action="{{ route('agent.tickets.close', $ticket->id) }}"
                     onsubmit="return confirm('Close this ticket?');" style="margin:0">
                     @csrf
                     <button type="submit" class="btn-close-ticket-prem">

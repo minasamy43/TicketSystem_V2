@@ -12,7 +12,7 @@
     <div class="premium-container container-fluid p-0 p-lg-3">
         <div class="d-none d-lg-flex flex-column mb-3">
             <h1 class="page-title mb-1">Messages</h1>
-            <p class="text-muted small mb-0">Manage all customer support conversations in one place.</p>
+            <p class="text-muted small mb-0">Manage all your support conversations in one place.</p>
         </div>
 
         <div class="messages-layout">
@@ -20,7 +20,7 @@
             <div class="chat-sidebar" id="messagesSidebar">
                 <div class="sidebar-header">
                     <div class="sidebar-title d-lg-none">Messages</div>
-                    <form method="GET" action="{{ route('admin.messages.index') }}" id="dateFilterForm">
+                    <form method="GET" action="{{ route('agent.messages.index') }}" id="dateFilterForm">
                         <div class="filter-container">
                             <input type="hidden" name="filter" value="custom">
                             <div class="position-relative flex-grow-1">
@@ -29,7 +29,7 @@
                                     value="{{ $date }}" max="{{ date('Y-m-d') }}" onchange="this.form.submit()">
                             </div>
                             @if($date !== date('Y-m-d'))
-                                <a href="{{ route('admin.messages.index') }}" class="btn btn-sm btn-light rounded-pill"
+                                <a href="{{ route('agent.messages.index') }}" class="btn btn-sm btn-light rounded-pill"
                                     title="Today">
                                     <i class="fa-solid fa-calendar-day"></i>
                                 </a>
@@ -52,11 +52,11 @@
                             </div>
                             <div class="chat-info">
                                 <div class="chat-info-top">
-                                    <span class="chat-name">{{ $message->ticket->user->name ?? 'Unknown User' }}</span>
+                                    <span class="chat-name">{{ $message->ticket->subject ?? 'Ticket #' . $message->ticket_id }}</span>
                                     <span class="chat-time">{{ $message->created_at->diffForHumans(null, true) }}</span>
                                 </div>
                                 <div class="chat-preview">
-                                    @if(!$message->is_read && !$message->isFromAdmin())
+                                    @if(!$message->is_read && $message->isFromAdmin())
                                         <span class="unread-dot"></span>
                                     @endif
                                     @if($message->image)
@@ -95,10 +95,10 @@
                         <i class="fa-solid fa-comments"></i>
                     </div>
                     <div class="placeholder-title">Your Conversations</div>
-                    <p>Select a message from the list to view the full conversation thread and reply to the agent.</p>
+                    <p>Select a message from the list to view the full conversation thread with our support team.</p>
                 </div>
 
-                <div id="chatContentWrapper">
+                <div id="chatContentWrapper" style="display: none;">
                     @include('admin.partials._chat', ['isStatic' => true, 'withTrigger' => false])
                 </div>
             </div>
@@ -117,30 +117,22 @@
         const mainArea = document.getElementById('messagesMain');
 
         function selectChat(ticketId, element) {
-            // Remove active class from all
             document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
-            // Add to clicked
             element.classList.add('active');
-
             currentActiveTicketId = ticketId;
-
-            // Show content area
             chatPlaceholder.style.display = 'none';
             chatContentWrapper.style.display = 'block';
 
-            // Mobile handling
             if (window.innerWidth < 992) {
                 sidebar.classList.add('hidden');
                 mainArea.classList.add('active');
                 document.getElementById('mobileChatHeaderTitle').textContent = element.querySelector('.chat-name').textContent;
             }
 
-            // Call the global openAdminChat from partials
             if (typeof openAdminChat === 'function') {
                 openAdminChat(ticketId);
             }
 
-            // Mark as read visually in sidebar
             const dot = element.querySelector('.unread-dot');
             if (dot) dot.remove();
         }
@@ -149,14 +141,12 @@
             sidebar.classList.remove('hidden');
             mainArea.classList.remove('active');
             currentActiveTicketId = null;
-            // Remove active class from all items when returning to the list
             document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
         }
 
-        // Real-time updates for sidebar
         setInterval(async () => {
             try {
-                const response = await fetch(`{{ route('admin.messages.new-data') }}?last_reply_id=${lastReplyId}&filter={{ $filter }}&date={{ $date }}`);
+                const response = await fetch(`{{ route('agent.messages.new-data') }}?last_reply_id=${lastReplyId}&filter={{ $filter }}&date={{ $date }}`);
                 const data = await response.json();
 
                 if (data.success && data.new_messages.length > 0) {
@@ -164,28 +154,22 @@
                         let item = document.querySelector(`.chat-item[data-ticket-id="${msg.ticket_id}"]`);
 
                         if (item) {
-                            // Update existing item and move to top
                             item.querySelector('.chat-preview').innerHTML = `
-                                    ${(!msg.is_read && !msg.is_from_admin) ? '<span class="unread-dot"></span>' : ''}
+                                    ${(!msg.is_read && msg.is_from_admin) ? '<span class="unread-dot"></span>' : ''}
                                     ${msg.image ? '<i class="fa-solid fa-image text-muted me-1" style="font-size: 0.75rem;"></i>' : ''}
                                     ${msg.body}
                                 `;
                             item.querySelector('.chat-time').textContent = msg.relative_time;
-
-                            // If it's active, it's already read (or being read)
                             if (currentActiveTicketId == msg.ticket_id) {
                                 const dot = item.querySelector('.unread-dot');
                                 if (dot) dot.remove();
                             }
-
                             chatList.prepend(item);
                         } else {
-                            // Prepend new item
                             const newItem = document.createElement('div');
                             newItem.className = 'chat-item';
                             newItem.setAttribute('data-ticket-id', msg.ticket_id);
                             newItem.onclick = () => selectChat(msg.ticket_id, newItem);
-
                             newItem.innerHTML = `
                                     <div class="chat-avatar">
                                         ${msg.user_name.charAt(0).toUpperCase()}
@@ -196,17 +180,15 @@
                                             <span class="chat-time">${msg.relative_time}</span>
                                         </div>
                                         <div class="chat-preview">
-                                            ${(!msg.is_read && !msg.is_from_admin) ? '<span class="unread-dot"></span>' : ''}
+                                            ${(!msg.is_read && msg.is_from_admin) ? '<span class="unread-dot"></span>' : ''}
                                             ${msg.image ? '<i class="fa-solid fa-image text-muted me-1" style="font-size: 0.75rem;"></i>' : ''}
                                             ${msg.body}
                                         </div>
                                     </div>
                                 `;
-
                             chatList.prepend(newItem);
                         }
                     });
-
                     lastReplyId = data.new_highest_id;
                 }
             } catch (error) {

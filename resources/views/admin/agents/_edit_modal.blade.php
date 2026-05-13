@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-content-premium">
             <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold" id="editUserModalLabel">Edit <span id="editUserNameDisplay"></span></h5>
+                <h5 class="modal-title fw-bold" id="editUserModalLabel">Edit Agent: <span id="editUserNameDisplay"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
@@ -21,7 +21,7 @@
                     <div class="mb-3">
                         <label for="edit_role" class="form-label small fw-bold text-muted">Role</label>
                         <select class="form-select form-control-premium shadow-none" id="edit_role" name="role" required>
-                            <option value="0">User</option>
+                            <option value="0">Agent</option>
                             <option value="1">Technical</option>
                         </select>
                     </div>

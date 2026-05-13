@@ -10,15 +10,6 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Normal user (optional)
-        User::updateOrCreate(
-            ['email' => 'user@example.com'],
-            [
-                'name' => 'Mark',
-                'password' => Hash::make('password'),
-                'role' => 0,
-            ]
-        );
 
         // ADMIN ACCOUNT (IMPORTANT)
         User::updateOrCreate(
@@ -27,6 +18,24 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Mina',
                 'password' => Hash::make('password'),
                 'role' => 1,
+            ]
+        );
+        // Normal agent
+        User::updateOrCreate(
+            ['email' => 'agent@example.com'],
+            [
+                'name' => 'Mark',
+                'password' => Hash::make('password'),
+                'role' => 0,
+            ]
+        );
+        // User ACCOUNT
+        User::updateOrCreate(
+            ['email' => 'user@example.com'],
+            [
+                'name' => 'Ashraf',
+                'password' => Hash::make('password'),
+                'role' => 2,
             ]
         );
 

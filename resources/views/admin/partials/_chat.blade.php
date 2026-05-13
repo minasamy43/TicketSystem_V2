@@ -410,7 +410,7 @@
             if (isset($ticket)) {
                 $defaultAction = (Auth::check() && Auth::user()->role == 1) 
                     ? route('admin.tickets.comment', $ticket->id) 
-                    : route('tickets.reply', $ticket->id);
+                    : route('agent.tickets.reply', $ticket->id);
             }
             $finalAction = $customAction ?? $defaultAction;
         @endphp
@@ -508,7 +508,7 @@
                 // Ensure last_id is properly handled
                 const lastIdParam = lastMessageId ? `last_id=${lastMessageId}` : '';
                 const dataUrl = isUserContext 
-                    ? `/user/tickets/${currentTicketId}/chat-data?${lastIdParam}` 
+                    ? `/agent/tickets/${currentTicketId}/chat-data?${lastIdParam}` 
                     : `/admin/tickets/${currentTicketId}/chat-data?${lastIdParam}`;
                 
                 const response = await fetch(dataUrl);
@@ -598,12 +598,23 @@
             
             // Update the sidebar Messages menu badge
             const sidebarBadge = document.getElementById('sidebar-messages-badge');
+            const userSidebarBadge = document.getElementById('sidebar-user-messages-badge');
+            
             if (sidebarBadge) {
                 if (totalUnread > 0) {
                     sidebarBadge.textContent = totalUnread > 99 ? '99+' : totalUnread;
                     sidebarBadge.style.display = '';
                 } else {
                     sidebarBadge.style.display = 'none';
+                }
+            }
+
+            if (userSidebarBadge) {
+                if (totalUnread > 0) {
+                    userSidebarBadge.textContent = totalUnread > 99 ? '99+' : totalUnread;
+                    userSidebarBadge.style.display = '';
+                } else {
+                    userSidebarBadge.style.display = 'none';
                 }
             }
         }
@@ -622,7 +633,7 @@
             chatMessages.innerHTML = '<div class="text-center py-5"><div class="text-muted small">Loading messages...</div></div>';
             
             const commentUrl = isUserContext 
-                ? `/user/tickets/${ticketId}/reply` 
+                ? `/agent/tickets/${ticketId}/reply` 
                 : `/admin/tickets/${ticketId}/comment`;
             chatForm.action = commentUrl;
             clearImagePreview();
@@ -658,7 +669,7 @@
 
             try {
                 const dataUrl = isUserContext 
-                    ? `/user/tickets/${ticketId}/chat-data` 
+                    ? `/agent/tickets/${ticketId}/chat-data` 
                     : `/admin/tickets/${ticketId}/chat-data`;
                 const response = await fetch(dataUrl);
                 const data = await response.json();

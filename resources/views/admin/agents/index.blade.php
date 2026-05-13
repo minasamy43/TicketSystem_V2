@@ -14,11 +14,11 @@
             class="d-flex flex-column flex-md-row justify-content-between align-items-center align-items-md-end mb-4 gap-3">
             <div class="text-center text-md-start">
                 <h1 class="page-title mb-1">Community Members</h1>
-                <p class="text-muted lead mb-0" style="font-size: 1rem;">Managing roles and permissions for system users.
+                <p class="text-muted lead mb-0" style="font-size: 1rem;">Managing roles and permissions for system agents.
                 </p>
             </div>
             <a href="{{ route('admin.users.create') }}" class="btn-gold-action shadow-none">
-                <i class="fas fa-user-plus"></i> Add New User
+                <i class="fas fa-user-plus"></i> Add New
             </a>
         </div>
 
@@ -64,7 +64,7 @@
                                             style="background: rgba(220, 53, 69, 0.1); color: #dc3545;">Technical</span>
                                     @else
                                         <span class="user-badge" style="background: rgba(13, 110, 253, 0.1); color: #0d6efd;">
-                                            User</span>
+                                            Agent</span>
                                     @endif
                                 </td>
                                 <td data-label="Member Since">
@@ -104,8 +104,8 @@
                                                     @method('DELETE')
                                                     <button type="submit"
                                                         class="dropdown-item dropdown-item-premium py-2 text-danger"
-                                                        onclick="return confirm('Securely delete this user record?')">
-                                                        <i class="fas fa-trash-alt me-2"></i> Remove User
+                                                        onclick="return confirm('Securely delete this agent record?')">
+                                                        <i class="fas fa-trash-alt me-2"></i> Remove Agent
                                                     </button>
                                                 </form>
                                             </li>
@@ -125,8 +125,8 @@
     </div>
 
 
-    @include('admin.users._edit_modal')
-    @include('admin.users._password_modal')
+    @include('admin.agents._edit_modal')
+    @include('admin.agents._password_modal')
 @endsection
 
 @push('scripts')

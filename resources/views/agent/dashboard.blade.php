@@ -17,10 +17,121 @@
                     style="color: #666; margin-top: 15px; font-size: 0.95rem; gap: 12px; flex-wrap: wrap;">
                     <span
                         style="font-family: 'DM Sans', sans-serif; font-size: 0.68rem; color: #3b6fd4; font-weight: 800; letter-spacing: 1.2px; background: rgba(59, 111, 212, 0.07); padding: 4px 12px; border-radius: 50px; border: 1px solid rgba(59, 111, 212, 0.12); box-shadow: 0 2px 5px rgba(59, 111, 212, 0.05); white-space: nowrap;">
-                        <span style="margin-right: 4px;">👤</span> User
+                        <span style="margin-right: 4px;">👤</span> Agent
                     </span>
                     <span>Manage your support tickets and track their status below.</span>
                 </p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{{ route('knowledge.base') }}"
+                    style="display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; background: #fff; border: 1px solid var(--primary-light); border-radius: 14px; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 4px 15px var(--primary-light);">
+                    <div
+                        style="width: 40px; height: 40px; background: var(--primary-light); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary-color);">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                        </svg>
+                    </div>
+                    <div style="text-align: left;">
+                        <div style="font-size: 0.75rem; color: #aaa; letter-spacing: 0.05em; font-weight: 700;">
+                            Need Help?</div>
+                        <div style="font-size: 0.95rem; color: #111; font-weight: 600;">Knowledge Base</div>
+                    </div>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)"
+                        stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 10px;">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <!-- Open Tickets -->
+            <div class="col-12 col-sm-6 col-lg-3">
+                <a href="{{ route('agent.dashboard', ['status' => 'open', 'date' => $date]) }}"
+                    style="text-decoration: none; color: inherit;">
+                    <div class="royal-card" style="--accent-color: #dc3545; --icon-bg: rgba(220, 53, 69, 0.08);">
+                        <div class="royal-card-watermark">
+                            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M2 9V5.2a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2V9a2 2 0 0 0 0 6v3.8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V15a2 2 0 0 0 0-6z" />
+                                <path d="M14 3v2" />
+                                <path d="M14 8v2" />
+                                <path d="M14 13v2" />
+                                <path d="M14 18v2" />
+                            </svg>
+                        </div>
+
+                        <div class="royal-card-content">
+                            <div class="royal-card-title">Open Tickets</div>
+                            <div class="royal-card-value" id="open-count">{{ $openTickets }}</div>
+                            <div class="royal-card-sub">New today</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- In Progress -->
+            <div class="col-12 col-sm-6 col-lg-3">
+                <a href="{{ route('agent.dashboard', ['status' => 'in progress', 'date' => $date]) }}"
+                    style="text-decoration: none; color: inherit;">
+                    <div class="royal-card" style="--accent-color: #d4af53; --icon-bg: rgba(212, 175, 83, 0.08);">
+                        <div class="royal-card-watermark">
+                            <span style="font-size: 55px;">👍🏻</span>
+                        </div>
+
+                        <div class="royal-card-content">
+                            <div class="royal-card-title">In Progress</div>
+                            <div class="royal-card-value" id="progress-count">{{ $inProgress }}</div>
+                            <div class="royal-card-sub">Handled today</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Closed Tickets -->
+            <div class="col-12 col-sm-6 col-lg-3">
+                <a href="{{ route('agent.dashboard', ['status' => 'closed', 'date' => $date]) }}"
+                    style="text-decoration: none; color: inherit;">
+                    <div class="royal-card" style="--accent-color: #198754; --icon-bg: rgba(25, 135, 84, 0.08);">
+                        <div class="royal-card-watermark">
+                            <span style="font-size: 55px;">✅️</span>
+                        </div>
+
+                        <div class="royal-card-content">
+                            <div class="royal-card-title">Closed Tickets</div>
+                            <div class="royal-card-value" id="closed-count">{{ $closedTickets }}</div>
+                            <div class="royal-card-sub">Resolved today</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Total Tickets -->
+            <div class="col-12 col-sm-6 col-lg-3">
+                <a href="{{ route('agent.dashboard', ['date' => $date]) }}" style="text-decoration: none; color: inherit;">
+                    <div class="royal-card" style="--accent-color: #3b6fd4; --icon-bg: rgba(59, 111, 212, 0.08);">
+                        <div class="royal-card-watermark">
+                            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                                <path d="M12 11h4"></path>
+                                <path d="M12 16h4"></path>
+                                <path d="M8 11h.01"></path>
+                                <path d="M8 16h.01"></path>
+                            </svg>
+                        </div>
+
+                        <div class="royal-card-content">
+                            <div class="royal-card-title">Total Tickets</div>
+                            <div class="royal-card-value" id="total-count">{{ $totalTickets }}</div>
+                            <div class="royal-card-sub">Requests today</div>
+                        </div>
+                    </div>
+                </a>
             </div>
         </div>
 
@@ -35,7 +146,7 @@
             </div>
 
             <div class="card-body p-0">
-                <form method="GET" action="{{ route('user.dashboard') }}" id="filterForm"></form>
+                <form method="GET" action="{{ route('agent.dashboard') }}" id="filterForm"></form>
                 <div class="table-responsive">
                     <table class="table table-bordered mb-0" style="min-width: 800px;">
                         <thead>
@@ -72,7 +183,7 @@
                                         form="filterForm" onchange="document.getElementById('filterForm').submit()">
                                 </td>
                                 <td class="text-center" style="padding: 10px 15px;">
-                                    <a href="{{ route('user.dashboard') }}" class="btn-clear-inline" title="Clear Filters">
+                                    <a href="{{ route('agent.dashboard') }}" class="btn-clear-inline" title="Clear Filters">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                             <polyline points="1 4 1 10 7 10"></polyline>
@@ -152,6 +263,25 @@
                                                     </span>
                                                 @endif
                                             </a>
+
+                                            {{-- Direct Delete Button --}}
+                                            <form method="POST" action="{{ route('agent.tickets.destroy', $ticket->id) }}"
+                                                class="m-0" onsubmit="return confirm('Delete this ticket?')">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="action-btn-premium action-btn-danger"
+                                                    title="Delete Ticket">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                        stroke-linecap="round" stroke-linejoin="round">
+                                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                                        <path
+                                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                        </path>
+                                                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                                                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                                                    </svg>
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
@@ -173,7 +303,7 @@
                                 It's quiet here!</h5>
                             <p style="color: #777; font-size: 0.95rem; margin-bottom: 1.5rem;">You haven't submitted any tickets
                                 matching this filter.</p>
-                            <a href="{{ route('user.tickets.create') }}" class="btn-create" style="text-decoration: none;">
+                            <a href="{{ route('agent.tickets.create') }}" class="btn-create" style="text-decoration: none;">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                     <path d="M12 5v14M5 12h14" />
                                 </svg>
@@ -202,8 +332,8 @@
     <script>
         const DASHBOARD_CONFIG = {
             highestTicketId: {{ $tickets->first()->id ?? 0 }},
-            newDataUrl: '{{ route("user.dashboard.new-data") }}'
+            newDataUrl: '{{ route("agent.dashboard.new-data") }}'
         };
     </script>
-    <script src="{{ asset('js/user-portal.js') }}"></script>
+    <script src="{{ asset('js/user-dashboard.js') }}"></script>
 @endsection

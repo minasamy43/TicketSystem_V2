@@ -28,6 +28,8 @@ class AuthController extends Controller
             $user = Auth::user();
             if ($user->role == 1) {
                 return redirect()->route('admin.dashboard');
+            } elseif ($user->role == 0) {
+                return redirect()->route('agent.dashboard');
             } else {
                 return redirect()->route('user.dashboard');
             }
@@ -53,7 +55,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 0, // Default user role
+            'role' => 2, // Default user role
         ]);
 
         return redirect()->route('login')->with('success', 'Registration successful! Please login.');

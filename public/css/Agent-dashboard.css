@@ -158,3 +158,132 @@
             box-shadow: 0 8px 25px rgba(201, 153, 26, 0.15);
             border-color: #C9991A;
         }
+
+        /* Royal Minimalist Cards */
+        .royal-card {
+            background: #ffffff;
+            border-radius: 18px;
+            position: relative;
+            padding: 1.6rem 1.75rem 1.4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 130px;
+            transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+        }
+
+        .royal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
+            border-color: rgba(59, 111, 212, 0.25);
+        }
+
+        /* Left accent bar */
+        .royal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--accent-color, #C9991A);
+            border-radius: 4px 0 0 4px;
+        }
+
+        /* Top edge gradient shimmer */
+        .royal-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 4px;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-color, #C9991A) 0%, transparent 100%);
+            opacity: 0.18;
+            border-radius: 0 18px 0 0;
+        }
+
+        .royal-card-watermark {
+            position: absolute;
+            right: -8px;
+            bottom: -8px;
+            color: var(--accent-color, #C9991A);
+            opacity: 0.19;
+            transform: rotate(-15deg);
+            z-index: 0;
+        }
+
+        .royal-card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .royal-card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: #888;
+            letter-spacing: 0.3px;
+            margin-bottom: 0.55rem;
+        }
+
+        .royal-card-value {
+            font-family: 'Inter', sans-serif;
+            font-size: 2rem;
+            font-weight: 500;
+            color: #111;
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+
+        .royal-card-sub {
+            font-size: 0.72rem;
+            color: #bbb;
+            margin-top: 0.45rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 400;
+        }
+
+        .royal-card-icon-min {
+            position: absolute;
+            top: 1.4rem;
+            right: 1.4rem;
+            width: 52px;
+            height: 52px;
+            background: var(--icon-bg, rgba(201, 153, 26, 0.08));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-color, #C9991A);
+            font-size: 1.45rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .royal-card:hover .royal-card-icon-min {
+            transform: scale(1.1) rotate(-5deg);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+        }
+
+        /* Mobile Responsiveness for Cards */
+        @media (max-width: 991px) {
+            .royal-card {
+                min-height: 110px;
+                padding: 1.25rem;
+            }
+
+            .royal-card-value {
+                font-size: 1.6rem;
+            }
+
+            .royal-card-icon-min {
+                width: 42px;
+                height: 42px;
+                font-size: 1.1rem;
+                top: 1rem;
+                right: 1rem;
+            }
+        }

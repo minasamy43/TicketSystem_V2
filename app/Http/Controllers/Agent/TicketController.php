@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Agent;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -30,12 +30,12 @@ class TicketController extends Controller
         if (Auth::user()->role == 1) {
             return view('admin.show-ticket', compact('ticket'));
         }
-        return view('user.show-ticket', compact('ticket'));
+        return view('agent.show-ticket', compact('ticket'));
     }
 
     public function create()
     {
-        return view('user.create-ticket');
+        return view('agent.create-ticket');
     }
     public function store(Request $request)
     {
@@ -71,7 +71,7 @@ class TicketController extends Controller
             'images' => $imagePaths
         ]);
 
-        return redirect()->route('user.dashboard')->with('success', 'Ticket created successfully');
+        return redirect()->route('agent.dashboard')->with('success', 'Ticket created successfully');
     }
 
 
@@ -154,7 +154,7 @@ class TicketController extends Controller
 
         $ticket->delete();
 
-        return redirect()->route('user.dashboard')->with('success', 'Ticket deleted successfully');
+        return redirect()->route('agent.dashboard')->with('success', 'Ticket deleted successfully');
     }
 
     /** Get ticket chat data for AJAX popup. */
@@ -187,7 +187,7 @@ class TicketController extends Controller
                 'id' => $ticket->id,
                 'subject' => $ticket->subject,
                 'status' => $ticket->status,
-                'user_name' => $ticket->user->name ?? 'User',
+                'user_name' => $ticket->user->name ?? 'Agent',
             ],
             'unread_count' => $unreadCount,
             'replies' => $replies->map(function ($reply) use ($lastId) {

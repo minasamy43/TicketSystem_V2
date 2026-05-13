@@ -12,12 +12,12 @@ class UserController extends Controller
     public function index()
     {
         $users = User::latest()->paginate(10)->withQueryString();
-        return view('admin.users.index', compact('users'));
+        return view('admin.agents.index', compact('users'));
     }
 
     public function create()
     {
-        return view('admin.users.create');
+        return view('admin.agents.create');
     }
 
     public function store(Request $request)
@@ -36,7 +36,7 @@ class UserController extends Controller
             'role' => $data['role'],
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'User added successfully');
+        return redirect()->route('admin.agents.index')->with('success', 'Agent added successfully');
     }
 
     public function update(Request $request, User $user)
@@ -49,13 +49,13 @@ class UserController extends Controller
 
         $user->update($data);
 
-        return redirect()->route('admin.users.index')->with('success', 'User updated successfully');
+        return redirect()->route('admin.agents.index')->with('success', 'Agent updated successfully');
     }
 
     public function destroy(User $user)
     {
         $user->delete();
-        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully');
+        return redirect()->route('admin.agents.index')->with('success', 'Agent deleted successfully');
     }
 
     public function updatePassword(Request $request, User $user)
@@ -68,6 +68,6 @@ class UserController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'Password changed successfully');
+        return redirect()->route('admin.agents.index')->with('success', 'Password changed successfully');
     }
 }

@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class UserMiddleware
+class AgentMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
@@ -14,7 +14,7 @@ class UserMiddleware
             return redirect()->route('login');
         }
 
-        if (Auth::user()->role != 2) {
+        if (Auth::user()->role != 0) {
             abort(403, 'Unauthorized');
         }
 

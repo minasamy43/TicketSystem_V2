@@ -1,9 +1,9 @@
 @extends('layouts.app')
-@section('title', 'Create Users')
+@section('title', 'Create Agents')
 
 @section('content')
     <div class="container mt-4">
-        <h2>Add New User</h2>
+        <h2>Add New Member</h2>
 
         <form method="POST" action="{{ route('admin.users.store') }}">
             @csrf
@@ -35,13 +35,13 @@
             <div class="mb-3">
                 <label for="role" class="form-label">Role</label>
                 <select class="form-select" id="role" name="role" required>
-                    <option value="0" {{ old('role') == '0' ? 'selected' : '' }}>User</option>
+                    <option value="0" {{ old('role') == '0' ? 'selected' : '' }}>Agent</option>
                     <option value="1" {{ old('role') == '1' ? 'selected' : '' }}>Technical</option>
                 </select>
                 @error('role')<span class="text-danger">{{ $message }}</span>@enderror
             </div>
 
-            <button type="submit" class="btn btn-success">Create User</button>
+            <button type="submit" class="btn btn-success">Create Agent</button>
         </form>
     </div>
 @endsection

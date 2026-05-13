@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Agent;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -15,7 +15,7 @@ class KnowledgeBaseController extends Controller
         $categories = KbCategory::with('articles')->get();
         $faqs = KbFaq::all();
 
-        return view('user.knowledge-base', compact('categories', 'faqs'));
+        return view('agent.knowledge-base', compact('categories', 'faqs'));
     }
 
 
