@@ -131,4 +131,27 @@ class MessageController extends Controller
             'new_highest_id' => max($newReplies->pluck('id')->toArray() + [$lastReplyId])
         ]);
     }
+
+    /** Get dates that have unread replies for the current admin. */
+    public function getUnreadMessageDates()
+    {
+        $adminId = Auth::id();
+        
+        $ticketIds = Ticket::where('inprogress_by', $adminId)
+            ->orWhere('closed_by', $adminId)
+            ->orWhereNull('inprogress_by')
+            ->orWhereIn('id', function ($query) use ($adminId) {
+                $query->select('ticket_id')->from('replies')->where('admin_id', $adminId);
+            })
+            ->pluck('id');
+
+        $dates = Reply::whereIn('ticket_id', $ticketIds)
+            ->whereNull('admin_id')
+            ->where('is_read', 0)
+            ->selectRaw('DATE(created_at) as date')
+            ->groupBy('date')
+            ->pluck('date');
+
+        return response()->json($dates);
+    }
 }

@@ -5,7 +5,30 @@
 
 @push('styles')
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="{{ asset('css/Admin-messages-index.css') }}">
+    <style>
+        .flatpickr-day.has-unread-msg {
+            background: #fff5f5 !important;
+            border-color: #ffcdd2 !important;
+            color: #c62828 !important;
+            font-weight: 700 !important;
+        }
+        .flatpickr-day.has-unread-msg::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background: #c62828;
+            border-radius: 50%;
+        }
+        .flatpickr-day.has-unread-msg:hover {
+            background: #feeaea !important;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -24,9 +47,9 @@
                         <div class="filter-container">
                             <input type="hidden" name="filter" value="custom">
                             <div class="position-relative flex-grow-1">
-                                <input type="date" name="date" id="customDateInput"
-                                    class="form-control form-control-sm border-0 bg-light rounded-pill px-3"
-                                    value="{{ $date }}" max="{{ date('Y-m-d') }}" onchange="this.form.submit()">
+                                <input type="text" name="date" id="customDateInput"
+                                    class="form-control form-control-sm border-0 bg-light rounded-pill px-3 date-picker-trigger"
+                                    value="{{ $date }}" placeholder="Select Date...">
                             </div>
                             @if($date !== date('Y-m-d'))
                                 <a href="{{ route('admin.messages.index') }}" class="btn btn-sm btn-light rounded-pill"
@@ -114,7 +137,43 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
+        const MESSAGES_CONFIG = {
+            unreadDatesUrl: '{{ route("admin.messages.unread-dates") }}',
+            currentDate: '{{ $date }}'
+        };
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Fetch unread dates
+            let unreadDates = [];
+            try {
+                const response = await fetch(MESSAGES_CONFIG.unreadDatesUrl);
+                unreadDates = await response.json();
+            } catch (e) { console.error('Failed to fetch unread dates:', e); }
+
+            flatpickr('.date-picker-trigger', {
+                dateFormat: 'Y-m-d',
+                defaultDate: MESSAGES_CONFIG.currentDate,
+                maxDate: 'today',
+                onChange: function(selectedDates, dateStr) {
+                    const form = document.getElementById('dateFilterForm');
+                    if (form) form.submit();
+                },
+                onDayCreate: function(dObj, dStr, fp, dayElem) {
+                    const date = dayElem.dateObj;
+                    const dateString = date.getFullYear() + "-" + 
+                                     ("0" + (date.getMonth() + 1)).slice(-2) + "-" + 
+                                     ("0" + date.getDate()).slice(-2);
+                    
+                    if (unreadDates.includes(dateString)) {
+                        dayElem.classList.add('has-unread-msg');
+                        dayElem.title = 'Has unread messages';
+                    }
+                }
+            });
+        });
+
         let currentActiveTicketId = null;
         let lastReplyId = {{ $messages->first()->id ?? 0 }};
         const chatList = document.getElementById('chatList');

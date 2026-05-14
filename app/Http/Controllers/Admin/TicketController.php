@@ -86,7 +86,10 @@ class TicketController extends Controller
         $ticket->replies()->whereNull('admin_id')->where('is_read', false)->update(['is_read' => true]);
         
         // Clear cached sidebar unread count
-        \Illuminate\Support\Facades\Cache::forget('admin_sidebar_unread_' . \Illuminate\Support\Facades\Auth::id());
+        $adminId = \Illuminate\Support\Facades\Auth::id();
+        \Illuminate\Support\Facades\Cache::forget('admin_sidebar_unread_' . $adminId);
+        \Illuminate\Support\Facades\Cache::forget('admin_sidebar_agent_tickets_unread_' . $adminId);
+        \Illuminate\Support\Facades\Cache::forget('admin_sidebar_user_tickets_unread_' . $adminId);
 
         return view('admin.tickets.show-ticket', compact('ticket'));
     }
@@ -176,7 +179,10 @@ class TicketController extends Controller
         $ticket->replies()->whereNull('admin_id')->where('is_read', false)->update(['is_read' => true]);
         
         // Clear cached sidebar unread count
-        \Illuminate\Support\Facades\Cache::forget('admin_sidebar_unread_' . \Illuminate\Support\Facades\Auth::id());
+        $adminId = \Illuminate\Support\Facades\Auth::id();
+        \Illuminate\Support\Facades\Cache::forget('admin_sidebar_unread_' . $adminId);
+        \Illuminate\Support\Facades\Cache::forget('admin_sidebar_agent_tickets_unread_' . $adminId);
+        \Illuminate\Support\Facades\Cache::forget('admin_sidebar_user_tickets_unread_' . $adminId);
 
         return response()->json([
             'success' => true,
@@ -370,5 +376,24 @@ class TicketController extends Controller
             'success' => true,
             'counts' => $tickets->pluck('unread_count', 'id')
         ]);
+    }
+
+    /** Get dates that have unread tickets. */
+    public function getUnreadDates(Request $request)
+    {
+        $query = Ticket::where('has_admin_read', false);
+
+        if ($senderType = $request->get('sender_type')) {
+            $role = $senderType === 'agent' ? 0 : 2;
+            $query->whereHas('user', function ($q) use ($role) {
+                $q->where('role', $role);
+            });
+        }
+
+        $dates = $query->selectRaw('DATE(created_at) as date')
+            ->groupBy('date')
+            ->pluck('date');
+
+        return response()->json($dates);
     }
 }

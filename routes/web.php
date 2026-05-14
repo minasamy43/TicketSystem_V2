@@ -25,6 +25,7 @@ Route::post('register', [App\Http\Controllers\AuthController::class, 'register']
 Route::post('logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 Route::get('tickets/unread-counts', [App\Http\Controllers\Admin\TicketController::class, 'getUnreadCounts'])->name('tickets.unread-counts')->middleware('auth');
 Route::get('admin/tickets/new-data', [App\Http\Controllers\Admin\TicketController::class, 'getNewTicketsData'])->name('admin.tickets.new-data')->middleware(['auth', 'admin']); //for ajax for realtime data update
+Route::get('admin/tickets/unread-dates', [App\Http\Controllers\Admin\TicketController::class, 'getUnreadDates'])->name('admin.tickets.unread-dates')->middleware(['auth', 'admin']);
 // Knowledge Base routes accessible to both User and Admin (for Preview only)
 Route::middleware('auth')->group(function () {
     Route::get('agent/knowledge-base', [App\Http\Controllers\Agent\KnowledgeBaseController::class, 'index'])->name('knowledge.base');
@@ -90,6 +91,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Admin Messages
     Route::get('admin/messages', [App\Http\Controllers\Admin\MessageController::class, 'index'])->name('admin.messages.index');
     Route::get('admin/messages/new-data', [App\Http\Controllers\Admin\MessageController::class, 'getNewMessagesData'])->name('admin.messages.new-data'); //for ajax for realtime data update
+    Route::get('admin/messages/unread-dates', [App\Http\Controllers\Admin\MessageController::class, 'getUnreadMessageDates'])->name('admin.messages.unread-dates');
     // Admin Ranking
     Route::get('admin/ranking', [App\Http\Controllers\Admin\RankingController::class, 'index'])->name('admin.ranking.index');
     // Admin Knowledge Base

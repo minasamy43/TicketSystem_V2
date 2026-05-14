@@ -22,7 +22,6 @@
     font-size: 0.68rem;
     font-weight: 800;
     letter-spacing: 2px;
-    text-transform: uppercase;
     padding: 3px 12px;
     border-radius: 50px;
     margin-bottom: 0.6rem;
@@ -162,11 +161,10 @@
     background: #f8f9fa;
     padding: 1.2rem 1.5rem;
     font-weight: 700;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
-    color: #828795;
+    font-size: 0.85rem;
+    color: #555b6d;
     border-bottom: 1px solid #edf0f5;
+    letter-spacing: -0.2px;
 }
 
 .modern-ticket-table tbody tr {
@@ -191,7 +189,6 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    text-transform: uppercase;
 }
 
 .status-pill.open { background: rgba(220, 53, 69, 0.1); color: #dc3545; }

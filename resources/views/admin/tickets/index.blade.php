@@ -7,7 +7,30 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="{{ asset('css/Admin-tickets-index.css') }}">
+    <style>
+        .flatpickr-day.has-unread-tickets {
+            background: #fff5f5 !important;
+            border-color: #ffcdd2 !important;
+            color: #c62828 !important;
+            font-weight: 700 !important;
+        }
+        .flatpickr-day.has-unread-tickets::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background: #c62828;
+            border-radius: 50%;
+        }
+        .flatpickr-day.has-unread-tickets:hover {
+            background: #feeaea !important;
+        }
+    </style>
 @endpush
  
 @section('content')
@@ -23,6 +46,9 @@
         <div class="card shadow-sm border-0" style="border-radius: 16px; overflow: hidden;">
             <div class="card-body p-0">
                 <form method="GET" action="{{ route('admin.tickets.index') }}" id="filterForm">
+                    @if(request('sender_type'))
+                        <input type="hidden" name="sender_type" value="{{ request('sender_type') }}">
+                    @endif
                     <div class="table-responsive">
                         <table class="table table-bordered mb-0" style="min-width: 100%;">
                             <thead>
@@ -75,11 +101,10 @@
                                             value="{{ request('closer_name') }}" oninput="debounceSubmit()">
                                     </td>
                                     <td style="padding: 8px 10px;">
-                                        <input type="date" name="date" class="inline-filter-input" value="{{ $date }}"
-                                            onchange="document.getElementById('filterForm').submit()">
+                                        <input type="text" name="date" class="inline-filter-input date-picker-trigger" value="{{ $date }}" placeholder="Select Date...">
                                     </td>
                                     <td class="text-center" style="padding: 10px 15px;">
-                                        <a href="{{ route('admin.tickets.index') }}" class="btn-clear-inline"
+                                        <a href="{{ route('admin.tickets.index', ['sender_type' => request('sender_type')]) }}" class="btn-clear-inline"
                                             title="Clear Filters">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
                                                 stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
@@ -102,10 +127,19 @@
                                             #{{ $ticket->id }}
                                         </td>
                                         <td style="font-weight: 500;">
-                                            {{ $ticket->user->name ?? 'N/A' }}
-                                            @if(!$ticket->has_admin_read)
-                                                <span class="new-badge rounded-pill ms-2"><span class="pulse-dot"></span> New</span>
-                                            @endif
+                                            <div class="d-flex align-items-center gap-1">
+                                                @if(($ticket->user->role ?? 2) == 0)
+                                                    <i class="fa-solid fa-user-cog" style="font-size: 0.75rem; color: var(--primary-color);" title="Agent"></i>
+                                                @else
+                                                    <i class="fa-solid fa-users" style="font-size: 0.75rem; color: var(--primary-color);" title="User"></i>
+                                                @endif
+                                                
+                                                <span class="ms-1">{{ $ticket->user->name ?? 'N/A' }}</span>
+
+                                                @if(!$ticket->has_admin_read)
+                                                    <span class="new-badge rounded-pill ms-2"><span class="pulse-dot"></span> New</span>
+                                                @endif
+                                            </div>
                                         </td>
                                         <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $ticket->subject }}">{{ $ticket->subject }}</td>
                                         <td>
@@ -227,12 +261,43 @@
 
     @include('admin.partials._chat')
 
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         const ADMIN_TICKETS_CONFIG = {
             highestTicketId: {{ $tickets->first()->id ?? 0 }},
             newDataUrl: '{{ route("admin.tickets.new-data") }}',
-            senderType: '{{ request("sender_type", "") }}'
+            senderType: '{{ request("sender_type", "") }}',
+            unreadDatesUrl: '{{ route("admin.tickets.unread-dates") }}'
         };
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Fetch unread dates
+            let unreadDates = [];
+            try {
+                const response = await fetch(`${ADMIN_TICKETS_CONFIG.unreadDatesUrl}?sender_type=${ADMIN_TICKETS_CONFIG.senderType}`);
+                unreadDates = await response.json();
+            } catch (e) { console.error('Failed to fetch unread dates:', e); }
+
+            flatpickr('.date-picker-trigger', {
+                dateFormat: 'Y-m-d',
+                defaultDate: '{{ $date }}',
+                onChange: function(selectedDates, dateStr) {
+                    const form = document.getElementById('filterForm');
+                    if (form) form.submit();
+                },
+                onDayCreate: function(dObj, dStr, fp, dayElem) {
+                    const date = dayElem.dateObj;
+                    const dateString = date.getFullYear() + "-" + 
+                                     ("0" + (date.getMonth() + 1)).slice(-2) + "-" + 
+                                     ("0" + date.getDate()).slice(-2);
+                    
+                    if (unreadDates.includes(dateString)) {
+                        dayElem.classList.add('has-unread-tickets');
+                        dayElem.title = 'Has unread tickets';
+                    }
+                }
+            });
+        });
     </script>
     <script src="{{ asset('js/admin-tickets-index.js') }}"></script>
 @endsection

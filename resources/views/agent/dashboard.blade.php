@@ -17,7 +17,7 @@
                     style="color: #666; margin-top: 15px; font-size: 0.95rem; gap: 12px; flex-wrap: wrap;">
                     <span
                         style="font-family: 'DM Sans', sans-serif; font-size: 0.68rem; color: #3b6fd4; font-weight: 800; letter-spacing: 1.2px; background: rgba(59, 111, 212, 0.07); padding: 4px 12px; border-radius: 50px; border: 1px solid rgba(59, 111, 212, 0.12); box-shadow: 0 2px 5px rgba(59, 111, 212, 0.05); white-space: nowrap;">
-                        <span style="margin-right: 4px;">👤</span> Agent
+                        <span style="margin-right: 4px;"><i class="fa-solid fa-user-cog"></i></span> Agent
                     </span>
                     <span>Manage your support tickets and track their status below.</span>
                 </p>

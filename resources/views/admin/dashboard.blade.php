@@ -19,7 +19,7 @@
                 class="d-flex align-items-center justify-content-center justify-content-md-start text-center text-md-start">
                 <span
                     style="font-family: 'Outfit', sans-serif; font-size: 0.68rem; color: #0d9488; font-weight: 700; text-transform: none; letter-spacing: 0.3px; background: rgba(13, 148, 136, 0.08); padding: 4px 12px; border-radius: 50px; border: 1px solid rgba(13, 148, 136, 0.2); box-shadow: 0 2px 8px rgba(13, 148, 136, 0.05); white-space: nowrap;">
-                    <span style="margin-right: 4px;">🛡️</span> Technical
+                    <span style="margin-right: 4px;">🛡️</span> Admin
                 </span>
                 <span>Monitor tickets, manage users, and view system analytics below.</span>
             </p>
@@ -210,7 +210,7 @@
                 allOpen: {{ $allOpen }},
                 allInProgress: {{ $allInProgress }},
                 allClosed: {{ $allClosed }}
-                        },
+                            },
             chartData: {
                 labels: @json($chartLabels),
                 open: @json($chartOpen),
@@ -224,11 +224,11 @@
                 date: '{{ request("date") }}',
                 month: {{ $month }},
                 year: {{ $year }}
-                        },
+                            },
             currentDate: {
                 month: {{ now()->month }},
                 year: {{ now()->year }}
-                        }
+                            }
         };
     </script>
     <script src="{{ asset('js/admin-dashboard.js') }}"></script>

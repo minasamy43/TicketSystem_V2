@@ -116,7 +116,26 @@
 
         {{-- Tickets sub-menu --}}
         @php
+          $adminIdForSidebar = Auth::id();
+          
+          // Determine if we are in Agent or User ticket context
+          $currentSenderType = request('sender_type');
+          if (request()->routeIs('admin.tickets.show') && isset($ticket)) {
+              $currentSenderType = ($ticket->user->role == 0) ? 'agent' : 'user';
+          }
+          
           $ticketsActive = request()->routeIs('admin.tickets.*');
+
+          $agentTicketsUnread = \Illuminate\Support\Facades\Cache::remember('admin_sidebar_agent_tickets_unread_' . $adminIdForSidebar, 60, function () {
+              return \App\Models\Ticket::whereHas('user', function($q) { $q->where('role', 0); })
+                  ->where('has_admin_read', false)
+                  ->count();
+          });
+          $userTicketsUnread = \Illuminate\Support\Facades\Cache::remember('admin_sidebar_user_tickets_unread_' . $adminIdForSidebar, 60, function () {
+              return \App\Models\Ticket::whereHas('user', function($q) { $q->where('role', 2); })
+                  ->where('has_admin_read', false)
+                  ->count();
+          });
         @endphp
         <div class="nav-submenu-wrapper {{ $ticketsActive ? 'open' : '' }}" id="ticketsSubmenu">
           <button class="nav-item nav-submenu-toggle w-100 text-start {{ $ticketsActive ? 'active' : '' }}"
@@ -124,18 +143,33 @@
             aria-expanded="{{ $ticketsActive ? 'true' : 'false' }}">
             <i class="fa-solid fa-ticket"></i>
             <span class="nav-text">Tickets</span>
+            @if(($agentTicketsUnread + $userTicketsUnread) > 0)
+              <span class="badge bg-danger rounded-pill ms-2" style="font-size: 0.6rem;">
+                {{ ($agentTicketsUnread + $userTicketsUnread) > 99 ? '99+' : ($agentTicketsUnread + $userTicketsUnread) }}
+              </span>
+            @endif
             <i class="fa-solid fa-chevron-down nav-submenu-arrow ms-auto"></i>
           </button>
           <div class="nav-submenu-items">
             <a href="{{ route('admin.tickets.index', ['sender_type' => 'agent']) }}"
-              class="nav-item nav-subitem {{ request()->routeIs('admin.tickets.*') && request('sender_type') === 'agent' ? 'active' : '' }}">
-              <i class="fa-solid fa-user-tie"></i>
+              class="nav-item nav-subitem {{ request()->routeIs('admin.tickets.*') && $currentSenderType === 'agent' ? 'active' : '' }}">
+              <i class="fa-solid fa-user-cog"></i>
               <span class="nav-text">Agent Tickets</span>
+              @if($agentTicketsUnread > 0)
+                <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.65rem;">
+                  {{ $agentTicketsUnread > 99 ? '99+' : $agentTicketsUnread }}
+                </span>
+              @endif
             </a>
             <a href="{{ route('admin.tickets.index', ['sender_type' => 'user']) }}"
-              class="nav-item nav-subitem {{ request()->routeIs('admin.tickets.*') && request('sender_type') === 'user' ? 'active' : '' }}">
+              class="nav-item nav-subitem {{ request()->routeIs('admin.tickets.*') && $currentSenderType === 'user' ? 'active' : '' }}">
               <i class="fa-solid fa-users"></i>
               <span class="nav-text">User Tickets</span>
+              @if($userTicketsUnread > 0)
+                <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.65rem;">
+                  {{ $userTicketsUnread > 99 ? '99+' : $userTicketsUnread }}
+                </span>
+              @endif
             </a>
           </div>
         </div>

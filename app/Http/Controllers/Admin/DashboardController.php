@@ -16,12 +16,11 @@ class DashboardController extends Controller
         $month = request('month', now()->month);
         $year = request('year', now()->year);
 
-        // Status cards — Today's totals
-        $today = now()->format('Y-m-d');
-        $totalTickets = Ticket::whereDate('created_at', $today)->count();
-        $openTickets  = Ticket::whereDate('created_at', $today)->where('status', 'open')->count();
-        $closedTickets = Ticket::whereDate('created_at', $today)->where('status', 'closed')->count();
-        $inProgress   = Ticket::whereDate('created_at', $today)->where('status', 'in progress')->count();
+        // Status cards — Respect requested date (defaults to today)
+        $totalTickets = Ticket::whereDate('created_at', $date)->count();
+        $openTickets  = Ticket::whereDate('created_at', $date)->where('status', 'open')->count();
+        $closedTickets = Ticket::whereDate('created_at', $date)->where('status', 'closed')->count();
+        $inProgress   = Ticket::whereDate('created_at', $date)->where('status', 'in progress')->count();
 
         // Data for monthly analysis chart
         $chartLabels = [];

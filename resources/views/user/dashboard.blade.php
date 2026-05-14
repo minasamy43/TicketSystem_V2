@@ -6,7 +6,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Playfair+Display:wght@700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/user-dashboard-new.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/User-dashboard-new.css') }}">
     <style>
         body {
             font-family: 'Outfit', sans-serif;
@@ -20,7 +20,14 @@
         {{-- Hero Section --}}
         <div class="hub-hero">
             <h1 class="hero-title">Hello, {{ explode(' ', Auth::user()->name)[0] }}! 👋</h1>
-            <p class="hero-subtitle">Welcome to your support portal. Submit tickets, track their status, and get help.</p>
+            <p class="d-flex align-items-center justify-content-center justify-content-lg-start text-center text-lg-start"
+                style="color: #666; margin-top: 15px; font-size: 0.92rem; gap: 12px; flex-wrap: wrap;">
+                <span
+                    style="font-family: 'DM Sans', sans-serif; font-size: 0.68rem; color: #198754; font-weight: 800; letter-spacing: 1.2px; background: rgba(25, 135, 84, 0.07); padding: 4px 12px; border-radius: 50px; border: 1px solid rgba(25, 135, 84, 0.12); box-shadow: 0 2px 5px rgba(25, 135, 84, 0.05); white-space: nowrap;">
+                    <span style="margin-right: 4px;">👤</span> User
+                </span>
+                <span>Welcome to your support portal. Submit tickets, track their status, and get help.</span>
+            </p>
             <form method="GET" action="{{ route('user.dashboard') }}" id="filterForm" style="display:none;">
                 <input type="hidden" name="subject">
                 <input type="hidden" name="status" value="{{ request('status') }}">
@@ -160,7 +167,8 @@
                                         </a>
                                     @else
                                         <h4 class="fw-bold">No tickets yet</h4>
-                                        <p class="text-muted">You haven't submitted any tickets yet. Let us know how we can help!</p>
+                                        <p class="text-muted">You haven't submitted any tickets yet. Let us know how we can help!
+                                        </p>
                                         <a href="{{ route('user.tickets.create') }}" class="btn btn-primary px-4 py-2 mt-2"
                                             style="border-radius: 10px; font-weight: 600;">
                                             <i class="fa-solid fa-plus me-2"></i> Open Your First Ticket
