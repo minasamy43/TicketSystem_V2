@@ -119,7 +119,7 @@
         <div class="d-flex flex-wrap align-items-end justify-content-between gap-4 mb-4">
             <div>
                 <h3 style="font-family: 'Outfit', sans-serif; font-weight: 700; color: #111; margin: 0;">Performance
-                    Analytics</h3>
+                     This Month</h3>
                 <p style="color: #888; font-size: 0.85rem; margin: 5px 0 0 0;">Visual distribution and historical trends.
                 </p>
             </div>
