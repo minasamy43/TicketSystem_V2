@@ -324,6 +324,8 @@ class TicketController extends Controller
             'open' => Ticket::whereBetween('created_at', [$monthStart, $monthEnd])->where('status', 'open')->count(),
             'in_progress' => Ticket::whereBetween('created_at', [$monthStart, $monthEnd])->where('status', 'in progress')->count(),
             'closed' => Ticket::whereBetween('created_at', [$monthStart, $monthEnd])->where('status', 'closed')->count(),
+            'agent_count' => Ticket::whereBetween('created_at', [$monthStart, $monthEnd])->whereHas('user', function($q) { $q->where('role', 0); })->count(),
+            'user_count' => Ticket::whereBetween('created_at', [$monthStart, $monthEnd])->whereHas('user', function($q) { $q->where('role', 2); })->count(),
         ];
 
         return response()->json([

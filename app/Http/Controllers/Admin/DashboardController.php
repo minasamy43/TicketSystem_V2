@@ -56,7 +56,9 @@ class DashboardController extends Controller
             'chartClosed' => $chartClosed,
             'allOpen' => Ticket::whereBetween('created_at', [$monthStart, $monthEnd])->where('status', 'open')->count(),
             'allInProgress' => Ticket::whereBetween('created_at', [$monthStart, $monthEnd])->where('status', 'in progress')->count(),
-            'allClosed' => Ticket::whereBetween('created_at', [$monthStart, $monthEnd])->where('status', 'closed')->count()
+            'allClosed' => Ticket::whereBetween('created_at', [$monthStart, $monthEnd])->where('status', 'closed')->count(),
+            'agentTicketsCount' => Ticket::whereBetween('created_at', [$monthStart, $monthEnd])->whereHas('user', function($q) { $q->where('role', 0); })->count(),
+            'userTicketsCount' => Ticket::whereBetween('created_at', [$monthStart, $monthEnd])->whereHas('user', function($q) { $q->where('role', 2); })->count(),
         ]);
     }
 }

@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
             datasets: [{
                 data: [config.stats.allOpen, config.stats.allInProgress, config.stats.allClosed],
                 backgroundColor: ['#dc3545', '#d4af53', '#198754'],
+                hoverBackgroundColor: ['#e35d6a', '#dfc276', '#20ac6b'],
                 borderWidth: 0,
                 hoverOffset: 15
             }]
@@ -20,26 +21,26 @@ document.addEventListener('DOMContentLoaded', function () {
             cutout: '80%',
             responsive: true,
             maintainAspectRatio: false,
+            onHover: (evt, elements) => {
+                const centerValue = document.querySelector('.stat-center-value');
+                const centerLabel = document.querySelector('.stat-center-label');
+                if (!centerValue || !centerLabel) return;
+
+                if (elements.length > 0) {
+                    const idx = elements[0].index;
+                    centerValue.textContent = distributionChart.data.datasets[0].data[idx];
+                    centerLabel.textContent = distributionChart.data.labels[idx];
+                    centerValue.style.color = distributionChart.data.datasets[0].backgroundColor[idx];
+                } else {
+                    centerValue.textContent = config.stats.allOpen + config.stats.allInProgress + config.stats.allClosed;
+                    centerLabel.textContent = 'Total';
+                    centerValue.style.color = '#1a1a1a';
+                }
+            },
             plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        usePointStyle: true,
-                        padding: 15,
-                        font: { size: 11, ...fonts }
-                    }
-                },
+                legend: { display: false },
                 tooltip: {
-                    backgroundColor: '#fff',
-                    titleColor: '#111',
-                    bodyColor: '#666',
-                    borderColor: 'rgba(0,0,0,0.05)',
-                    borderWidth: 1,
-                    padding: 12,
-                    usePointStyle: true,
-                    callbacks: {
-                        label: (ctx) => ` ${ctx.label}: ${ctx.raw} Tickets`
-                    }
+                    enabled: false, // Using center text instead for a cleaner look
                 }
             }
         }
@@ -168,11 +169,32 @@ setInterval(async () => {
                     const m = data.monthly_counts;
                     distributionChart.data.datasets[0].data = [m.open, m.in_progress, m.closed];
                     distributionChart.update();
+
+                    // Update Mini Progress Bars (Sender Distribution)
+                    const totalSource = m.agent_count + m.user_count;
+                    const agentPct = totalSource > 0 ? Math.round((m.agent_count / totalSource) * 100) : 0;
+                    const userPct = totalSource > 0 ? Math.round((m.user_count / totalSource) * 100) : 0;
+
+                    const agentBar = document.getElementById('mini-agent-bar');
+                    const userBar = document.getElementById('mini-user-bar');
+                    const agentCount = document.getElementById('mini-agent-count');
+                    const userCount = document.getElementById('mini-user-count');
+
+                    if (agentBar) {
+                        agentBar.style.width = agentPct + '%';
+                        agentBar.querySelector('div').textContent = agentPct + '%';
+                    }
+                    if (userBar) {
+                        userBar.style.width = userPct + '%';
+                        userBar.querySelector('div').textContent = userPct + '%';
+                    }
+                    if (agentCount) agentCount.textContent = m.agent_count;
+                    if (userCount) userCount.textContent = m.user_count;
                     
-                    // Update center total
-                    const centerVal = document.querySelector('.stat-center-value');
-                    if (centerVal) {
-                        centerVal.textContent = m.open + m.in_progress + m.closed;
+                    // Update center total for status chart
+                    const statusVal = document.querySelector('.stat-center-value');
+                    if (statusVal) {
+                        statusVal.textContent = m.open + m.in_progress + m.closed;
                     }
                 }
 

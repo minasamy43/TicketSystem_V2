@@ -153,31 +153,65 @@
         </div>
 
         <div class="row g-4 mb-5">
-            <!-- Status Distribution -->
-            <div class="col-12 col-lg-4">
+            <!-- Unified Analytics Distribution -->
+            <div class="col-12 col-lg-5">
                 <div class="analysis-card">
                     <div class="analysis-header">
                         <div class="analysis-title">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
-                                <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
-                            </svg>
-                            Distribution by Month
+                            <i class="fa-solid fa-chart-pie me-2"></i> Global Distribution
                         </div>
                     </div>
-                    <div class="chart-wrapper">
-                        <div class="stat-center">
-                            <div class="stat-center-value">{{ $allOpen + $allInProgress + $allClosed }}</div>
-                            <div class="stat-center-label">Total</div>
+                    <div class="row align-items-center">
+                        <div class="col-12 col-md-7">
+                            <div class="chart-wrapper" style="height: 220px; position: relative;">
+                                <div class="stat-center">
+                                    <div class="stat-center-value">{{ $allOpen + $allInProgress + $allClosed }}</div>
+                                    <div class="stat-center-label">Total</div>
+                                </div>
+                                <canvas id="distributionChart"></canvas>
+                            </div>
+                            <!-- Custom Legend -->
+                            <div class="d-flex justify-content-center gap-3 mt-3" style="font-size: 0.75rem; font-family: 'Outfit', sans-serif;">
+                                <div class="d-flex align-items-center gap-1"><span style="width: 8px; height: 8px; border-radius: 50%; background: #dc3545;"></span> Open</div>
+                                <div class="d-flex align-items-center gap-1"><span style="width: 8px; height: 8px; border-radius: 50%; background: #d4af53;"></span> In Progress</div>
+                                <div class="d-flex align-items-center gap-1"><span style="width: 8px; height: 8px; border-radius: 50%; background: #198754;"></span> Closed</div>
+                            </div>
                         </div>
-                        <canvas id="distributionChart"></canvas>
+                        <div class="col-12 col-md-5 mt-4 mt-md-0">
+                            <div class="sender-analysis-mini">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span style="font-size: 0.8rem; font-weight: 600; color: #555;">Source</span>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1" style="font-size: 0.75rem;">
+                                        <span class="text-muted"><i class="fa-solid fa-user-cog me-1"></i> Agents</span>
+                                        <span class="fw-bold" id="mini-agent-count">{{ $agentTicketsCount }}</span>
+                                    </div>
+                                    <div class="progress" style="height: 6px; background: rgba(0,0,0,0.03); border-radius: 10px; overflow: visible;">
+                                        <div class="progress-bar" id="mini-agent-bar" style="width: {{ $agentTicketsCount + $userTicketsCount > 0 ? ($agentTicketsCount / ($agentTicketsCount + $userTicketsCount)) * 100 : 0 }}%; background: #3b6fd4; border-radius: 10px; position: relative;">
+                                            <div style="position: absolute; right: 0; top: -15px; font-size: 0.65rem; color: #3b6fd4; font-weight: 700;">{{ $agentTicketsCount + $userTicketsCount > 0 ? round(($agentTicketsCount / ($agentTicketsCount + $userTicketsCount)) * 100) : 0 }}%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="d-flex justify-content-between mb-1" style="font-size: 0.75rem;">
+                                        <span class="text-muted"><i class="fa-solid fa-users me-1"></i> Users</span>
+                                        <span class="fw-bold" id="mini-user-count">{{ $userTicketsCount }}</span>
+                                    </div>
+                                    <div class="progress" style="height: 6px; background: rgba(0,0,0,0.03); border-radius: 10px; overflow: visible;">
+                                        <div class="progress-bar" id="mini-user-bar" style="width: {{ $agentTicketsCount + $userTicketsCount > 0 ? ($userTicketsCount / ($agentTicketsCount + $userTicketsCount)) * 100 : 0 }}%; background: #C9991A; border-radius: 10px; position: relative;">
+                                            <div style="position: absolute; right: 0; top: -15px; font-size: 0.65rem; color: #C9991A; font-weight: 700;">{{ $agentTicketsCount + $userTicketsCount > 0 ? round(($userTicketsCount / ($agentTicketsCount + $userTicketsCount)) * 100) : 0 }}%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Weekly Trend -->
-            <div class="col-12 col-lg-8">
+            <div class="col-12 col-lg-7">
                 <div class="analysis-card">
                     <div class="analysis-header">
                         <div class="analysis-title">
@@ -209,8 +243,10 @@
             stats: {
                 allOpen: {{ $allOpen }},
                 allInProgress: {{ $allInProgress }},
-                allClosed: {{ $allClosed }}
-                            },
+                allClosed: {{ $allClosed }},
+                agentCount: {{ $agentTicketsCount }},
+                userCount: {{ $userTicketsCount }}
+            },
             chartData: {
                 labels: @json($chartLabels),
                 open: @json($chartOpen),
