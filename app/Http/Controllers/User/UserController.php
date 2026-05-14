@@ -210,6 +210,91 @@ class UserController extends Controller
         // Mark as unread for the admin
         Ticket::where('id', $id)->update(['has_admin_read' => false]);
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Reply sent.',
+                'reply' => [
+                    'id' => $reply->id ?? rand(1000, 9999),
+                    'body' => $request->body ?? '',
+                    'is_admin' => false,
+                    'image' => $imagePath ? asset('storage/' . $imagePath) : null,
+                    'sender' => 'You',
+                    'time' => now()->format('g:i A'),
+                ]
+            ]);
+        }
+
         return back()->with('success', 'Reply sent.');
+    }
+
+    /** Get ticket chat data for AJAX popup. */
+    public function getChatData(Request $request, $id)
+    {
+        $ticket = Ticket::with(['user', 'replies.admin'])->findOrFail($id);
+
+        if ($ticket->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $lastId = $request->query('last_id');
+        $repliesQuery = $ticket->replies();
+
+        if ($lastId) {
+            $repliesQuery->where('id', '>', $lastId);
+        }
+
+        $replies = $repliesQuery->get();
+        $unreadCount = $ticket->replies->whereNotNull('admin_id')->where('is_read', 0)->count();
+
+        if (!$ticket->has_user_read) {
+            $ticket->update(['has_user_read' => true]);
+        }
+        $ticket->replies()->whereNotNull('admin_id')->where('is_read', false)->update(['is_read' => true]);
+
+        return response()->json([
+            'success' => true,
+            'ticket' => [
+                'id' => $ticket->id,
+                'subject' => $ticket->subject,
+                'status' => $ticket->status,
+                'user_name' => $ticket->user->name ?? 'User',
+            ],
+            'unread_count' => $unreadCount,
+            'replies' => $replies->map(function ($reply) use ($lastId) {
+                static $dividerInserted = false;
+                $isFirstUnread = false;
+
+                // Only show divider on initial load (when last_id is null)
+                if (!$lastId && !$dividerInserted && $reply->isFromAdmin() && !$reply->is_read) {
+                    $isFirstUnread = true;
+                    $dividerInserted = true;
+                }
+
+                return [
+                    'id' => $reply->id,
+                    'body' => $reply->body,
+                    'image' => $reply->image ? asset('storage/' . $reply->image) : null,
+                    'is_admin' => $reply->isFromAdmin(),
+                    'sender' => $reply->isFromAdmin() ? ($reply->admin->name ?? 'Support') : 'You',
+                    'time' => $reply->created_at->format('g:i A'),
+                    'is_first_unread' => $isFirstUnread,
+                ];
+            })
+        ]);
+    }
+
+    public function destroyTicket($id)
+    {
+        $ticket = Ticket::findOrFail($id);
+
+        if ($ticket->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $ticket->replies()->delete();
+        $ticket->delete();
+
+        return redirect()->route('user.dashboard')->with('success', 'Ticket deleted successfully.');
     }
 }

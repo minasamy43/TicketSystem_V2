@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
 | Here is where you can register web routes for your application. These
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "web" middleware group. Make something great!
@@ -64,6 +63,8 @@ Route::middleware(['auth', 'user'])->group(function () {
     Route::post('user/tickets/store', [App\Http\Controllers\User\UserController::class, 'storeTicket'])->name('user.tickets.store');
     Route::get('user/tickets/{id}', [App\Http\Controllers\User\UserController::class, 'showTicket'])->name('user.tickets.show');
     Route::post('user/tickets/{id}/reply', [App\Http\Controllers\User\UserController::class, 'replyTicket'])->name('user.tickets.reply');
+    Route::get('user/tickets/{id}/chat-data', [App\Http\Controllers\User\UserController::class, 'getChatData'])->name('user.tickets.chat-data');
+    Route::delete('user/tickets/{id}', [App\Http\Controllers\User\UserController::class, 'destroyTicket'])->name('user.tickets.destroy');
 });
 
 
@@ -75,7 +76,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('admin/tickets/{id}/status', [App\Http\Controllers\Admin\TicketController::class, 'updateStatus'])->name('admin.tickets.status');
     Route::post('admin/tickets/{id}/comment', [App\Http\Controllers\Admin\TicketController::class, 'storeComment'])->name('admin.tickets.comment');
     Route::get('admin/tickets/{id}/chat-data', [App\Http\Controllers\Admin\TicketController::class, 'getChatData'])->name('admin.tickets.chat-data');
-    // admin user management
     // admin user management
     Route::get('admin/agents', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.agents.index');
     Route::get('admin/agents/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.agents.create');

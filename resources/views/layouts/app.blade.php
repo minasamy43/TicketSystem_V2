@@ -247,12 +247,6 @@
 
       <div class="navbar-actions d-flex align-items-center gap-3">
         @auth
-          @if(Auth::user()->role == 2)
-            <a href="{{ route('user.tickets.create') }}" class="btn btn-sm d-none d-md-flex align-items-center gap-2 px-3 py-2 shadow-sm" style="border-radius: 10px; font-weight: 600; color: white; background-color: var(--primary-color);">
-              <i class="fa-solid fa-plus"></i>
-              <span>Create Ticket</span>
-            </a>
-          @endif
 
           <div class="dropdown">
             <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown"

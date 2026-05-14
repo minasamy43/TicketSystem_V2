@@ -1,0 +1,243 @@
+/* User Dashboard - Customer Hub Styles */
+
+:root {
+    --hub-hero-bg: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --card-hover-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+}
+
+.hub-hero {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.6rem 2rem;
+    margin-bottom: 2rem;
+    border-left: 5px solid var(--primary-color);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+}
+
+.hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 12px;
+    border-radius: 50px;
+    margin-bottom: 0.6rem;
+    border: 1px solid rgba(255,255,255,0.25);
+}
+
+.hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 0.3rem;
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 0.92rem;
+    color: #6c7380;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Capability pills */
+.hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.22);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.4rem 0.9rem;
+    border-radius: 50px;
+    white-space: nowrap;
+    backdrop-filter: blur(4px);
+    transition: background 0.2s ease;
+}
+
+.hero-pill:hover {
+    background: rgba(255,255,255,0.25);
+}
+
+@media (max-width: 768px) {
+    .hub-hero { padding: 1.5rem 1.3rem; }
+    .hero-title { font-size: 1.5rem; }
+    .hero-pills { justify-content: flex-start; }
+}
+
+.action-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2rem;
+    height: 100%;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    box-shadow: var(--card-shadow);
+    text-decoration: none !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.action-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--card-hover-shadow);
+    border-color: var(--primary-light);
+}
+
+.action-icon-wrapper {
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
+    background: var(--primary-light);
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.action-card:hover .action-icon-wrapper {
+    background: var(--primary-color);
+    color: #fff;
+    transform: scale(1.1) rotate(5deg);
+}
+
+.action-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 0.5rem;
+}
+
+.action-desc {
+    color: #6c7380;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.section-title {
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: #1a1a1a;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.section-title::after {
+    content: '';
+    flex-grow: 1;
+    height: 2px;
+    background: linear-gradient(to right, rgba(0,0,0,0.05), transparent);
+}
+
+.modern-ticket-table {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.modern-ticket-table thead th {
+    background: #f8f9fa;
+    padding: 1.2rem 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: #828795;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.modern-ticket-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.modern-ticket-table tbody tr:hover {
+    background: var(--primary-light);
+}
+
+.modern-ticket-table td {
+    padding: 1.2rem 1.5rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.status-pill {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+}
+
+.status-pill.open { background: rgba(220, 53, 69, 0.1); color: #dc3545; }
+.status-pill.in-progress { background: rgba(212, 175, 83, 0.15); color: #d4af53; }
+.status-pill.closed { background: rgba(25, 135, 84, 0.1); color: #198754; }
+
+.ticket-subject {
+    font-weight: 700;
+    color: #1a1a1a;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+}
+
+.ticket-meta {
+    font-size: 0.8rem;
+    color: #828795;
+}
+
+.chat-btn-modern {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid #edf0f5;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.chat-btn-modern:hover {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .hub-hero {
+        padding: 2rem 1.5rem;
+        text-align: center;
+    }
+    .hub-search-container {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}

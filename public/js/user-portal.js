@@ -36,14 +36,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const tableBody = document.querySelector('table tbody');
     if (tableBody) {
         tableBody.addEventListener('click', function(e) {
-            const row = e.target.closest('tr:not(.empty-state-row)');
+            const row = e.target.closest('tr[data-ticket-id]');
             if (!row) return;
 
             // Don't navigate if clicking on interactive elements
             const isInteractive = e.target.closest('a') ||
                 e.target.closest('button') ||
                 e.target.closest('input') ||
-                e.target.closest('select');
+                e.target.closest('select') ||
+                e.target.closest('.chat-btn-modern');
 
             if (isInteractive) return;
 
@@ -65,15 +66,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     setInterval(async () => {
-        const dateElement = document.querySelector('input[name="date"]');
-        const statusElement = document.querySelector('select[name="status"]');
-        const subjectElement = document.getElementById('filter_subject');
+        const filterForm = document.getElementById('filterForm');
+        if (!filterForm) return;
 
-        if (!dateElement || !statusElement || !subjectElement) return;
-
-        const date = dateElement.value;
-        const status = statusElement.value;
-        const subject = subjectElement.value;
+        const date = filterForm.querySelector('input[name="date"]')?.value || '';
+        const status = filterForm.querySelector('input[name="status"]')?.value || '';
+        const subject = filterForm.querySelector('input[name="subject"]')?.value || '';
         
         // Gather existing IDs
         const existingIds = [];
@@ -100,25 +98,26 @@ document.addEventListener('DOMContentLoaded', function() {
                     data.updates.forEach(update => {
                         const row = document.querySelector(`tr[data-ticket-id="${update.id}"]`);
                         if (row) {
-                            const statusBadge = row.querySelector('.badge');
-                            if (statusBadge) {
-                                statusBadge.style.background = update.status_bg;
-                                statusBadge.style.color = update.status_color;
-                                statusBadge.innerHTML = `${update.status_label} ${update.status_icon}`;
+                            // Update status pill
+                            const statusPill = row.querySelector('.status-pill');
+                            if (statusPill) {
+                                // Remove old status classes
+                                statusPill.classList.remove('open', 'in-progress', 'closed');
+                                // Add new status class
+                                const normalizedStatus = update.status_label.toLowerCase().replace(' ', '-');
+                                statusPill.classList.add(normalizedStatus);
+                                statusPill.innerHTML = `${update.status_icon} ${update.status_label}`;
                             }
                             
-                            const closerCell = row.cells[2];
-                            if (closerCell) closerCell.textContent = update.closer;
-                            
-                            const chatBtn = row.querySelector('.action-btn-premium[title="Chat"]');
+                            // Update chat unread count
+                            const chatBtn = row.querySelector('.chat-btn-modern[title="Open Chat"]');
                             if (chatBtn) {
-                                let unreadBadge = chatBtn.querySelector('span[id^="unread-count-"]');
+                                let unreadBadge = chatBtn.querySelector('.badge');
                                 if (update.unread_count > 0) {
                                     if (!unreadBadge) {
                                         unreadBadge = document.createElement('span');
-                                        unreadBadge.id = `unread-count-${update.id}`;
-                                        unreadBadge.className = 'position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light shadow-sm';
-                                        unreadBadge.style = 'font-size: 0.66rem; padding: 0.24em 0.45em; line-height: 1;';
+                                        unreadBadge.className = 'position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger';
+                                        unreadBadge.style = 'font-size: 0.6rem; padding: 0.3em 0.5em;';
                                         chatBtn.appendChild(unreadBadge);
                                     }
                                     unreadBadge.textContent = update.unread_count > 99 ? '99+' : update.unread_count;
@@ -140,32 +139,38 @@ document.addEventListener('DOMContentLoaded', function() {
                             newRow.setAttribute('data-ticket-id', ticket.id);
                             newRow.style.cursor = 'pointer';
 
-                            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+                            const normalizedStatus = ticket.status_label.toLowerCase().replace(' ', '-');
 
                             newRow.innerHTML = `
-                                <td style="font-weight: 500;">${ticket.subject}</td>
                                 <td>
-                                    <span class="badge" style="padding: 0.5rem 0.8rem; border-radius: 10px; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.5px; background: ${ticket.status_bg}; color: ${ticket.status_color};">
-                                        ${ticket.status_label} ${ticket.status_icon}
-                                    </span>
-                                </td>
-                                <td class="text-muted">${ticket.closer}</td>
-                                <td>
-                                    <div style="display:flex; align-items:center; gap:8px;">
-                                        <span style="color:var(--primary-color); flex-shrink:0;">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
-                                        </span>
-                                        <div>
-                                            <div style="font-weight:600; color:#333; font-size:0.88rem; line-height:1.2;">${ticket.time}</div>
-                                            <div style="font-size:0.72rem; color:#aaa; margin-top:2px;">${ticket.relative_time}</div>
-                                        </div>
+                                    <div class="ticket-subject">${ticket.subject}</div>
+                                    <div class="ticket-meta">
+                                        <span class="me-2">#${ticket.id}</span>
+                                        <span>Opened Just now</span>
                                     </div>
                                 </td>
-                                <td class="text-center">
-                                    <div class="d-flex justify-content-center align-items-center gap-1">
-                                        <a href="javascript:void(0)" onclick="openAdminChat(${ticket.id})" class="action-btn-premium" title="Chat">
-                                            <svg viewBox="0 0 256 256" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="messenger-grad" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#00C6FF" /><stop offset="50%" stop-color="#0078FF" /><stop offset="100%" stop-color="#A033FF" /></linearGradient></defs><path fill="url(#messenger-grad)" d="M128,24C68.9,24,21,68.6,21,123.5c0,31.2,15.7,58.5,40.1,76.5c1.4,1,2.5,2.6,2.8,4.3l3.8,27.3c0.4,3,3.7,4.8,6.4,3.3l29.1-14.9c1-0.5,2.2-0.6,3.2-0.3c7.2,1.8,14.8,2.7,22.7,2.7c59.1,0,107-44.6,107-99.5S187.1,24,128,24z M138.8,148v-0.1l-25.5-27c-4-4.2-10.6-4.5-15.1-0.5l-31.5,28.5c-3,2.7-7.2-0.8-5.2-4.1l29.4-48c3.2-5.3,10.6-6.6,15.5-2.8l25.3,19.3c3.8,2.9,9.3,3.3,13.5-0.1l32-26.1c3-2.5,7,1,5.2,4.3L153,141.5C149.8,146.9,142.5,148.6,138.8,148z" /></svg>
-                                            ${ticket.unread_count > 0 ? '<span id="unread-count-' + ticket.id + '" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light shadow-sm" style="font-size: 0.66rem; padding: 0.24em 0.45em; line-height: 1;">' + (ticket.unread_count > 99 ? '99+' : ticket.unread_count) + '</span>' : ''}
+                                <td>
+                                    <span class="status-pill ${normalizedStatus}">
+                                        ${ticket.status_icon} ${ticket.status_label}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div style="font-weight: 600; color: #333; font-size: 0.9rem;">
+                                        Just now
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: #aaa;">
+                                        ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                    </div>
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="javascript:void(0)" onclick="openAdminChat(${ticket.id})" 
+                                           class="chat-btn-modern" title="Open Chat">
+                                            <i class="fa-solid fa-message"></i>
+                                            ${ticket.unread_count > 0 ? '<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.3em 0.5em;">' + (ticket.unread_count > 99 ? '99+' : ticket.unread_count) + '</span>' : ''}
+                                        </a>
+                                        <a href="/user/tickets/${ticket.id}" class="chat-btn-modern" title="View Details">
+                                            <i class="fa-solid fa-eye"></i>
                                         </a>
                                     </div>
                                 </td>

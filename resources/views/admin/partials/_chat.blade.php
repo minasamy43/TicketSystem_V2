@@ -453,7 +453,15 @@
         const imageInput = document.getElementById('chatImageInput');
         const previewWrap = document.getElementById('imagePreviewWrap');
         const previewImg = document.getElementById('imagePreview');
-        const isUserContext = {{ (Auth::check() && Auth::user()->role != 1) ? 'true' : 'false' }};
+        @php
+            $chatRoutePrefix = 'admin';
+            if(Auth::check()) {
+                if(Auth::user()->role == 0) $chatRoutePrefix = 'agent';
+                elseif(Auth::user()->role == 2) $chatRoutePrefix = 'user';
+            }
+        @endphp
+        const chatRoutePrefix = '{{ $chatRoutePrefix }}';
+        const isUserContext = chatRoutePrefix !== 'admin';
         const isSingleTicketView = {{ isset($ticket) ? 'true' : 'false' }};
         let currentTicketId = {{ isset($ticket) ? $ticket->id : 'null' }};
         let lastMessageId = null;
@@ -521,9 +529,7 @@
             try {
                 // Ensure last_id is properly handled
                 const lastIdParam = lastMessageId ? `last_id=${lastMessageId}` : '';
-                const dataUrl = isUserContext 
-                    ? `/agent/tickets/${currentTicketId}/chat-data?${lastIdParam}` 
-                    : `/admin/tickets/${currentTicketId}/chat-data?${lastIdParam}`;
+                const dataUrl = `/${chatRoutePrefix}/tickets/${currentTicketId}/chat-data?${lastIdParam}`;
                 
                 const response = await fetch(dataUrl);
                 const data = await response.json();
@@ -646,9 +652,7 @@
             container.classList.add('active');
             chatMessages.innerHTML = '<div class="text-center py-5"><div class="text-muted small">Loading messages...</div></div>';
             
-            const commentUrl = isUserContext 
-                ? `/agent/tickets/${ticketId}/reply` 
-                : `/admin/tickets/${ticketId}/comment`;
+            const commentUrl = `/${chatRoutePrefix}/tickets/${ticketId}/${chatRoutePrefix === 'admin' ? 'comment' : 'reply'}`;
             chatForm.action = commentUrl;
             clearImagePreview();
 
@@ -682,9 +686,7 @@
             }
 
             try {
-                const dataUrl = isUserContext 
-                    ? `/agent/tickets/${ticketId}/chat-data` 
-                    : `/admin/tickets/${ticketId}/chat-data`;
+                const dataUrl = `/${chatRoutePrefix}/tickets/${ticketId}/chat-data`;
                 const response = await fetch(dataUrl);
                 const data = await response.json();
 
