@@ -157,6 +157,8 @@ async function updateStatusLive(ticketId, newStatus, selectElement) {
             if (user_name) url.searchParams.set('user_name', user_name);
             if (inprogress_name) url.searchParams.set('inprogress_name', inprogress_name);
             if (closer_name) url.searchParams.set('closer_name', closer_name);
+            const senderType = (typeof ADMIN_TICKETS_CONFIG !== 'undefined' && ADMIN_TICKETS_CONFIG.senderType) ? ADMIN_TICKETS_CONFIG.senderType : '';
+            if (senderType) url.searchParams.set('sender_type', senderType);
 
             const response = await fetch(url);
             const data = await response.json();
@@ -173,12 +175,6 @@ async function updateStatusLive(ticketId, newStatus, selectElement) {
 
                         newRow.innerHTML = `
                                 <td style="font-weight: 600; color: #000;">#${ticket.id}</td>
-                                <td>
-                                    ${ticket.user_role == 0 
-                                        ? '<span class="badge" style="background: rgba(59, 111, 212, 0.1); color: #3b6fd4; border: 1px solid rgba(59, 111, 212, 0.2); font-size: 0.7rem;">Agent 👤</span>' 
-                                        : '<span class="badge" style="background: rgba(212, 175, 83, 0.1); color: #d4af53; border: 1px solid rgba(212, 175, 83, 0.2); font-size: 0.7rem;">User 👥</span>'
-                                    }
-                                </td>
                                 <td style="font-weight: 500;">
                                     ${ticket.user_name}
                                     <span class="new-badge rounded-pill ms-2"><span class="pulse-dot"></span> New</span>

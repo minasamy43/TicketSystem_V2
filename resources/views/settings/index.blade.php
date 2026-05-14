@@ -44,7 +44,7 @@
                         </h3>
 
                         <form
-                            action="{{ Auth::user()->role == 1 ? route('admin.settings.profile') : route('agent.settings.profile') }}"
+                            action="{{ Auth::user()->role == 1 ? route('admin.settings.profile') : (Auth::user()->role == 0 ? route('agent.settings.profile') : route('user.settings.profile')) }}"
                             method="POST" enctype="multipart/form-data">
                             @csrf
 
@@ -107,7 +107,7 @@
                             Password</h3>
 
                         <form
-                            action="{{ Auth::user()->role == 1 ? route('admin.settings.password') : route('agent.settings.password') }}"
+                            action="{{ Auth::user()->role == 1 ? route('admin.settings.password') : (Auth::user()->role == 0 ? route('agent.settings.password') : route('user.settings.password')) }}"
                             method="POST">
                             @csrf
 

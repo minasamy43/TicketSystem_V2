@@ -905,6 +905,7 @@
         chatInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
+                if (isSubmitting) return;
                 chatForm.requestSubmit();
             }
         });

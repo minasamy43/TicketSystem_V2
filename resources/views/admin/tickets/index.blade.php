@@ -28,7 +28,6 @@
                             <thead>
                                 <tr>
                                     <th width="80">Id</th>
-                                    <th>Type</th>
                                     <th>Sender</th>
                                     <th width="200">Subject</th>
                                     <th>Status</th>
@@ -43,7 +42,6 @@
                                             class="inline-filter-input search-icon-input" placeholder="ID..."
                                             value="{{ request('ticket_id') }}" oninput="debounceSubmit()">
                                     </td>
-                                    <td style="padding: 8px 10px;"></td>
                                     <td style="padding: 8px 10px;">
                                         <input type="text" name="user_name" id="filter_user_name"
                                             class="inline-filter-input search-icon-input" placeholder="Sender..."
@@ -102,13 +100,6 @@
                                         class="{{ !$ticket->has_admin_read ? 'unread-row' : '' }}">
                                         <td style="font-weight: 600; color: #000;">
                                             #{{ $ticket->id }}
-                                        </td>
-                                        <td>
-                                            @if($ticket->user->role == 0)
-                                                <span class="badge" style="background: rgba(59, 111, 212, 0.1); color: #3b6fd4; border: 1px solid rgba(59, 111, 212, 0.2);">Agent 👤</span>
-                                            @else
-                                                <span class="badge" style="background: rgba(212, 175, 83, 0.1); color: #d4af53; border: 1px solid rgba(212, 175, 83, 0.2);">User 👥</span>
-                                            @endif
                                         </td>
                                         <td style="font-weight: 500;">
                                             {{ $ticket->user->name ?? 'N/A' }}
@@ -196,7 +187,7 @@
                                     </tr>
                                 @empty
                                     <tr class="empty-state-row">
-                                        <td colspan="9" class="p-0">
+                                        <td colspan="8" class="p-0">
                                             <div class="empty-state-container text-center w-100"
                                                 style="padding: 4rem 1rem; background: #fff;">
                                                 <div
@@ -239,7 +230,8 @@
     <script>
         const ADMIN_TICKETS_CONFIG = {
             highestTicketId: {{ $tickets->first()->id ?? 0 }},
-            newDataUrl: '{{ route("admin.tickets.new-data") }}'
+            newDataUrl: '{{ route("admin.tickets.new-data") }}',
+            senderType: '{{ request("sender_type", "") }}'
         };
     </script>
     <script src="{{ asset('js/admin-tickets-index.js') }}"></script>

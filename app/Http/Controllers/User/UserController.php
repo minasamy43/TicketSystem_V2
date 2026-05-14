@@ -199,7 +199,7 @@ class UserController extends Controller
             $imagePath = $image->storeAs('tickets', $filename, 'public');
         }
 
-        \App\Models\Reply::create([
+        $reply = \App\Models\Reply::create([
             'ticket_id' => $id,
             'user_id' => Auth::id(),
             'admin_id' => null,
@@ -215,7 +215,7 @@ class UserController extends Controller
                 'success' => true,
                 'message' => 'Reply sent.',
                 'reply' => [
-                    'id' => $reply->id ?? rand(1000, 9999),
+                    'id' => $reply->id,
                     'body' => $request->body ?? '',
                     'is_admin' => false,
                     'image' => $imagePath ? asset('storage/' . $imagePath) : null,

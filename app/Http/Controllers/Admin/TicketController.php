@@ -58,6 +58,14 @@ class TicketController extends Controller
             });
         }
 
+        // Filter by sender type: 'agent' = role 0, 'user' = role 2
+        if ($senderType = request('sender_type')) {
+            $role = $senderType === 'agent' ? 0 : 2;
+            $query->whereHas('user', function ($q) use ($role) {
+                $q->where('role', $role);
+            });
+        }
+
         $tickets = $query->latest()->paginate(10)->withQueryString();
 
         return view('admin.tickets.index', compact('tickets', 'date'));
@@ -284,6 +292,12 @@ class TicketController extends Controller
         if ($inprogressName = $request->get('inprogress_name')) {
             $query->whereHas('inprogressBy', function ($q) use ($inprogressName) {
                 $q->where('name', 'like', '%' . $inprogressName . '%'); });
+        }
+        if ($senderType = $request->get('sender_type')) {
+            $role = $senderType === 'agent' ? 0 : 2;
+            $query->whereHas('user', function ($q) use ($role) {
+                $q->where('role', $role);
+            });
         }
 
         $newTickets = $query->latest()->get();

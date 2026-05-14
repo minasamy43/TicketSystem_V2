@@ -113,9 +113,32 @@
         </a>
 
         <div class="nav-label" style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">Management</div>
-        <a href="{{ route('admin.tickets.index') }}" class="nav-item {{ request()->routeIs('admin.tickets.*') ? 'active' : '' }}">
-          <i class="fa-solid fa-ticket"></i><span class="nav-text">Tickets</span>
-        </a>
+
+        {{-- Tickets sub-menu --}}
+        @php
+          $ticketsActive = request()->routeIs('admin.tickets.*');
+        @endphp
+        <div class="nav-submenu-wrapper {{ $ticketsActive ? 'open' : '' }}" id="ticketsSubmenu">
+          <button class="nav-item nav-submenu-toggle w-100 text-start {{ $ticketsActive ? 'active' : '' }}"
+            onclick="toggleNavSubmenu('ticketsSubmenu')" type="button"
+            aria-expanded="{{ $ticketsActive ? 'true' : 'false' }}">
+            <i class="fa-solid fa-ticket"></i>
+            <span class="nav-text">Tickets</span>
+            <i class="fa-solid fa-chevron-down nav-submenu-arrow ms-auto"></i>
+          </button>
+          <div class="nav-submenu-items">
+            <a href="{{ route('admin.tickets.index', ['sender_type' => 'agent']) }}"
+              class="nav-item nav-subitem {{ request()->routeIs('admin.tickets.*') && request('sender_type') === 'agent' ? 'active' : '' }}">
+              <i class="fa-solid fa-user-tie"></i>
+              <span class="nav-text">Agent Tickets</span>
+            </a>
+            <a href="{{ route('admin.tickets.index', ['sender_type' => 'user']) }}"
+              class="nav-item nav-subitem {{ request()->routeIs('admin.tickets.*') && request('sender_type') === 'user' ? 'active' : '' }}">
+              <i class="fa-solid fa-users"></i>
+              <span class="nav-text">User Tickets</span>
+            </a>
+          </div>
+        </div>
         <a href="{{ route('admin.messages.index') }}" class="nav-item {{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">
           <i class="fa-solid fa-envelope"></i><span class="nav-text">Messages</span>
           @php
@@ -238,8 +261,8 @@
           @else
             {{-- Show brand in navbar for users since there is no sidebar --}}
             <a href="{{ route('user.dashboard') }}" class="d-flex align-items-center gap-2 text-decoration-none ms-3">
-              <img src="{{ \App\Models\Setting::getLogoUrl() }}" alt="Logo" style="height: 32px;">
-              <span style="font-weight: 700; font-size: 1.2rem; color: var(--site-name-color);">{{ \App\Models\Setting::get('site_name', 'HelpTK') }}</span>
+              <img src="{{ \App\Models\Setting::getLogoUrl() }}" alt="Logo" style="height: 38px;">
+              <span class="sidebar-brand-name" style="font-size: 1.25rem; color: var(--site-name-color);">{{ \App\Models\Setting::get('site_name', 'HelpTK') }}</span>
             </a>
           @endif
         @endauth
@@ -263,7 +286,7 @@
             <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown"
               style="min-width: 200px; border-radius: 10px;">
               <li><a class="dropdown-item py-2"
-                  href="{{ Auth::user()->role == 1 ? route('admin.settings') : (Auth::user()->role == 0 ? route('agent.settings') : '#') }}"><i
+                  href="{{ Auth::user()->role == 1 ? route('admin.settings') : (Auth::user()->role == 0 ? route('agent.settings') : route('user.settings')) }}"><i
                     class="fa-solid fa-user me-2 text-muted"></i> My Profile</a></li>
               <li>
                 <hr class="dropdown-divider">
@@ -329,6 +352,14 @@
           document.body.style.overflow = '';
         }, 300);
       }
+    }
+
+    function toggleNavSubmenu(id) {
+      const wrapper = document.getElementById(id);
+      if (!wrapper) return;
+      wrapper.classList.toggle('open');
+      const btn = wrapper.querySelector('.nav-submenu-toggle');
+      if (btn) btn.setAttribute('aria-expanded', wrapper.classList.contains('open'));
     }
 
     document.addEventListener('DOMContentLoaded', function () {

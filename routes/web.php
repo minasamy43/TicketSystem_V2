@@ -5,7 +5,6 @@ use App\Http\Controllers\Agent\TicketController;
 use Illuminate\Support\Facades\Route;
 
 /*
-|--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 | Here is where you can register web routes for your application. These
@@ -65,6 +64,11 @@ Route::middleware(['auth', 'user'])->group(function () {
     Route::post('user/tickets/{id}/reply', [App\Http\Controllers\User\UserController::class, 'replyTicket'])->name('user.tickets.reply');
     Route::get('user/tickets/{id}/chat-data', [App\Http\Controllers\User\UserController::class, 'getChatData'])->name('user.tickets.chat-data');
     Route::delete('user/tickets/{id}', [App\Http\Controllers\User\UserController::class, 'destroyTicket'])->name('user.tickets.destroy');
+
+    // User Settings
+    Route::get('user/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('user.settings');
+    Route::post('user/settings/profile', [\App\Http\Controllers\SettingsController::class, 'updateProfile'])->name('user.settings.profile');
+    Route::post('user/settings/password', [\App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('user.settings.password');
 });
 
 
