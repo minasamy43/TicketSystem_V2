@@ -24,6 +24,7 @@ Route::get('register', [App\Http\Controllers\AuthController::class, 'showRegiste
 Route::post('register', [App\Http\Controllers\AuthController::class, 'register']);
 Route::post('logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 Route::get('tickets/unread-counts', [App\Http\Controllers\Admin\TicketController::class, 'getUnreadCounts'])->name('tickets.unread-counts')->middleware('auth');
+Route::get('sidebar/unread-counts', [App\Http\Controllers\Admin\TicketController::class, 'getSidebarAggregateCounts'])->name('sidebar.unread-counts')->middleware('auth');
 Route::get('admin/tickets/new-data', [App\Http\Controllers\Admin\TicketController::class, 'getNewTicketsData'])->name('admin.tickets.new-data')->middleware(['auth', 'admin']); //for ajax for realtime data update
 Route::get('admin/tickets/unread-dates', [App\Http\Controllers\Admin\TicketController::class, 'getUnreadDates'])->name('admin.tickets.unread-dates')->middleware(['auth', 'admin']);
 // Knowledge Base routes accessible to both User and Admin (for Preview only)

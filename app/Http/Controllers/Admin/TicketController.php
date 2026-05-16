@@ -398,4 +398,58 @@ class TicketController extends Controller
 
         return response()->json($dates);
     }
+    /** Get aggregate unread counts for the sidebar (Admin and Agent/User). */
+    public function getSidebarAggregateCounts()
+    {
+        $user = Auth::user();
+        if (!$user) return response()->json(['success' => false]);
+
+        $data = [
+            'success' => true,
+            'role' => $user->role,
+        ];
+
+        if ($user->role == 1) {
+            // Admin counts
+            $agentUnread = Ticket::whereHas('user', function($q) { $q->where('role', 0); })
+                ->where('has_admin_read', false)
+                ->count();
+            
+            $userUnread = Ticket::whereHas('user', function($q) { $q->where('role', 2); })
+                ->where('has_admin_read', false)
+                ->count();
+
+            $totalUnread = Reply::whereNull('admin_id')
+                ->where('is_read', 0)
+                ->whereIn('ticket_id', function ($query) use ($user) {
+                    $query->select('id')->from('tickets')
+                        ->where('inprogress_by', $user->id)
+                        ->orWhere('closed_by', $user->id)
+                        ->orWhereNull('inprogress_by')
+                        ->orWhereIn('id', function ($sub) use ($user) {
+                            $sub->select('ticket_id')->from('replies')->where('admin_id', $user->id);
+                        });
+                })->count();
+
+            $data['admin'] = [
+                'agent_tickets' => $agentUnread,
+                'user_tickets' => $userUnread,
+                'total_tickets' => $agentUnread + $userUnread,
+                'messages' => $totalUnread
+            ];
+        } else {
+            // Agent (User role 0) or User (User role 2) counts
+            $unread = Reply::whereNotNull('admin_id')
+                ->where('is_read', 0)
+                ->whereIn('ticket_id', function ($query) use ($user) {
+                    $query->select('id')->from('tickets')->where('user_id', $user->id);
+                })->count();
+
+            $data['user'] = [
+                'messages' => $unread
+            ];
+        }
+
+        return response()->json($data);
+    }
 }

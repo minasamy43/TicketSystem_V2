@@ -143,11 +143,9 @@
             aria-expanded="{{ $ticketsActive ? 'true' : 'false' }}">
             <i class="fa-solid fa-ticket"></i>
             <span class="nav-text">Tickets</span>
-            @if(($agentTicketsUnread + $userTicketsUnread) > 0)
-              <span class="badge bg-danger rounded-pill ms-2" style="font-size: 0.6rem;">
-                {{ ($agentTicketsUnread + $userTicketsUnread) > 99 ? '99+' : ($agentTicketsUnread + $userTicketsUnread) }}
-              </span>
-            @endif
+            <span id="sidebar-admin-tickets-badge" class="badge bg-danger rounded-pill ms-2" style="{{ ($agentTicketsUnread + $userTicketsUnread) > 0 ? '' : 'display: none;' }} font-size: 0.6rem;">
+              {{ ($agentTicketsUnread + $userTicketsUnread) > 99 ? '99+' : ($agentTicketsUnread + $userTicketsUnread) }}
+            </span>
             <i class="fa-solid fa-chevron-down nav-submenu-arrow ms-auto"></i>
           </button>
           <div class="nav-submenu-items">
@@ -155,21 +153,17 @@
               class="nav-item nav-subitem {{ request()->routeIs('admin.tickets.*') && $currentSenderType === 'agent' ? 'active' : '' }}">
               <i class="fa-solid fa-user-cog"></i>
               <span class="nav-text">Agent Tickets</span>
-              @if($agentTicketsUnread > 0)
-                <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.65rem;">
-                  {{ $agentTicketsUnread > 99 ? '99+' : $agentTicketsUnread }}
-                </span>
-              @endif
+              <span id="sidebar-agent-tickets-badge" class="badge bg-danger rounded-pill ms-auto" style="{{ $agentTicketsUnread > 0 ? '' : 'display: none;' }} font-size: 0.65rem;">
+                {{ $agentTicketsUnread > 99 ? '99+' : $agentTicketsUnread }}
+              </span>
             </a>
             <a href="{{ route('admin.tickets.index', ['sender_type' => 'user']) }}"
               class="nav-item nav-subitem {{ request()->routeIs('admin.tickets.*') && $currentSenderType === 'user' ? 'active' : '' }}">
               <i class="fa-solid fa-users"></i>
               <span class="nav-text">User Tickets</span>
-              @if($userTicketsUnread > 0)
-                <span class="badge bg-danger rounded-pill ms-auto" style="font-size: 0.65rem;">
-                  {{ $userTicketsUnread > 99 ? '99+' : $userTicketsUnread }}
-                </span>
-              @endif
+              <span id="sidebar-user-tickets-badge" class="badge bg-danger rounded-pill ms-auto" style="{{ $userTicketsUnread > 0 ? '' : 'display: none;' }} font-size: 0.65rem;">
+                {{ $userTicketsUnread > 99 ? '99+' : $userTicketsUnread }}
+              </span>
             </a>
           </div>
         </div>
@@ -426,6 +420,48 @@
     });
   </script>
   @stack('scripts')
+  <script>
+    // Real-time Sidebar Counts Updater
+    (function() {
+      async function updateSidebarCounts() {
+        try {
+          const response = await fetch('{{ route('sidebar.unread-counts') }}', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          });
+          const data = await response.json();
+          if (data.success) {
+            if (data.role == 1) { // Admin
+              const admin = data.admin;
+              updateBadge('sidebar-admin-tickets-badge', admin.total_tickets);
+              updateBadge('sidebar-agent-tickets-badge', admin.agent_tickets);
+              updateBadge('sidebar-user-tickets-badge', admin.user_tickets);
+              updateBadge('sidebar-messages-badge', admin.messages);
+            } else { // Agent/User
+              updateBadge('sidebar-user-messages-badge', data.user.messages);
+            }
+          }
+        } catch (error) { console.error('Sidebar poll failed:', error); }
+      }
+
+      function updateBadge(id, count) {
+        const badge = document.getElementById(id);
+        if (!badge) return;
+        if (count > 0) {
+          badge.textContent = count > 99 ? '99+' : count;
+          badge.style.display = '';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+
+      // Initial update and then every 30 seconds
+      if ({{ Auth::check() ? 'true' : 'false' }}) {
+        updateSidebarCounts();
+        setInterval(updateSidebarCounts, 30000);
+      }
+    })();
+  </script>
 </body>
+
 
 </html>
