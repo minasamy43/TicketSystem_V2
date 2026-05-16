@@ -49,6 +49,7 @@ Route::middleware(['auth', 'agent'])->group(function () {
     // Agent Messages
     Route::get('agent/messages', [\App\Http\Controllers\Agent\MessageController::class, 'index'])->name('agent.messages.index');
     Route::get('agent/messages/new-data', [\App\Http\Controllers\Agent\MessageController::class, 'getNewMessagesData'])->name('agent.messages.new-data');
+    Route::get('agent/messages/unread-dates', [\App\Http\Controllers\Agent\MessageController::class, 'getUnreadMessageDates'])->name('agent.messages.unread-dates');
     // Agent Settings
     Route::get('agent/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('agent.settings');
     Route::post('agent/settings/profile', [\App\Http\Controllers\SettingsController::class, 'updateProfile'])->name('agent.settings.profile');

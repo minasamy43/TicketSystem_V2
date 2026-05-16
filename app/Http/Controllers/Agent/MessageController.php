@@ -99,4 +99,18 @@ class MessageController extends Controller
             'new_highest_id' => max($newReplies->pluck('id')->toArray() + [$lastReplyId])
         ]);
     }
+    public function getUnreadMessageDates()
+    {
+        $userId = Auth::id();
+        $ticketIds = Ticket::where('user_id', $userId)->pluck('id');
+
+        $dates = Reply::whereIn('ticket_id', $ticketIds)
+            ->whereNotNull('admin_id') // For users/agents, unread messages come from admins
+            ->where('is_read', 0)
+            ->selectRaw('DATE(created_at) as date')
+            ->groupBy('date')
+            ->pluck('date');
+
+        return response()->json($dates);
+    }
 }

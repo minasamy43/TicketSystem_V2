@@ -1,7 +1,15 @@
 @extends('layouts.app')
 
 @section('title', 'View Ticket')
-@section('breadcrumb', 'View Ticket')
+@section('breadcrumb')
+    @php
+        $senderType = ($ticket->user->role == 0) ? 'agent' : 'user';
+        $senderLabel = ($ticket->user->role == 0) ? 'Agent Tickets' : 'User Tickets';
+    @endphp
+    <a href="{{ route('admin.tickets.index', ['sender_type' => $senderType]) }}" style="color: inherit; text-decoration: none;">{{ $senderLabel }}</a>
+    <i class="fa-solid fa-chevron-right breadcrumb-sep" style="margin: 0 8px; font-size: 10px; opacity: 0.5;"></i>
+    View Ticket
+@endsection
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/Admin-show-ticket.css') }}">

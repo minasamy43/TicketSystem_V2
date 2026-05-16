@@ -169,10 +169,6 @@
                                         <h4 class="fw-bold">No tickets yet</h4>
                                         <p class="text-muted">You haven't submitted any tickets yet. Let us know how we can help!
                                         </p>
-                                        <a href="{{ route('user.tickets.create') }}" class="btn btn-primary px-4 py-2 mt-2"
-                                            style="border-radius: 10px; font-weight: 600;">
-                                            <i class="fa-solid fa-plus me-2"></i> Open Your First Ticket
-                                        </a>
                                     @endif
                                 </td>
                             </tr>
