@@ -212,7 +212,7 @@ setInterval(async () => {
     } catch (error) {
         console.error('Error fetching summary data:', error);
     }
-}, 10000);
+}, 5000);
 
 function updateValueWithEffect(id, newValue) {
     const el = document.getElementById(id);

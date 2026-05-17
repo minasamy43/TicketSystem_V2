@@ -237,5 +237,5 @@ async function updateStatusLive(ticketId, newStatus, selectElement) {
         } catch (error) {
             console.error('Error fetching new tickets:', error);
         }
-    }, 10000);
+    }, 5000);
 })();

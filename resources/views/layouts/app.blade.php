@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -73,202 +74,237 @@
 
   <div class="mobile-sheet-overlay" id="sheetOverlay"></div>
   @auth
-  @if(Auth::user()->role != 2)
-  <div class="sidebar" id="sidebar">
-    <button class="sidebar-pin-toggle d-none d-lg-flex" id="sidebarPinToggle" title="Toggle Sidebar">
-      <i class="fa-solid fa-chevron-left"></i>
-    </button>
-    <a href="{{ Auth::user()->role == 1 ? route('admin.dashboard') : (Auth::user()->role == 0 ? route('agent.dashboard') : route('user.dashboard')) }}"
-      class="sidebar-brand" style="text-decoration: none;">
-      <img src="{{ \App\Models\Setting::getLogoUrl() }}" alt="Logo" class="sidebar-brand-logo">
-      <span class="sidebar-brand-name"
-        style="color: var(--site-name-color);">{{ \App\Models\Setting::get('site_name', 'HelpTK') }}</span>
-    </a>
+    @if(Auth::user()->role != 2)
+      <div class="sidebar" id="sidebar">
+        <button class="sidebar-pin-toggle d-none d-lg-flex" id="sidebarPinToggle" title="Toggle Sidebar">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <a href="{{ Auth::user()->role == 1 ? route('admin.dashboard') : (Auth::user()->role == 0 ? route('agent.dashboard') : route('user.dashboard')) }}"
+          class="sidebar-brand" style="text-decoration: none;">
+          <img src="{{ \App\Models\Setting::getLogoUrl() }}" alt="Logo" class="sidebar-brand-logo">
+          <span class="sidebar-brand-name"
+            style="color: var(--site-name-color);">{{ \App\Models\Setting::get('site_name', 'HelpTK') }}</span>
+        </a>
 
-    <div class="sidebar-user">
-      <div class="user-avatar" style="position: relative; overflow: hidden;">
-        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-        @if(Auth::user()->avatar)
-          <img src="{{ $avatarBase64 ?? asset('storage/' . Auth::user()->avatar) }}" alt="Avatar"
-            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
-        @endif
-      </div>
-      <div class="user-info">
-        <div class="user-info-name">{{ Auth::user()->name }}</div>
-        <div class="user-info-role">
-          @if(Auth::user()->role == 1) Administrator
-          @elseif(Auth::user()->role == 0) Agent
-          @else User
+        <div class="sidebar-user">
+          <div class="user-avatar" style="position: relative; overflow: hidden;">
+            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+            @if(Auth::user()->avatar)
+              <img src="{{ $avatarBase64 ?? asset('storage/' . Auth::user()->avatar) }}" alt="Avatar"
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+            @endif
+          </div>
+          <div class="user-info">
+            <div class="user-info-name">{{ Auth::user()->name }}</div>
+            <div class="user-info-role">
+              @if(Auth::user()->role == 1) Administrator
+              @elseif(Auth::user()->role == 0) Agent
+              @else User
+              @endif
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-menu">
+          @if(Auth::user()->role == 1)
+            {{-- Admin Menu --}}
+            <div class="nav-label"
+              style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
+              Overview</div>
+            <a href="{{ route('admin.dashboard') }}"
+              class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+              <i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span>
+            </a>
+
+            <div class="nav-label"
+              style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
+              Management</div>
+
+            {{-- Tickets sub-menu --}}
+            @php
+              $adminIdForSidebar = Auth::id();
+
+              // Determine if we are in Agent or User ticket context
+              $currentSenderType = request('sender_type');
+              if (request()->routeIs('admin.tickets.show') && isset($ticket)) {
+                $currentSenderType = ($ticket->user->role == 0) ? 'agent' : 'user';
+              }
+
+              $ticketsActive = request()->routeIs('admin.tickets.*');
+
+              $agentTicketsUnread = \Illuminate\Support\Facades\Cache::remember('admin_sidebar_agent_tickets_unread_' . $adminIdForSidebar, 60, function () {
+                return \App\Models\Ticket::whereHas('user', function ($q) {
+                  $q->where('role', 0);
+                })
+                  ->where('has_admin_read', false)
+                  ->count();
+              });
+              $userTicketsUnread = \Illuminate\Support\Facades\Cache::remember('admin_sidebar_user_tickets_unread_' . $adminIdForSidebar, 60, function () {
+                return \App\Models\Ticket::whereHas('user', function ($q) {
+                  $q->where('role', 2);
+                })
+                  ->where('has_admin_read', false)
+                  ->count();
+              });
+            @endphp
+            <div class="nav-submenu-wrapper {{ $ticketsActive ? 'open' : '' }}" id="ticketsSubmenu">
+              <button class="nav-item nav-submenu-toggle w-100 text-start {{ $ticketsActive ? 'active' : '' }}"
+                onclick="toggleNavSubmenu('ticketsSubmenu')" type="button"
+                aria-expanded="{{ $ticketsActive ? 'true' : 'false' }}">
+                <i class="fa-solid fa-ticket"></i>
+                <span class="nav-text">Tickets</span>
+                <span id="sidebar-admin-tickets-badge" class="badge bg-danger rounded-pill ms-2"
+                  style="{{ ($agentTicketsUnread + $userTicketsUnread) > 0 ? '' : 'display: none;' }} font-size: 0.6rem;">
+                  {{ ($agentTicketsUnread + $userTicketsUnread) > 99 ? '99+' : ($agentTicketsUnread + $userTicketsUnread) }}
+                </span>
+                <i class="fa-solid fa-chevron-down nav-submenu-arrow ms-auto"></i>
+              </button>
+              <div class="nav-submenu-items">
+                <a href="{{ route('admin.tickets.index', ['sender_type' => 'agent']) }}"
+                  class="nav-item nav-subitem {{ request()->routeIs('admin.tickets.*') && $currentSenderType === 'agent' ? 'active' : '' }}">
+                  <i class="fa-solid fa-user-cog"></i>
+                  <span class="nav-text">Agent Tickets</span>
+                  <span id="sidebar-agent-tickets-badge" class="badge bg-danger rounded-pill ms-auto"
+                    style="{{ $agentTicketsUnread > 0 ? '' : 'display: none;' }} font-size: 0.65rem;">
+                    {{ $agentTicketsUnread > 99 ? '99+' : $agentTicketsUnread }}
+                  </span>
+                </a>
+                <a href="{{ route('admin.tickets.index', ['sender_type' => 'user']) }}"
+                  class="nav-item nav-subitem {{ request()->routeIs('admin.tickets.*') && $currentSenderType === 'user' ? 'active' : '' }}">
+                  <i class="fa-solid fa-users"></i>
+                  <span class="nav-text">User Tickets</span>
+                  <span id="sidebar-user-tickets-badge" class="badge bg-danger rounded-pill ms-auto"
+                    style="{{ $userTicketsUnread > 0 ? '' : 'display: none;' }} font-size: 0.65rem;">
+                    {{ $userTicketsUnread > 99 ? '99+' : $userTicketsUnread }}
+                  </span>
+                </a>
+              </div>
+            </div>
+            <a href="{{ route('admin.messages.index') }}"
+              class="nav-item {{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">
+              <i class="fa-solid fa-envelope"></i><span class="nav-text">Messages</span>
+              @php
+                $adminId = Auth::id();
+                $totalUnread = \Illuminate\Support\Facades\Cache::remember('admin_sidebar_unread_' . $adminId, 60, function () use ($adminId) {
+                  return \App\Models\Reply::whereNull('admin_id')
+                    ->where('is_read', 0)
+                    ->whereIn('ticket_id', function ($query) use ($adminId) {
+                      $query->select('id')->from('tickets')
+                        ->where('inprogress_by', $adminId)
+                        ->orWhere('closed_by', $adminId)
+                        ->orWhereNull('inprogress_by')
+                        ->orWhereIn('id', function ($sub) use ($adminId) {
+                          $sub->select('ticket_id')->from('replies')->where('admin_id', $adminId);
+                        });
+                    })->count();
+                });
+              @endphp
+              <span id="sidebar-messages-badge" class="badge bg-danger rounded-pill ms-auto"
+                style="{{ $totalUnread > 0 ? '' : 'display: none;' }} font-size: 0.7rem;">
+                {{ $totalUnread > 99 ? '99+' : ($totalUnread > 0 ? $totalUnread : '') }}
+              </span>
+            </a>
+            <a href="{{ route('admin.knowledge-base.index') }}"
+              class="nav-item {{ request()->routeIs('admin.knowledge-base.*') ? 'active' : '' }}">
+              <i class="fa-solid fa-book"></i><span class="nav-text">Knowledge Base</span>
+            </a>
+            <a href="{{ route('admin.agents.index') }}"
+              class="nav-item {{ request()->routeIs('admin.agents.*') ? 'active' : '' }}">
+              <i class="fa-solid fa-users"></i><span class="nav-text">Agents</span>
+            </a>
+            <a href="{{ route('admin.ranking.index') }}"
+              class="nav-item {{ request()->routeIs('admin.ranking.*') ? 'active' : '' }}">
+              <i class="fa-solid fa-chart-line"></i><span class="nav-text">Ranking</span>
+            </a>
+
+            <div class="nav-label"
+              style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
+              System</div>
+            <a href="{{ route('admin.settings') }}"
+              class="nav-item {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
+              <i class="fa-solid fa-gear"></i><span class="nav-text">Settings</span>
+            </a>
+          @elseif(Auth::user()->role == 0)
+            {{-- Agent Menu --}}
+            <div class="nav-label"
+              style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
+              Overview</div>
+            <a href="{{ route('agent.dashboard') }}" class="nav-item {{ request()->is('agent/dashboard') ? 'active' : '' }}">
+              <i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span>
+            </a>
+
+            <div class="nav-label"
+              style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
+              Support</div>
+            <a href="{{ route('agent.tickets.create') }}"
+              class="nav-item {{ request()->routeIs('agent.tickets.create') ? 'active' : '' }}">
+              <i class="fa-solid fa-plus-circle"></i><span class="nav-text">Create Ticket</span>
+            </a>
+            <a href="{{ route('agent.messages.index') }}"
+              class="nav-item {{ request()->routeIs('agent.messages.*') ? 'active' : '' }}">
+              <i class="fa-solid fa-envelope"></i><span class="nav-text">Messages</span>
+              @php
+                $userId = Auth::id();
+                $userUnread = \Illuminate\Support\Facades\Cache::remember('user_sidebar_unread_' . $userId, 60, function () use ($userId) {
+                  return \App\Models\Reply::whereNotNull('admin_id')
+                    ->where('is_read', 0)
+                    ->whereIn('ticket_id', function ($query) use ($userId) {
+                      $query->select('id')->from('tickets')->where('user_id', $userId);
+                    })->count();
+                });
+              @endphp
+              <span id="sidebar-user-messages-badge" class="badge bg-danger rounded-pill ms-auto"
+                style="{{ $userUnread > 0 ? '' : 'display: none;' }} font-size: 0.7rem;">
+                {{ $userUnread > 99 ? '99+' : ($userUnread > 0 ? $userUnread : '') }}
+              </span>
+            </a>
+
+            <a href="{{ route('knowledge.base') }}" class="nav-item {{ request()->routeIs('knowledge.*') ? 'active' : '' }}">
+              <i class="fa-solid fa-book"></i><span class="nav-text">Knowledge Base</span>
+            </a>
+
+            <div class="nav-label"
+              style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
+              Account</div>
+            <a href="{{ route('agent.settings') }}"
+              class="nav-item {{ request()->routeIs('agent.settings') ? 'active' : '' }}">
+              <i class="fa-solid fa-gear"></i><span class="nav-text">Settings</span>
+            </a>
+          @else
+            {{-- User Menu --}}
+            <div class="nav-label"
+              style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
+              Overview</div>
+            <a href="{{ route('user.dashboard') }}" class="nav-item {{ request()->is('user/dashboard') ? 'active' : '' }}">
+              <i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span>
+            </a>
+
+            <div class="nav-label"
+              style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">
+              Support</div>
+            <a href="{{ route('user.tickets.create') }}"
+              class="nav-item {{ request()->routeIs('user.tickets.create') ? 'active' : '' }}">
+              <i class="fa-solid fa-plus-circle"></i><span class="nav-text">Create Ticket</span>
+            </a>
           @endif
-        </div>
-      </div>
-    </div>
 
-    <div class="nav-menu">
-      @if(Auth::user()->role == 1)
-        {{-- Admin Menu --}}
-        <div class="nav-label" style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">Overview</div>
-        <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-          <i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span>
-        </a>
-
-        <div class="nav-label" style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">Management</div>
-
-        {{-- Tickets sub-menu --}}
-        @php
-          $adminIdForSidebar = Auth::id();
-          
-          // Determine if we are in Agent or User ticket context
-          $currentSenderType = request('sender_type');
-          if (request()->routeIs('admin.tickets.show') && isset($ticket)) {
-              $currentSenderType = ($ticket->user->role == 0) ? 'agent' : 'user';
-          }
-          
-          $ticketsActive = request()->routeIs('admin.tickets.*');
-
-          $agentTicketsUnread = \Illuminate\Support\Facades\Cache::remember('admin_sidebar_agent_tickets_unread_' . $adminIdForSidebar, 60, function () {
-              return \App\Models\Ticket::whereHas('user', function($q) { $q->where('role', 0); })
-                  ->where('has_admin_read', false)
-                  ->count();
-          });
-          $userTicketsUnread = \Illuminate\Support\Facades\Cache::remember('admin_sidebar_user_tickets_unread_' . $adminIdForSidebar, 60, function () {
-              return \App\Models\Ticket::whereHas('user', function($q) { $q->where('role', 2); })
-                  ->where('has_admin_read', false)
-                  ->count();
-          });
-        @endphp
-        <div class="nav-submenu-wrapper {{ $ticketsActive ? 'open' : '' }}" id="ticketsSubmenu">
-          <button class="nav-item nav-submenu-toggle w-100 text-start {{ $ticketsActive ? 'active' : '' }}"
-            onclick="toggleNavSubmenu('ticketsSubmenu')" type="button"
-            aria-expanded="{{ $ticketsActive ? 'true' : 'false' }}">
-            <i class="fa-solid fa-ticket"></i>
-            <span class="nav-text">Tickets</span>
-            <span id="sidebar-admin-tickets-badge" class="badge bg-danger rounded-pill ms-2" style="{{ ($agentTicketsUnread + $userTicketsUnread) > 0 ? '' : 'display: none;' }} font-size: 0.6rem;">
-              {{ ($agentTicketsUnread + $userTicketsUnread) > 99 ? '99+' : ($agentTicketsUnread + $userTicketsUnread) }}
-            </span>
-            <i class="fa-solid fa-chevron-down nav-submenu-arrow ms-auto"></i>
-          </button>
-          <div class="nav-submenu-items">
-            <a href="{{ route('admin.tickets.index', ['sender_type' => 'agent']) }}"
-              class="nav-item nav-subitem {{ request()->routeIs('admin.tickets.*') && $currentSenderType === 'agent' ? 'active' : '' }}">
-              <i class="fa-solid fa-user-cog"></i>
-              <span class="nav-text">Agent Tickets</span>
-              <span id="sidebar-agent-tickets-badge" class="badge bg-danger rounded-pill ms-auto" style="{{ $agentTicketsUnread > 0 ? '' : 'display: none;' }} font-size: 0.65rem;">
-                {{ $agentTicketsUnread > 99 ? '99+' : $agentTicketsUnread }}
-              </span>
-            </a>
-            <a href="{{ route('admin.tickets.index', ['sender_type' => 'user']) }}"
-              class="nav-item nav-subitem {{ request()->routeIs('admin.tickets.*') && $currentSenderType === 'user' ? 'active' : '' }}">
-              <i class="fa-solid fa-users"></i>
-              <span class="nav-text">User Tickets</span>
-              <span id="sidebar-user-tickets-badge" class="badge bg-danger rounded-pill ms-auto" style="{{ $userTicketsUnread > 0 ? '' : 'display: none;' }} font-size: 0.65rem;">
-                {{ $userTicketsUnread > 99 ? '99+' : $userTicketsUnread }}
-              </span>
-            </a>
-          </div>
-        </div>
-        <a href="{{ route('admin.messages.index') }}" class="nav-item {{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">
-          <i class="fa-solid fa-envelope"></i><span class="nav-text">Messages</span>
-          @php
-            $adminId = Auth::id();
-            $totalUnread = \Illuminate\Support\Facades\Cache::remember('admin_sidebar_unread_' . $adminId, 60, function () use ($adminId) {
-              return \App\Models\Reply::whereNull('admin_id')
-                ->where('is_read', 0)
-                ->whereIn('ticket_id', function ($query) use ($adminId) {
-                  $query->select('id')->from('tickets')
-                    ->where('inprogress_by', $adminId)
-                    ->orWhere('closed_by', $adminId)
-                    ->orWhereNull('inprogress_by')
-                    ->orWhereIn('id', function ($sub) use ($adminId) {
-                      $sub->select('ticket_id')->from('replies')->where('admin_id', $adminId);
-                    });
-                })->count();
-            });
-          @endphp
-          <span id="sidebar-messages-badge" class="badge bg-danger rounded-pill ms-auto" style="{{ $totalUnread > 0 ? '' : 'display: none;' }} font-size: 0.7rem;">
-            {{ $totalUnread > 99 ? '99+' : ($totalUnread > 0 ? $totalUnread : '') }}
-          </span>
-        </a>
-        <a href="{{ route('admin.knowledge-base.index') }}" class="nav-item {{ request()->routeIs('admin.knowledge-base.*') ? 'active' : '' }}">
-          <i class="fa-solid fa-book"></i><span class="nav-text">Knowledge Base</span>
-        </a>
-        <a href="{{ route('admin.agents.index') }}" class="nav-item {{ request()->routeIs('admin.agents.*') ? 'active' : '' }}">
-          <i class="fa-solid fa-users"></i><span class="nav-text">Agents</span>
-        </a>
-        <a href="{{ route('admin.ranking.index') }}" class="nav-item {{ request()->routeIs('admin.ranking.*') ? 'active' : '' }}">
-          <i class="fa-solid fa-chart-line"></i><span class="nav-text">Ranking</span>
-        </a>
-
-        <div class="nav-label" style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">System</div>
-        <a href="{{ route('admin.settings') }}" class="nav-item {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
-          <i class="fa-solid fa-gear"></i><span class="nav-text">Settings</span>
-        </a>
-      @elseif(Auth::user()->role == 0)
-        {{-- Agent Menu --}}
-        <div class="nav-label" style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">Overview</div>
-        <a href="{{ route('agent.dashboard') }}" class="nav-item {{ request()->is('agent/dashboard') ? 'active' : '' }}">
-          <i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span>
-        </a>
-
-        <div class="nav-label" style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">Support</div>
-        <a href="{{ route('agent.tickets.create') }}" class="nav-item {{ request()->routeIs('agent.tickets.create') ? 'active' : '' }}">
-          <i class="fa-solid fa-plus-circle"></i><span class="nav-text">Create Ticket</span>
-        </a>
-        <a href="{{ route('agent.messages.index') }}" class="nav-item {{ request()->routeIs('agent.messages.*') ? 'active' : '' }}">
-          <i class="fa-solid fa-envelope"></i><span class="nav-text">Messages</span>
-          @php
-            $userId = Auth::id();
-            $userUnread = \Illuminate\Support\Facades\Cache::remember('user_sidebar_unread_' . $userId, 60, function () use ($userId) {
-              return \App\Models\Reply::whereNotNull('admin_id')
-                ->where('is_read', 0)
-                ->whereIn('ticket_id', function ($query) use ($userId) {
-                  $query->select('id')->from('tickets')->where('user_id', $userId);
-                })->count();
-            });
-          @endphp
-          <span id="sidebar-user-messages-badge" class="badge bg-danger rounded-pill ms-auto" style="{{ $userUnread > 0 ? '' : 'display: none;' }} font-size: 0.7rem;">
-            {{ $userUnread > 99 ? '99+' : ($userUnread > 0 ? $userUnread : '') }}
-          </span>
-        </a>
-
-        <a href="{{ route('knowledge.base') }}" class="nav-item {{ request()->routeIs('knowledge.*') ? 'active' : '' }}">
-          <i class="fa-solid fa-book"></i><span class="nav-text">Knowledge Base</span>
-        </a>
-
-        <div class="nav-label" style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">Account</div>
-        <a href="{{ route('agent.settings') }}" class="nav-item {{ request()->routeIs('agent.settings') ? 'active' : '' }}">
-          <i class="fa-solid fa-gear"></i><span class="nav-text">Settings</span>
-        </a>
-      @else
-        {{-- User Menu --}}
-        <div class="nav-label" style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">Overview</div>
-        <a href="{{ route('user.dashboard') }}" class="nav-item {{ request()->is('user/dashboard') ? 'active' : '' }}">
-          <i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span>
-        </a>
-
-        <div class="nav-label" style="color: var(--menu-title-color); font-size: 12px; font-weight: 600; letter-spacing: 1px; margin: 15px 20px 5px;">Support</div>
-        <a href="{{ route('user.tickets.create') }}" class="nav-item {{ request()->routeIs('user.tickets.create') ? 'active' : '' }}">
-          <i class="fa-solid fa-plus-circle"></i><span class="nav-text">Create Ticket</span>
-        </a>
-      @endif
-
-      <div class="sidebar-accent-container">
-        <div class="accent-crown-mini">
-          <i class="fa-solid fa-crown"></i>
-        </div>
-        <div class="geometric-accent">
-          <div class="accent-line"></div>
-          <div class="accent-line-short"></div>
-          <div class="accent-line-dots">
-            <div class="accent-dot"></div>
-            <div class="accent-dot"></div>
-            <div class="accent-dot"></div>
+          <div class="sidebar-accent-container">
+            <div class="accent-crown-mini">
+              <i class="fa-solid fa-crown"></i>
+            </div>
+            <div class="geometric-accent">
+              <div class="accent-line"></div>
+              <div class="accent-line-short"></div>
+              <div class="accent-line-dots">
+                <div class="accent-dot"></div>
+                <div class="accent-dot"></div>
+                <div class="accent-dot"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  @endif
+    @endif
   @endauth
 
   <div class="main-wrapper">
@@ -277,7 +313,8 @@
         @auth
           @if(Auth::user()->role != 2)
             <nav class="navbar-breadcrumb" aria-label="breadcrumb">
-              <a href="{{ Auth::user()->role == 1 ? route('admin.dashboard') : route('agent.dashboard') }}" class="breadcrumb-home">
+              <a href="{{ Auth::user()->role == 1 ? route('admin.dashboard') : route('agent.dashboard') }}"
+                class="breadcrumb-home">
                 <i class="fa-solid fa-house"></i>
                 <span>Home</span>
               </a>
@@ -290,7 +327,8 @@
             {{-- Show brand in navbar for users since there is no sidebar --}}
             <a href="{{ route('user.dashboard') }}" class="d-flex align-items-center gap-2 text-decoration-none ms-3">
               <img src="{{ \App\Models\Setting::getLogoUrl() }}" alt="Logo" style="height: 38px;">
-              <span class="sidebar-brand-name" style="font-size: 1.25rem; color: var(--site-name-color);">{{ \App\Models\Setting::get('site_name', 'HelpTK') }}</span>
+              <span class="sidebar-brand-name"
+                style="font-size: 1.25rem; color: var(--site-name-color);">{{ \App\Models\Setting::get('site_name', 'HelpTK') }}</span>
             </a>
           @endif
         @endauth
@@ -330,9 +368,9 @@
           </div>
 
           @if(Auth::user()->role != 2)
-          <button class="sidebar-toggle" id="sidebarToggle">
-            <i class="fa-solid fa-bars"></i>
-          </button>
+            <button class="sidebar-toggle" id="sidebarToggle">
+              <i class="fa-solid fa-bars"></i>
+            </button>
           @endif
         @endauth
       </div>
@@ -422,7 +460,7 @@
   @stack('scripts')
   <script>
     // Real-time Sidebar Counts Updater
-    (function() {
+    (function () {
       async function updateSidebarCounts() {
         try {
           const response = await fetch('{{ route('sidebar.unread-counts') }}', {
@@ -454,10 +492,10 @@
         }
       }
 
-      // Initial update and then every 30 seconds
+      // Initial update and then every 5 seconds
       if ({{ Auth::check() ? 'true' : 'false' }}) {
         updateSidebarCounts();
-        setInterval(updateSidebarCounts, 30000);
+        setInterval(updateSidebarCounts, 5000);
       }
     })();
   </script>
