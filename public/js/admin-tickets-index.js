@@ -146,6 +146,12 @@ async function updateStatusLive(ticketId, newStatus, selectElement) {
         const closer_name = closerNameElement.value;
         const ticket_id = ticketIdElement.value;
 
+        // Gather existing IDs
+        const existingIds = [];
+        document.querySelectorAll('table tbody tr[data-ticket-id]').forEach(row => {
+            existingIds.push(row.getAttribute('data-ticket-id'));
+        });
+
         try {
             const newDataUrl = ADMIN_TICKETS_CONFIG.newDataUrl;
             const url = new URL(newDataUrl, window.location.origin);
@@ -160,79 +166,135 @@ async function updateStatusLive(ticketId, newStatus, selectElement) {
             const senderType = (typeof ADMIN_TICKETS_CONFIG !== 'undefined' && ADMIN_TICKETS_CONFIG.senderType) ? ADMIN_TICKETS_CONFIG.senderType : '';
             if (senderType) url.searchParams.set('sender_type', senderType);
 
+            existingIds.forEach(id => url.searchParams.append('existing_ids[]', id));
+
             const response = await fetch(url);
             const data = await response.json();
 
-            if (data.success && data.new_tickets.length > 0) {
-                const tbody = document.querySelector('table tbody');
-                data.new_tickets.forEach(ticket => {
-                    const existingRow = document.querySelector(`tr[data-ticket-id="${ticket.id}"]`);
-                    if (!existingRow) {
-                        const newRow = document.createElement('tr');
-                        newRow.setAttribute('data-ticket-id', ticket.id);
-                        newRow.className = 'new-entry-flash unread-row';
-                        newRow.style.cursor = 'pointer';
+            if (data.success) {
+                // Update existing tickets status and details
+                if (data.updates && data.updates.length > 0) {
+                    data.updates.forEach(update => {
+                        const row = document.querySelector(`tr[data-ticket-id="${update.id}"]`);
+                        if (row) {
+                            // Update status select if the value changed
+                            const statusSelect = row.querySelector('.status-select-badge');
+                            if (statusSelect && statusSelect.value !== update.status) {
+                                statusSelect.value = update.status;
+                                statusSelect.className = 'status-select-badge';
+                                if (update.status === 'open') statusSelect.classList.add('status-open');
+                                else if (update.status === 'in progress') statusSelect.classList.add('status-progress');
+                                else if (update.status === 'closed') statusSelect.classList.add('status-closed');
+                                Array.from(statusSelect.options).forEach(o => o.defaultSelected = (o.value === update.status));
+                            }
+                            
+                            // Update in-progress handler cell
+                            const inprogressCell = document.getElementById(`inprogress-${update.id}`);
+                            if (inprogressCell && inprogressCell.textContent !== update.inprogress_by) {
+                                inprogressCell.textContent = update.inprogress_by;
+                            }
+                            
+                            // Update closer cell
+                            const closerCell = document.getElementById(`closer-${update.id}`);
+                            if (closerCell && closerCell.textContent !== update.closer) {
+                                closerCell.textContent = update.closer;
+                            }
 
-                        newRow.innerHTML = `
-                                <td style="font-weight: 600; color: #000;">#${ticket.id}</td>
-                                <td style="font-weight: 500;">
-                                    ${ticket.user_name}
-                                    <span class="new-badge rounded-pill ms-2"><span class="pulse-dot"></span> New</span>
-                                </td>
-                                <td>${ticket.subject}</td>
-                                <td>
-                                    <select class="status-select-badge status-${ticket.status === 'in progress' ? 'progress' : ticket.status}" onchange="updateStatusLive(${ticket.id}, this.value, this)">
-                                        <option value="open" ${ticket.status === 'open' ? 'selected' : ''}>Open 🎟️</option>
-                                        <option value="in progress" ${ticket.status === 'in progress' ? 'selected' : ''}>In Progress 👍🏻</option>
-                                        <option value="closed" ${ticket.status === 'closed' ? 'selected' : ''}>Closed ✅️</option>
-                                    </select>
-                                </td>
-                                <td class="text-muted" id="inprogress-${ticket.id}">${ticket.inprogress_by}</td>
-                                <td class="text-muted" id="closer-${ticket.id}">${ticket.closer}</td>
-                                <td>
-                                    <div style="display:flex; align-items:center; gap:8px;">
-                                        <span style="color:#d4af53; flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg></span>
-                                        <div>
-                                            <div style="font-weight:600; color:#333; font-size:0.88rem; line-height:1.2;">${ticket.time}</div>
-                                            <div style="font-size:0.72rem; color:#aaa; margin-top:2px;">${ticket.relative_time}</div>
+                            // Update unread replies badge
+                            const chatBtn = row.querySelector('.action-btn-premium[title="Chat"]');
+                            if (chatBtn) {
+                                let unreadBadge = chatBtn.querySelector('span[id^="unread-count-"]');
+                                if (update.unread_count > 0) {
+                                    if (!unreadBadge) {
+                                        unreadBadge = document.createElement('span');
+                                        unreadBadge.id = `unread-count-${update.id}`;
+                                        unreadBadge.className = 'position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light shadow-sm';
+                                        unreadBadge.style = 'font-size: 0.66rem; padding: 0.24em 0.45em; line-height: 1;';
+                                        chatBtn.appendChild(unreadBadge);
+                                    }
+                                    unreadBadge.textContent = update.unread_count > 99 ? '99+' : update.unread_count;
+                                    row.classList.add('unread-row');
+                                } else {
+                                    if (unreadBadge) unreadBadge.remove();
+                                    row.classList.remove('unread-row');
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Add new tickets
+                if (data.new_tickets && data.new_tickets.length > 0) {
+                    const tbody = document.querySelector('table tbody');
+                    data.new_tickets.forEach(ticket => {
+                        const existingRow = document.querySelector(`tr[data-ticket-id="${ticket.id}"]`);
+                        if (!existingRow) {
+                            const newRow = document.createElement('tr');
+                            newRow.setAttribute('data-ticket-id', ticket.id);
+                            newRow.className = 'new-entry-flash unread-row';
+                            newRow.style.cursor = 'pointer';
+
+                            newRow.innerHTML = `
+                                    <td style="font-weight: 600; color: #000;">#${ticket.id}</td>
+                                    <td style="font-weight: 500;">
+                                        ${ticket.user_name}
+                                        <span class="new-badge rounded-pill ms-2"><span class="pulse-dot"></span> New</span>
+                                    </td>
+                                    <td>${ticket.subject}</td>
+                                    <td>
+                                        <select class="status-select-badge status-${ticket.status === 'in progress' ? 'progress' : ticket.status}" onchange="updateStatusLive(${ticket.id}, this.value, this)">
+                                            <option value="open" ${ticket.status === 'open' ? 'selected' : ''}>Open 🎟️</option>
+                                            <option value="in progress" ${ticket.status === 'in progress' ? 'selected' : ''}>In Progress 👍🏻</option>
+                                            <option value="closed" ${ticket.status === 'closed' ? 'selected' : ''}>Closed ✅️</option>
+                                        </select>
+                                    </td>
+                                    <td class="text-muted" id="inprogress-${ticket.id}">${ticket.inprogress_by}</td>
+                                    <td class="text-muted" id="closer-${ticket.id}">${ticket.closer}</td>
+                                    <td>
+                                        <div style="display:flex; align-items:center; gap:8px;">
+                                            <span style="color:#d4af53; flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg></span>
+                                            <div>
+                                                <div style="font-weight:600; color:#333; font-size:0.88rem; line-height:1.2;">${ticket.time}</div>
+                                                <div style="font-size:0.72rem; color:#aaa; margin-top:2px;">${ticket.relative_time}</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <a href="javascript:void(0)" onclick="openAdminChat(${ticket.id})" class="action-btn-premium position-relative" title="Chat">
-                                        <svg viewBox="0 0 256 256" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="messenger-grad" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#00C6FF" /><stop offset="50%" stop-color="#0078FF" /><stop offset="100%" stop-color="#A033FF" /></linearGradient></defs><path fill="url(#messenger-grad)" d="M128,24C68.9,24,21,68.6,21,123.5c0,31.2,15.7,58.5,40.1,76.5c1.4,1,2.5,2.6,2.8,4.3l3.8,27.3c0.4,3,3.7,4.8,6.4,3.3l29.1-14.9c1-0.5,2.2-0.6,3.2-0.3c7.2,1.8,14.8,2.7,22.7,2.7c59.1,0,107-44.6,107-99.5S187.1,24,128,24z M138.8,148v-0.1l-25.5-27c-4-4.2-10.6-4.5-15.1-0.5l-31.5,28.5c-3,2.7-7.2-0.8-5.2-4.1l29.4-48c3.2-5.3,10.6-6.6,15.5-2.8l25.3,19.3c3.8,2.9,9.3,3.3,13.5-0.1l32-26.1c3-2.5,7,1,5.2,4.3L153,141.5C149.8,146.9,142.5,148.6,138.8,148z" /></svg>
-                                        ${ticket.unread_count > 0 ? `<span id="unread-count-${ticket.id}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light shadow-sm" style="font-size: 0.66rem; padding: 0.24em 0.45em; line-height: 1;">${ticket.unread_count}</span>` : ''}
-                                    </a>
-                                </td>
-                            `;
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="javascript:void(0)" onclick="openAdminChat(${ticket.id})" class="action-btn-premium position-relative" title="Chat">
+                                            <svg viewBox="0 0 256 256" width="24" height="24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="messenger-grad" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#00C6FF" /><stop offset="50%" stop-color="#0078FF" /><stop offset="100%" stop-color="#A033FF" /></linearGradient></defs><path fill="url(#messenger-grad)" d="M128,24C68.9,24,21,68.6,21,123.5c0,31.2,15.7,58.5,40.1,76.5c1.4,1,2.5,2.6,2.8,4.3l3.8,27.3c0.4,3,3.7,4.8,6.4,3.3l29.1-14.9c1-0.5,2.2-0.6,3.2-0.3c7.2,1.8,14.8,2.7,22.7,2.7c59.1,0,107-44.6,107-99.5S187.1,24,128,24z M138.8,148v-0.1l-25.5-27c-4-4.2-10.6-4.5-15.1-0.5l-31.5,28.5c-3,2.7-7.2-0.8-5.2-4.1l29.4-48c3.2-5.3,10.6-6.6,15.5-2.8l25.3,19.3c3.8,2.9,9.3,3.3,13.5-0.1l32-26.1c3-2.5,7,1,5.2,4.3L153,141.5C149.8,146.9,142.5,148.6,138.8,148z" /></svg>
+                                            ${ticket.unread_count > 0 ? `<span id="unread-count-${ticket.id}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light shadow-sm" style="font-size: 0.66rem; padding: 0.24em 0.45em; line-height: 1;">${ticket.unread_count}</span>` : ''}
+                                        </a>
+                                    </td>
+                                `;
 
-                        newRow.addEventListener('click', function (e) {
-                            if (e.target.closest('a[onclick^="openAdminChat"]')) {
+                            newRow.addEventListener('click', function (e) {
+                                if (e.target.closest('a[onclick^="openAdminChat"]')) {
+                                    this.classList.remove('unread-row');
+                                    const badge = this.querySelector('.new-badge');
+                                    if (badge) badge.remove();
+                                }
+                                if (e.target.closest('a') || e.target.closest('button') || e.target.closest('input') || e.target.closest('select')) return;
+                                
                                 this.classList.remove('unread-row');
                                 const badge = this.querySelector('.new-badge');
                                 if (badge) badge.remove();
+                                
+                                window.location.href = `/admin/tickets/${ticket.id}`;
+                            });
+
+                            const emptyRow = tbody.querySelector('.empty-state-row');
+                            if (emptyRow) emptyRow.remove();
+                            const emptyContainer = document.querySelector('.empty-state-container');
+                            if (emptyContainer) {
+                                const containerRow = emptyContainer.closest('tr');
+                                if (containerRow) containerRow.remove();
                             }
-                            if (e.target.closest('a') || e.target.closest('button') || e.target.closest('input') || e.target.closest('select')) return;
-                            
-                            this.classList.remove('unread-row');
-                            const badge = this.querySelector('.new-badge');
-                            if (badge) badge.remove();
-                            
-                            window.location.href = `/admin/tickets/${ticket.id}`;
-                        });
 
-                        const emptyRow = tbody.querySelector('.empty-state-row');
-                        if (emptyRow) emptyRow.remove();
-                        const emptyContainer = document.querySelector('.empty-state-container');
-                        if (emptyContainer) {
-                            const containerRow = emptyContainer.closest('tr');
-                            if (containerRow) containerRow.remove();
+                            tbody.insertBefore(newRow, tbody.firstChild);
                         }
-
-                        tbody.insertBefore(newRow, tbody.firstChild);
-                    }
-                });
-                highestTicketId = data.new_highest_id;
+                    });
+                    highestTicketId = data.new_highest_id;
+                }
             }
         } catch (error) {
             console.error('Error fetching new tickets:', error);

@@ -535,6 +535,9 @@
                 const data = await response.json();
 
                 if (data.success) {
+                    if (data.ticket && data.ticket.status) {
+                        window.updateChatStatusBadge(data.ticket.status);
+                    }
                     if (data.replies && data.replies.length > 0) {
                         appendMessages(data.replies);
                     }
@@ -919,6 +922,29 @@
                  else if (newStatus === 'in progress') chatBadge.classList.add('status-progress-lite');
                  else chatBadge.classList.add('status-closed-lite');
                  chatBadge.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+             }
+
+             // Also update main status pill if present on the page (index/details pages)
+             const mainPill = document.getElementById('mainStatusPill');
+             if (mainPill) {
+                 mainPill.className = 'status-pill-premium';
+                 if (newStatus === 'open') {
+                     mainPill.classList.add('status-open-prem');
+                     mainPill.innerHTML = '<span class="pulse-dot-prem"></span> Open';
+                 } else if (newStatus === 'in progress') {
+                     mainPill.classList.add('status-progress-prem');
+                     mainPill.innerHTML = '👍🏻 In Progress';
+                 } else if (newStatus === 'closed') {
+                     mainPill.classList.add('status-closed-prem');
+                     mainPill.innerHTML = '✅️ Closed';
+                 }
+             }
+
+             // Also update select input value if present on the page
+             const statusSelect = document.querySelector('select.status-select-header');
+             if (statusSelect && statusSelect.value !== newStatus) {
+                 statusSelect.value = newStatus;
+                 Array.from(statusSelect.options).forEach(o => o.defaultSelected = (o.value === newStatus));
              }
         };
     })();

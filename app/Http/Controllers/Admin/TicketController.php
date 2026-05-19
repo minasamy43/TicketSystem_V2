@@ -328,6 +328,28 @@ class TicketController extends Controller
             'user_count' => Ticket::whereBetween('created_at', [$monthStart, $monthEnd])->whereHas('user', function($q) { $q->where('role', 2); })->count(),
         ];
 
+        $updates = [];
+        $existingIds = $request->get('existing_ids', []);
+        if (!empty($existingIds)) {
+            $updatedTickets = Ticket::with(['closer', 'inprogressBy'])
+                ->whereIn('id', $existingIds)
+                ->withCount([
+                    'replies as unread_replies_count' => function ($query) {
+                        $query->where('is_read', 0)->whereNull('admin_id');
+                    }
+                ])->get();
+
+            foreach ($updatedTickets as $t) {
+                $updates[] = [
+                    'id' => $t->id,
+                    'status' => $t->status,
+                    'inprogress_by' => $t->inprogressBy->name ?? '---',
+                    'closer' => $t->closer->name ?? '---',
+                    'unread_count' => $t->unread_replies_count,
+                ];
+            }
+        }
+
         return response()->json([
             'success' => true,
             'new_tickets' => $newTickets->map(function ($t) {
@@ -349,7 +371,8 @@ class TicketController extends Controller
             'counts' => $counts,
             'monthly_counts' => $monthly_counts,
             'today_label' => now()->format('M d'),
-            'new_highest_id' => $newTickets->max('id') ?: $lastId
+            'new_highest_id' => $newTickets->max('id') ?: $lastId,
+            'updates' => $updates
         ]);
     }
 
