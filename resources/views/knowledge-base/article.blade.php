@@ -13,7 +13,6 @@
             </svg>
             Back to {{ $article->category->title }}
         </a>
-
         <div class="article-content-wrapper">
             <div class="article-header">
                 <div class="cat-badge">{{ $article->category->icon }} {{ $article->category->title }}</div>

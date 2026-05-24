@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Tickets')
-@section('breadcrumb', 'Tickets')
+@section('breadcrumb', request('sender_type') === 'user' ? 'User Tickets' : 'Agent Tickets')
 
 @push('styles')
     <link
