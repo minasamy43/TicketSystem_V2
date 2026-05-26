@@ -152,6 +152,7 @@ class TicketController extends Controller
             abort(403, 'Unauthorized');
         }
 
+        $ticket->replies()->delete();
         $ticket->delete();
 
         return redirect()->route('agent.dashboard')->with('success', 'Ticket deleted successfully');
@@ -174,12 +175,10 @@ class TicketController extends Controller
         }
 
         $replies = $repliesQuery->get();
-        $unreadCount = $ticket->replies->whereNotNull('admin_id')->where('is_read', 0)->count();
 
-        if (!$ticket->has_user_read) {
-            $ticket->update(['has_user_read' => true]);
+        if (!$lastId) {
+            app(\App\Http\Controllers\Admin\TicketController::class)->markConversationAsRead($ticket);
         }
-        $ticket->replies()->whereNotNull('admin_id')->where('is_read', false)->update(['is_read' => true]);
 
         return response()->json([
             'success' => true,
@@ -189,7 +188,7 @@ class TicketController extends Controller
                 'status' => $ticket->status,
                 'user_name' => $ticket->user->name ?? 'Agent',
             ],
-            'unread_count' => $unreadCount,
+            'unread_count' => 0,
             'replies' => $replies->map(function ($reply) use ($lastId) {
                 static $dividerInserted = false;
                 $isFirstUnread = false;

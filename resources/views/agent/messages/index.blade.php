@@ -191,9 +191,6 @@
             if (typeof openAdminChat === 'function') {
                 openAdminChat(ticketId);
             }
-
-            const dot = element.querySelector('.unread-dot');
-            if (dot) dot.remove();
         }
 
         function closeMobileChat() {
@@ -203,56 +200,48 @@
             document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
         }
 
-        setInterval(async () => {
-            try {
-                const response = await fetch(`{{ route('agent.messages.new-data') }}?last_reply_id=${lastReplyId}&filter={{ $filter }}&date={{ $date }}`);
-                const data = await response.json();
+        window.MESSAGES_REALTIME_ENABLED = true;
+        window.MESSAGES_INBOX_MODE = 'agent';
 
-                if (data.success && data.new_messages.length > 0) {
-                    data.new_messages.forEach(msg => {
-                        let item = document.querySelector(`.chat-item[data-ticket-id="${msg.ticket_id}"]`);
+        window.handleInboxMessageRealtime = function (msg) {
+            if (!msg || !chatList) return;
+            if (msg.id <= lastReplyId) return;
+            lastReplyId = Math.max(lastReplyId, msg.id);
 
-                        if (item) {
-                            item.querySelector('.chat-preview').innerHTML = `
-                                    ${(!msg.is_read && msg.is_from_admin) ? '<span class="unread-dot"></span>' : ''}
-                                    ${msg.image ? '<i class="fa-solid fa-image text-muted me-1" style="font-size: 0.75rem;"></i>' : ''}
-                                    ${msg.body}
-                                `;
-                            item.querySelector('.chat-time').textContent = msg.relative_time;
-                            if (currentActiveTicketId == msg.ticket_id) {
-                                const dot = item.querySelector('.unread-dot');
-                                if (dot) dot.remove();
-                            }
-                            chatList.prepend(item);
-                        } else {
-                            const newItem = document.createElement('div');
-                            newItem.className = 'chat-item';
-                            newItem.setAttribute('data-ticket-id', msg.ticket_id);
-                            newItem.onclick = () => selectChat(msg.ticket_id, newItem);
-                            newItem.innerHTML = `
-                                    <div class="chat-avatar">
-                                        ${msg.user_name.charAt(0).toUpperCase()}
-                                    </div>
-                                    <div class="chat-info">
-                                        <div class="chat-info-top">
-                                            <span class="chat-name">${msg.user_name}</span>
-                                            <span class="chat-time">${msg.relative_time}</span>
-                                        </div>
-                                        <div class="chat-preview">
-                                            ${(!msg.is_read && msg.is_from_admin) ? '<span class="unread-dot"></span>' : ''}
-                                            ${msg.image ? '<i class="fa-solid fa-image text-muted me-1" style="font-size: 0.75rem;"></i>' : ''}
-                                            ${msg.body}
-                                        </div>
-                                    </div>
-                                `;
-                            chatList.prepend(newItem);
-                        }
-                    });
-                    lastReplyId = data.new_highest_id;
+            let item = document.querySelector(`.chat-item[data-ticket-id="${msg.ticket_id}"]`);
+            const showUnread = !msg.is_read && msg.is_from_admin && currentActiveTicketId != msg.ticket_id;
+
+            if (item) {
+                item.querySelector('.chat-preview').innerHTML = `
+                    ${showUnread ? '<span class="unread-dot"></span>' : ''}
+                    ${msg.image ? '<i class="fa-solid fa-image text-muted me-1" style="font-size: 0.75rem;"></i>' : ''}
+                    ${msg.body}`;
+                item.querySelector('.chat-time').textContent = msg.relative_time;
+                if (currentActiveTicketId == msg.ticket_id) {
+                    const dot = item.querySelector('.unread-dot');
+                    if (dot) dot.remove();
                 }
-            } catch (error) {
-                console.error('Error fetching new sidebar data:', error);
+                chatList.prepend(item);
+            } else {
+                const newItem = document.createElement('div');
+                newItem.className = 'chat-item';
+                newItem.setAttribute('data-ticket-id', msg.ticket_id);
+                newItem.onclick = () => selectChat(msg.ticket_id, newItem);
+                newItem.innerHTML = `
+                    <div class="chat-avatar">${msg.user_name.charAt(0).toUpperCase()}</div>
+                    <div class="chat-info">
+                        <div class="chat-info-top">
+                            <span class="chat-name">${msg.user_name}</span>
+                            <span class="chat-time">${msg.relative_time}</span>
+                        </div>
+                        <div class="chat-preview">
+                            ${showUnread ? '<span class="unread-dot"></span>' : ''}
+                            ${msg.image ? '<i class="fa-solid fa-image text-muted me-1" style="font-size: 0.75rem;"></i>' : ''}
+                            ${msg.body}
+                        </div>
+                    </div>`;
+                chatList.prepend(newItem);
             }
-        }, 10000);
+        };
     </script>
 @endpush

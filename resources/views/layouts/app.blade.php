@@ -457,48 +457,7 @@
       }
     });
   </script>
-  @stack('scripts')
-  <script>
-    // Real-time Sidebar Counts Updater
-    (function () {
-      async function updateSidebarCounts() {
-        try {
-          const response = await fetch('{{ route('sidebar.unread-counts') }}', {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-          });
-          const data = await response.json();
-          if (data.success) {
-            if (data.role == 1) { // Admin
-              const admin = data.admin;
-              updateBadge('sidebar-admin-tickets-badge', admin.total_tickets);
-              updateBadge('sidebar-agent-tickets-badge', admin.agent_tickets);
-              updateBadge('sidebar-user-tickets-badge', admin.user_tickets);
-              updateBadge('sidebar-messages-badge', admin.messages);
-            } else { // Agent/User
-              updateBadge('sidebar-user-messages-badge', data.user.messages);
-            }
-          }
-        } catch (error) { console.error('Sidebar poll failed:', error); }
-      }
-
-      function updateBadge(id, count) {
-        const badge = document.getElementById(id);
-        if (!badge) return;
-        if (count > 0) {
-          badge.textContent = count > 99 ? '99+' : count;
-          badge.style.display = '';
-        } else {
-          badge.style.display = 'none';
-        }
-      }
-
-      // Initial update and then every 5 seconds
-      if ({{ Auth::check() ? 'true' : 'false' }}) {
-        updateSidebarCounts();
-        setInterval(updateSidebarCounts, 5000);
-      }
-    })();
-  </script>
+  @include('partials.realtime')
 </body>
 
 

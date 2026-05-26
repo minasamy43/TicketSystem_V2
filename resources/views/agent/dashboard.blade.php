@@ -331,6 +331,7 @@
     @include('admin.partials._chat')
     <script>
         const DASHBOARD_CONFIG = {
+            mode: 'agent',
             highestTicketId: {{ $tickets->first()->id ?? 0 }},
             newDataUrl: '{{ route("agent.dashboard.new-data") }}'
         };

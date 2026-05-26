@@ -7,6 +7,7 @@ use App\Models\Reply;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class TicketController extends Controller
 {
@@ -170,19 +171,10 @@ class TicketController extends Controller
         }
 
         $replies = $repliesQuery->get();
-        $unreadCount = $ticket->replies->whereNull('admin_id')->where('is_read', 0)->count();
 
-        // Mark as read for admin
-        if (!$ticket->has_admin_read) {
-            $ticket->update(['has_admin_read' => true]);
+        if (!$lastId) {
+            $this->markConversationAsRead($ticket);
         }
-        $ticket->replies()->whereNull('admin_id')->where('is_read', false)->update(['is_read' => true]);
-        
-        // Clear cached sidebar unread count
-        $adminId = \Illuminate\Support\Facades\Auth::id();
-        \Illuminate\Support\Facades\Cache::forget('admin_sidebar_unread_' . $adminId);
-        \Illuminate\Support\Facades\Cache::forget('admin_sidebar_agent_tickets_unread_' . $adminId);
-        \Illuminate\Support\Facades\Cache::forget('admin_sidebar_user_tickets_unread_' . $adminId);
 
         return response()->json([
             'success' => true,
@@ -192,7 +184,7 @@ class TicketController extends Controller
                 'status' => $ticket->status,
                 'user_name' => $ticket->user->name ?? 'User',
             ],
-            'unread_count' => $unreadCount,
+            'unread_count' => 0,
             'replies' => $replies->map(function ($reply) use ($lastId) {
                 static $dividerInserted = false;
                 $isFirstUnread = false;
@@ -213,6 +205,18 @@ class TicketController extends Controller
                     'is_first_unread' => $isFirstUnread,
                 ];
             })
+        ]);
+    }
+
+    /** Mark ticket conversation as read (admin or agent). */
+    public function markAsRead($id)
+    {
+        $ticket = Ticket::findOrFail($id);
+        $this->markConversationAsRead($ticket);
+
+        return response()->json([
+            'success' => true,
+            'counts' => $this->unreadCountsForCurrentUser(),
         ]);
     }
 
@@ -379,28 +383,72 @@ class TicketController extends Controller
     /** Get unread counts for all relevant tickets. */
     public function getUnreadCounts()
     {
+        return response()->json([
+            'success' => true,
+            'counts' => $this->unreadCountsForCurrentUser(),
+        ]);
+    }
+
+    private function unreadCountsForCurrentUser(): array
+    {
         $user = Auth::user();
-        if ($user->role == 1) {
-            // Admin: counts of user replies (where admin_id is null)
+        if ((int) $user->role === 1) {
             $tickets = Ticket::withCount([
                 'replies as unread_count' => function ($q) {
                     $q->whereNull('admin_id')->where('is_read', 0);
-                }
+                },
             ])->having('unread_count', '>', 0)->get();
         } else {
-            // User: counts of admin replies (where admin_id is not null)
             $tickets = Ticket::where('user_id', $user->id)
                 ->withCount([
                     'replies as unread_count' => function ($q) {
                         $q->whereNotNull('admin_id')->where('is_read', 0);
-                    }
+                    },
                 ])->having('unread_count', '>', 0)->get();
         }
 
-        return response()->json([
-            'success' => true,
-            'counts' => $tickets->pluck('unread_count', 'id')
-        ]);
+        return $tickets->pluck('unread_count', 'id')->toArray();
+    }
+
+    public function markConversationAsRead(Ticket $ticket): void
+    {
+        $user = Auth::user();
+
+        if ((int) $user->role === 1) {
+            if (!$ticket->has_admin_read) {
+                $ticket->update(['has_admin_read' => true]);
+            }
+            $ticket->replies()->whereNull('admin_id')->where('is_read', false)->update(['is_read' => true]);
+
+            $adminId = $user->id;
+            Cache::forget('admin_sidebar_unread_' . $adminId);
+            Cache::forget('admin_sidebar_agent_tickets_unread_' . $adminId);
+            Cache::forget('admin_sidebar_user_tickets_unread_' . $adminId);
+
+            return;
+        }
+
+        if ((int) $user->role === 0 && (int) $ticket->user_id === (int) $user->id) {
+            if (!$ticket->has_user_read) {
+                $ticket->update(['has_user_read' => true]);
+            }
+            $ticket->replies()->whereNotNull('admin_id')->where('is_read', false)->update(['is_read' => true]);
+            Cache::forget('user_sidebar_unread_' . $user->id);
+
+            return;
+        }
+
+        if ((int) $user->role === 2 && (int) $ticket->user_id === (int) $user->id) {
+            if (!$ticket->has_user_read) {
+                $ticket->update(['has_user_read' => true]);
+            }
+            $ticket->replies()->whereNotNull('admin_id')->where('is_read', false)->update(['is_read' => true]);
+            Cache::forget('user_sidebar_unread_' . $user->id);
+
+            return;
+        }
+
+        abort(403, 'Unauthorized');
     }
 
     /** Get dates that have unread tickets. */

@@ -165,8 +165,8 @@
                         <div class="col-12 col-md-7">
                             <div class="chart-wrapper" style="height: 220px; position: relative;">
                                 <div class="stat-center">
-                                    <div class="stat-center-value">{{ $allOpen + $allInProgress + $allClosed }}</div>
-                                    <div class="stat-center-label">Total</div>
+                                    <div class="stat-center-value" id="distribution-center-total">{{ $allOpen + $allInProgress + $allClosed }}</div>
+                                    <div class="stat-center-label" id="distribution-center-label">Total</div>
                                 </div>
                                 <canvas id="distributionChart"></canvas>
                             </div>

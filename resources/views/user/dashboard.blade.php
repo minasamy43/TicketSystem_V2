@@ -224,8 +224,8 @@
 
     <script>
         const DASHBOARD_CONFIG = {
+            mode: 'user',
             highestTicketId: {{ $tickets->first()->id ?? 0 }},
-            newDataUrl: '{{ route("user.dashboard.new-data") }}'
         };
 
         function confirmDelete(ticketId, subject) {

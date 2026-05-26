@@ -462,6 +462,7 @@
         @endphp
         const chatRoutePrefix = '{{ $chatRoutePrefix }}';
         const isUserContext = chatRoutePrefix !== 'admin';
+        const useWebsocketRealtime = chatRoutePrefix === 'admin' || chatRoutePrefix === 'agent' || chatRoutePrefix === 'user';
         const isSingleTicketView = {{ isset($ticket) ? 'true' : 'false' }};
         let currentTicketId = {{ isset($ticket) ? $ticket->id : 'null' }};
         let lastMessageId = null;
@@ -489,7 +490,7 @@
                 // We'll trust the initial load IDs if we need polling for static, 
                 // but usually static is just for the show page.
                 // For now, let's start polling even if static if there is a ticket.
-                if (currentTicketId) startPolling();
+                if (currentTicketId && !useWebsocketRealtime) startPolling();
             });
         }
 
@@ -512,8 +513,9 @@
         };
 
         function startPolling() {
+            if (useWebsocketRealtime) return;
             stopPolling();
-            pollInterval = setInterval(pollForNewMessages, 2000); // Faster polling for chat
+            pollInterval = setInterval(pollForNewMessages, 2000);
         }
 
         function stopPolling() {
@@ -559,29 +561,87 @@
             }
         }
 
+        window.isTicketChatOpen = function(ticketId) {
+            return container.classList.contains('active')
+                && currentTicketId != null
+                && String(currentTicketId) === String(ticketId);
+        };
+
+        window.clearTicketUnreadUi = function(ticketId) {
+            const badge = document.getElementById(`unread-count-${ticketId}`);
+            if (badge) badge.remove();
+
+            const floatingBadge = document.getElementById('floatingChatBadge');
+            if (isTicketChatOpen(ticketId) && floatingBadge) {
+                floatingBadge.style.display = 'none';
+            }
+
+            document.querySelectorAll(`tr[data-ticket-id="${ticketId}"], .chat-item[data-ticket-id="${ticketId}"]`).forEach((el) => {
+                el.classList.remove('unread-row');
+                el.querySelectorAll('.unread-dot, .unread-indicator-dot, .msg-unread-badge').forEach((n) => n.remove());
+            });
+        };
+
+        window.markTicketAsRead = async function markTicketAsRead(ticketId) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            try {
+                await fetch(`/tickets/${ticketId}/mark-read`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                });
+                clearTicketUnreadUi(ticketId);
+                await syncUnreadBadgesFromServer();
+            } catch (e) {
+                console.warn('Mark as read failed:', e);
+            }
+        }
+
+        async function syncUnreadBadgesFromServer() {
+            try {
+                const response = await fetch('/tickets/unread-counts', {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    updateAllBadges(data.counts);
+                }
+            } catch (e) {
+                console.warn('Unread sync failed:', e);
+            }
+            if (window.Realtime?.refreshSidebar) {
+                window.Realtime.refreshSidebar();
+            }
+        }
+
         function updateAllBadges(counts) {
             let totalUnread = 0;
             
             for (const [ticketId, count] of Object.entries(counts)) {
-                totalUnread += count;
+                const effectiveCount = isTicketChatOpen(ticketId) ? 0 : count;
+                totalUnread += effectiveCount;
                 
                 // Update dashboard badges
                 const badgeId = `unread-count-${ticketId}`;
                 let badge = document.getElementById(badgeId);
                 const row = document.querySelector(`tr[data-ticket-id="${ticketId}"]`);
                 
-                if (count > 0) {
+                if (effectiveCount > 0) {
                     if (badge) {
-                        badge.textContent = count > 99 ? '99+' : count;
+                        badge.textContent = effectiveCount > 99 ? '99+' : effectiveCount;
                         badge.style.display = 'block';
                     } else {
                         // Try to find the chat button to append badge
-                        const chatBtn = document.querySelector(`tr[data-ticket-id="${ticketId}"] .action-btn-premium`);
+                        const chatBtn = document.querySelector(`tr[data-ticket-id="${ticketId}"] .action-btn-premium`)
+                            || document.querySelector(`tr[data-ticket-id="${ticketId}"] .chat-btn-modern[title="Open Chat"]`);
                         if (chatBtn) {
                             chatBtn.insertAdjacentHTML('beforeend', `
                                 <span id="${badgeId}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light shadow-sm"
                                       style="font-size: 0.66rem; padding: 0.24em 0.45em; line-height: 1;">
-                                    ${count > 99 ? '99+' : count}
+                                    ${effectiveCount > 99 ? '99+' : effectiveCount}
                                 </span>
                             `);
                         }
@@ -642,13 +702,48 @@
             }
         }
 
-        // Start global polling
-        setInterval(pollGlobalUnreadCounts, 5000); // Faster Global polling (5s)
-        pollGlobalUnreadCounts(); // Initial check
+        if (!useWebsocketRealtime) {
+            setInterval(pollGlobalUnreadCounts, 5000);
+            pollGlobalUnreadCounts();
+        } else {
+            (function bindChatWebsocket() {
+                if (!window.Realtime) {
+                    return setTimeout(bindChatWebsocket, 100);
+                }
+                window.Realtime.on('reply.created', (e) => {
+                    const role = window.RealtimeConfig?.role;
+                    const counts = role === 0
+                        ? (e.unread_counts?.agent || {})
+                        : role === 2
+                            ? (e.unread_counts?.user || {})
+                            : (e.unread_counts?.admin || {});
+                    if (counts && typeof updateAllBadges === 'function') {
+                        updateAllBadges(counts);
+                    }
+                    if (currentTicketId && e.ticket_id == currentTicketId && e.reply) {
+                        const incomingFromOther = isUserContext ? e.reply.is_admin : !e.reply.is_admin;
+                        if (incomingFromOther) {
+                            window.markTicketAsRead(e.ticket_id);
+                        }
+                        if (!lastMessageId || e.reply.id > lastMessageId) {
+                            appendMessages([e.reply]);
+                        }
+                    }
+                });
+                window.Realtime.on('ticket.changed', (e) => {
+                    if (!currentTicketId) return;
+                    const ticketId = e.user_update?.id ?? e.agent_update?.id ?? e.update?.id ?? e.ticket?.id;
+                    if (ticketId != currentTicketId) return;
+                    const status = e.user_update?.status ?? e.agent_update?.status ?? e.update?.status ?? e.ticket?.status;
+                    if (status) window.updateChatStatusBadge?.(status);
+                });
+            })();
+        }
 
         // Global function to open chat (used by dashboard)
         window.openAdminChat = async function(ticketId) {
             currentTicketId = ticketId;
+            window.currentTicketId = ticketId;
             lastMessageId = null;
             stopPolling();
             
@@ -658,35 +753,7 @@
             const commentUrl = `/${chatRoutePrefix}/tickets/${ticketId}/${chatRoutePrefix === 'admin' ? 'comment' : 'reply'}`;
             chatForm.action = commentUrl;
             clearImagePreview();
-
-            // Clear unread visual indicators instantly
-            const badge = document.getElementById(`unread-count-${ticketId}`);
-            if (badge) {
-                const count = parseInt(badge.textContent) || 0;
-                const sidebarBadge = document.getElementById('sidebar-messages-badge');
-                if (sidebarBadge) {
-                    const currentTotal = parseInt(sidebarBadge.textContent) || 0;
-                    const newTotal = Math.max(0, currentTotal - count);
-                    if (newTotal > 0) {
-                        sidebarBadge.textContent = newTotal > 99 ? '99+' : newTotal;
-                    } else {
-                        sidebarBadge.style.display = 'none';
-                    }
-                }
-                badge.remove();
-            }
-
-            const floatingBadge = document.getElementById('floatingChatBadge');
-            if (floatingBadge) floatingBadge.remove();
-            
-            const ticketRow = document.querySelector(`tr[data-ticket-id="${ticketId}"], .chat-item[data-ticket-id="${ticketId}"]`);
-            if (ticketRow) {
-                ticketRow.classList.remove('unread-row');
-                const dot = ticketRow.querySelector('.unread-indicator-dot, .unread-dot');
-                if (dot) dot.remove();
-                const msgBadge = ticketRow.querySelector('.msg-unread-badge');
-                if (msgBadge) msgBadge.remove();
-            }
+            clearTicketUnreadUi(ticketId);
 
             try {
                 const dataUrl = `/${chatRoutePrefix}/tickets/${ticketId}/chat-data`;
@@ -712,7 +779,9 @@
                         lastMessageId = data.replies[data.replies.length - 1].id;
                     }
                     
-                    startPolling();
+                    if (!useWebsocketRealtime) startPolling();
+
+                    await syncUnreadBadgesFromServer();
 
                     scrollToBottom(50); 
                     scrollToBottom(300);
@@ -725,6 +794,8 @@
 
         window.closeAdminChat = function() {
             container.classList.remove('active');
+            currentTicketId = null;
+            window.currentTicketId = null;
             stopPolling();
         };
 

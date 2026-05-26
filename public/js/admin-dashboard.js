@@ -22,17 +22,19 @@ document.addEventListener('DOMContentLoaded', function () {
             responsive: true,
             maintainAspectRatio: false,
             onHover: (evt, elements) => {
-                const centerValue = document.querySelector('.stat-center-value');
-                const centerLabel = document.querySelector('.stat-center-label');
+                const centerValue = document.getElementById('distribution-center-total');
+                const centerLabel = document.getElementById('distribution-center-label');
                 if (!centerValue || !centerLabel) return;
+
+                const data = window.distributionChart.data.datasets[0].data;
 
                 if (elements.length > 0) {
                     const idx = elements[0].index;
-                    centerValue.textContent = distributionChart.data.datasets[0].data[idx];
-                    centerLabel.textContent = distributionChart.data.labels[idx];
-                    centerValue.style.color = distributionChart.data.datasets[0].backgroundColor[idx];
+                    centerValue.textContent = data[idx];
+                    centerLabel.textContent = window.distributionChart.data.labels[idx];
+                    centerValue.style.color = window.distributionChart.data.datasets[0].backgroundColor[idx];
                 } else {
-                    centerValue.textContent = config.stats.allOpen + config.stats.allInProgress + config.stats.allClosed;
+                    centerValue.textContent = data[0] + data[1] + data[2];
                     centerLabel.textContent = 'Total';
                     centerValue.style.color = '#1a1a1a';
                 }
@@ -140,92 +142,4 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Real-time Dashboard Summary Discovery
-setInterval(async () => {
-    try {
-        const config = window.AdminDashboardConfig;
-        if (!config) return;
-
-        const url = new URL(config.routes.newData, window.location.origin);
-        if (config.currentSelection.date) {
-            url.searchParams.set('date', config.currentSelection.date);
-        }
-
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.success && data.counts) {
-            const counts = data.counts;
-            updateValueWithEffect('open-count', counts.open);
-            updateValueWithEffect('progress-count', counts.in_progress);
-            updateValueWithEffect('closed-count', counts.closed);
-            updateValueWithEffect('total-count', counts.total);
-
-            // Real-time Chart Updates (Only if viewing current month/year)
-            const isCurrentMonth = config.currentSelection.month == config.currentDate.month && config.currentSelection.year == config.currentDate.year;
-            
-            if (isCurrentMonth) {
-                if (window.distributionChart && data.monthly_counts) {
-                    const m = data.monthly_counts;
-                    distributionChart.data.datasets[0].data = [m.open, m.in_progress, m.closed];
-                    distributionChart.update();
-
-                    // Update Mini Progress Bars (Sender Distribution)
-                    const totalSource = m.agent_count + m.user_count;
-                    const agentPct = totalSource > 0 ? Math.round((m.agent_count / totalSource) * 100) : 0;
-                    const userPct = totalSource > 0 ? Math.round((m.user_count / totalSource) * 100) : 0;
-
-                    const agentBar = document.getElementById('mini-agent-bar');
-                    const userBar = document.getElementById('mini-user-bar');
-                    const agentCount = document.getElementById('mini-agent-count');
-                    const userCount = document.getElementById('mini-user-count');
-
-                    if (agentBar) {
-                        agentBar.style.width = agentPct + '%';
-                        agentBar.querySelector('div').textContent = agentPct + '%';
-                    }
-                    if (userBar) {
-                        userBar.style.width = userPct + '%';
-                        userBar.querySelector('div').textContent = userPct + '%';
-                    }
-                    if (agentCount) agentCount.textContent = m.agent_count;
-                    if (userCount) userCount.textContent = m.user_count;
-                    
-                    // Update center total for status chart
-                    const statusVal = document.querySelector('.stat-center-value');
-                    if (statusVal) {
-                        statusVal.textContent = m.open + m.in_progress + m.closed;
-                    }
-                }
-
-                if (window.trendChart && data.today_label) {
-                    const todayIdx = trendChart.data.labels.indexOf(data.today_label);
-                    if (todayIdx !== -1) {
-                        trendChart.data.datasets[0].data[todayIdx] = counts.open;
-                        trendChart.data.datasets[1].data[todayIdx] = counts.in_progress;
-                        trendChart.data.datasets[2].data[todayIdx] = counts.closed;
-                        trendChart.update('none'); // Update without animation for smoothness
-                    }
-                }
-            }
-        }
-    } catch (error) {
-        console.error('Error fetching summary data:', error);
-    }
-}, 5000);
-
-function updateValueWithEffect(id, newValue) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const currentVal = parseInt(el.textContent);
-    if (currentVal !== newValue) {
-        el.style.transition = 'all 0.3s ease';
-        el.style.transform = 'scale(1.2)';
-        el.style.color = '#d4af53';
-        setTimeout(() => {
-            el.textContent = newValue;
-            el.style.transform = 'scale(1)';
-            el.style.color = '';
-        }, 300);
-    }
-}
+// Real-time dashboard updates via WebSockets (see realtime-handlers.js)
