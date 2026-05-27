@@ -84,7 +84,6 @@ class TicketController extends Controller
         if (!$ticket->has_admin_read) {
             $ticket->update(['has_admin_read' => true]);
         }
-        $ticket->replies()->whereNull('admin_id')->where('is_read', false)->update(['is_read' => true]);
         
         // Clear cached sidebar unread count
         $adminId = \Illuminate\Support\Facades\Auth::id();
@@ -172,7 +171,9 @@ class TicketController extends Controller
 
         $replies = $repliesQuery->get();
 
+        $unreadCount = 0;
         if (!$lastId) {
+            $unreadCount = $ticket->replies()->whereNull('admin_id')->where('is_read', 0)->count();
             $this->markConversationAsRead($ticket);
         }
 
@@ -184,7 +185,7 @@ class TicketController extends Controller
                 'status' => $ticket->status,
                 'user_name' => $ticket->user->name ?? 'User',
             ],
-            'unread_count' => 0,
+            'unread_count' => $unreadCount,
             'replies' => $replies->map(function ($reply) use ($lastId) {
                 static $dividerInserted = false;
                 $isFirstUnread = false;

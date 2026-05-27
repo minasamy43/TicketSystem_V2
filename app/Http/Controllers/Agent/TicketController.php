@@ -107,9 +107,6 @@ class TicketController extends Controller
             'image' => $imagePath,
         ]);
 
-        // Mark as unread for the admin
-        Ticket::where('id', $id)->update(['has_admin_read' => false]);
-
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
@@ -138,7 +135,6 @@ class TicketController extends Controller
 
         $ticket->update([
             'status' => 'closed',
-            'has_admin_read' => false
         ]);
 
         return back()->with('success', 'Ticket closed successfully.');
@@ -176,7 +172,9 @@ class TicketController extends Controller
 
         $replies = $repliesQuery->get();
 
+        $unreadCount = 0;
         if (!$lastId) {
+            $unreadCount = $ticket->replies()->whereNotNull('admin_id')->where('is_read', 0)->count();
             app(\App\Http\Controllers\Admin\TicketController::class)->markConversationAsRead($ticket);
         }
 
@@ -188,7 +186,7 @@ class TicketController extends Controller
                 'status' => $ticket->status,
                 'user_name' => $ticket->user->name ?? 'Agent',
             ],
-            'unread_count' => 0,
+            'unread_count' => $unreadCount,
             'replies' => $replies->map(function ($reply) use ($lastId) {
                 static $dividerInserted = false;
                 $isFirstUnread = false;

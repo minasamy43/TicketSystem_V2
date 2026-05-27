@@ -239,29 +239,29 @@
                                         <div class="d-flex justify-content-center align-items-center gap-1">
                                             @php
                                                 $msgCount = $ticket->unread_replies_count ?? 0;
+                                                $messengerGradId = 'messenger-grad-' . $ticket->id;
                                             @endphp
                                             <a href="javascript:void(0)" onclick="openAdminChat({{ $ticket->id }})"
-                                                class="action-btn-premium" title="Chat">
+                                                class="action-btn-premium position-relative" title="Chat">
                                                 <svg viewBox="0 0 256 256" width="24" height="24"
                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <defs>
-                                                        <linearGradient id="messenger-grad" x1="0" y1="1" x2="1" y2="0">
+                                                        <linearGradient id="{{ $messengerGradId }}" x1="0" y1="1" x2="1" y2="0">
                                                             <stop offset="0%" stop-color="#00C6FF" />
                                                             <stop offset="50%" stop-color="#0078FF" />
                                                             <stop offset="100%" stop-color="#A033FF" />
                                                         </linearGradient>
                                                     </defs>
-                                                    <path fill="url(#messenger-grad)"
+                                                    <path fill="url(#{{ $messengerGradId }})"
                                                         d="M128,24C68.9,24,21,68.6,21,123.5c0,31.2,15.7,58.5,40.1,76.5c1.4,1,2.5,2.6,2.8,4.3l3.8,27.3c0.4,3,3.7,4.8,6.4,3.3l29.1-14.9c1-0.5,2.2-0.6,3.2-0.3c7.2,1.8,14.8,2.7,22.7,2.7c59.1,0,107-44.6,107-99.5S187.1,24,128,24z M138.8,148v-0.1l-25.5-27c-4-4.2-10.6-4.5-15.1-0.5l-31.5,28.5c-3,2.7-7.2-0.8-5.2-4.1l29.4-48c3.2-5.3,10.6-6.6,15.5-2.8l25.3,19.3c3.8,2.9,9.3,3.3,13.5-0.1l32-26.1c3-2.5,7,1,5.2,4.3L153,141.5C149.8,146.9,142.5,148.6,138.8,148z" />
                                                 </svg>
 
-                                                @if($msgCount > 0)
-                                                    <span id="unread-count-{{ $ticket->id }}"
-                                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light shadow-sm"
-                                                        style="font-size: 0.66rem; padding: 0.24em 0.45em; line-height: 1;">
-                                                        {{ $msgCount > 99 ? '99+' : $msgCount }}
-                                                    </span>
-                                                @endif
+                                                {{-- Always render badge span so JS can update it without DOM insertion --}}
+                                                <span id="unread-count-{{ $ticket->id }}"
+                                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light shadow-sm"
+                                                    style="font-size: 0.66rem; padding: 0.24em 0.45em; line-height: 1; {{ $msgCount > 0 ? '' : 'display:none;' }}">
+                                                    {{ $msgCount > 99 ? '99+' : ($msgCount ?: '') }}
+                                                </span>
                                             </a>
 
                                             {{-- Direct Delete Button --}}

@@ -16,9 +16,12 @@
 @endpush
 
 @section('content')
+    @php
+        $senderType = ($ticket->user->role == 0) ? 'agent' : 'user';
+    @endphp
     <div class="tk-wrap">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <a href="{{ route('admin.tickets.index') }}" class="btn-back-premium">
+            <a href="{{ route('admin.tickets.index', ['sender_type' => $senderType]) }}" class="btn-back-premium">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                     stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -106,20 +109,18 @@
                 </div>
                 <div class="meta-item-premium">
                     <span class="meta-label-premium">Message Status</span>
-                    <span class="meta-value-premium">
+                    <span class="meta-value-premium" id="message-status-container-{{ $ticket->id }}">
                         <span class="meta-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2.5">
                                 <path
                                     d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
                             </svg></span>
                         @php $uCount = $ticket->unread_replies_count ?? 0; @endphp
-                        <span>{{ $uCount > 0 ? 'New Customer Reply' : 'All Read' }}</span>
-                        @if($uCount > 0)
-                            <span id="unread-count-{{ $ticket->id }}" class="badge rounded-pill bg-danger ms-1"
-                                style="font-size: 0.66rem; padding: 0.2em 0.35em; vertical-align: middle; line-height: 1.5;">
-                                {{ $uCount }} new
-                            </span>
-                        @endif
+                        <span class="status-text">{{ $uCount > 0 ? 'New Customer Reply' : 'All Read' }}</span>
+                        <span id="unread-count-{{ $ticket->id }}" class="badge rounded-pill bg-danger ms-1"
+                            style="font-size: 0.66rem; padding: 0.2em 0.35em; vertical-align: middle; line-height: 1.5; {{ $uCount > 0 ? '' : 'display: none;' }}">
+                            {{ $uCount }} new
+                        </span>
                     </span>
                 </div>
             </div>

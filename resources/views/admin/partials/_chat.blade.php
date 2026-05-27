@@ -469,6 +469,14 @@
         let pollInterval = null;
         let isSubmitting = false;
 
+        // Safety: on list/index pages, ensure chat is not treated as open.
+        // This prevents unread counts from disappearing unless the user actually opens the chat.
+        if (!isSingleTicketView) {
+            container.classList.remove('active');
+            currentTicketId = null;
+            window.currentTicketId = null;
+        }
+
         // Auto-scroll helper
         window.scrollToBottom = (delay = 0) => {
             if (delay > 0) {
@@ -569,7 +577,18 @@
 
         window.clearTicketUnreadUi = function(ticketId) {
             const badge = document.getElementById(`unread-count-${ticketId}`);
-            if (badge) badge.remove();
+            if (badge) {
+                const container = document.getElementById(`message-status-container-${ticketId}`);
+                if (container) {
+                    badge.style.display = 'none';
+                    const statusText = container.querySelector('.status-text');
+                    if (statusText) {
+                        statusText.textContent = 'All Read';
+                    }
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
 
             const floatingBadge = document.getElementById('floatingChatBadge');
             if (isTicketChatOpen(ticketId) && floatingBadge) {
@@ -632,7 +651,7 @@
                 if (effectiveCount > 0) {
                     if (badge) {
                         badge.textContent = effectiveCount > 99 ? '99+' : effectiveCount;
-                        badge.style.display = 'block';
+                        badge.style.display = '';
                     } else {
                         // Try to find the chat button to append badge
                         const chatBtn = document.querySelector(`tr[data-ticket-id="${ticketId}"] .action-btn-premium`)
@@ -679,6 +698,12 @@
                 if (floatingBadge) floatingBadge.style.display = 'none';
             }
             
+            // For admin: sidebar "Messages" unread count is per-admin scoped (assigned/related tickets).
+            // The per-ticket unread map pushed via WS is global, so updating the sidebar here causes flicker.
+            // Sidebar counts are refreshed via `window.Realtime.refreshSidebar()` instead.
+            const roleNum = Number(window.RealtimeConfig?.role);
+            if (roleNum === 1) return;
+
             // Update the sidebar Messages menu badge
             const sidebarBadge = document.getElementById('sidebar-messages-badge');
             const userSidebarBadge = document.getElementById('sidebar-user-messages-badge');
@@ -706,12 +731,15 @@
             setInterval(pollGlobalUnreadCounts, 5000);
             pollGlobalUnreadCounts();
         } else {
+            // Fetch and display existing unread counts immediately on page load (before any WS event fires)
+            syncUnreadBadgesFromServer();
+
             (function bindChatWebsocket() {
                 if (!window.Realtime) {
                     return setTimeout(bindChatWebsocket, 100);
                 }
                 window.Realtime.on('reply.created', (e) => {
-                    const role = window.RealtimeConfig?.role;
+                    const role = Number(window.RealtimeConfig?.role);
                     const counts = role === 0
                         ? (e.unread_counts?.agent || {})
                         : role === 2

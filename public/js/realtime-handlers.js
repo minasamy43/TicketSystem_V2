@@ -136,7 +136,9 @@
 
             const chatBtn = row.querySelector('.action-btn-premium[title="Chat"]');
             if (chatBtn) {
-                let unreadBadge = chatBtn.querySelector(`span[id^="unread-count-"]`);
+                // Use the always-rendered span (hide/show) rather than remove/re-create
+                let unreadBadge = document.getElementById(`unread-count-${update.id}`)
+                    || chatBtn.querySelector(`span[id^="unread-count-"]`);
                 if (unreadCount > 0) {
                     if (!unreadBadge) {
                         unreadBadge = document.createElement('span');
@@ -146,9 +148,10 @@
                         chatBtn.appendChild(unreadBadge);
                     }
                     unreadBadge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                    unreadBadge.style.display = '';
                     row.classList.add('unread-row');
                 } else {
-                    if (unreadBadge) unreadBadge.remove();
+                    if (unreadBadge) unreadBadge.style.display = 'none'; // hide, don't remove
                     row.classList.remove('unread-row');
                 }
             }
@@ -181,7 +184,7 @@
                 <td class="text-muted" id="closer-${ticket.id}">${ticket.closer}</td>
                 <td>
                     <div style="display:flex; align-items:center; gap:8px;">
-                        <span style="color:#d4af53; flex-shrink:0;"><svg width="16" height="16" viewBox="0  0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg></span>
+                        <span style="color:var(--primary-color); flex-shrink:0;"><svg width="16" height="16" viewBox="0  0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg></span>
                         <div>
                             <div style="font-weight:600; color:#333; font-size:0.88rem;">${ticket.time}</div>
                             <div style="font-size:0.72rem; color:#aaa;">${ticket.relative_time}</div>
@@ -190,8 +193,19 @@
                 </td>
                 <td class="text-center">
                     <a href="javascript:void(0)" onclick="openAdminChat(${ticket.id})" class="action-btn-premium position-relative" title="Chat">
-                        <svg viewBox="0 0 256 256" width="24" height="24"><path fill="#0078FF" d="M128,24C68.9,24,21,68.6,21,123.5c0,31.2,15.7,58.5,40.1,76.5l3.8,27.3c3.7,4.8,6.4,3.3l29.1-14.9c7.2,1.8,14.8,2.7,22.7,2.7c59.1,0,107-44.6,107-99.5S187.1,24,128,24z"/></svg>
-                        ${ticket.unread_count > 0 ? `<span id="unread-count-${ticket.id}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light shadow-sm" style="font-size: 0.66rem; padding: 0.24em 0.45em;">${ticket.unread_count}</span>` : ''}
+                        <svg viewBox="0 0 256 256" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="messenger-grad-${ticket.id}" x1="0" y1="1" x2="1" y2="0">
+                                    <stop offset="0%" stop-color="#00C6FF" />
+                                    <stop offset="50%" stop-color="#0078FF" />
+                                    <stop offset="100%" stop-color="#A033FF" />
+                                </linearGradient>
+                            </defs>
+                            <path fill="url(#messenger-grad-${ticket.id})" d="M128,24C68.9,24,21,68.6,21,123.5c0,31.2,15.7,58.5,40.1,76.5c1.4,1,2.5,2.6,2.8,4.3l3.8,27.3c0.4,3,3.7,4.8,6.4,3.3l29.1-14.9c1-0.5,2.2-0.6,3.2-0.3c7.2,1.8,14.8,2.7,22.7,2.7c59.1,0,107-44.6,107-99.5S187.1,24,128,24z M138.8,148v-0.1l-25.5-27c-4-4.2-10.6-4.5-15.1-0.5l-31.5,28.5c-3,2.7-7.2-0.8-5.2-4.1l29.4-48c3.2-5.3,10.6-6.6,15.5-2.8l25.3,19.3c3.8,2.9,9.3,3.3,13.5-0.1l32-26.1c3-2.5,7,1,5.2,4.3L153,141.5C149.8,146.9,142.5,148.6,138.8,148z" />
+                        </svg>
+                        <span id="unread-count-${ticket.id}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light shadow-sm" style="font-size: 0.66rem; padding: 0.24em 0.45em; line-height: 1; ${ticket.unread_count > 0 ? '' : 'display:none;'}">
+                            ${ticket.unread_count > 99 ? '99+' : (ticket.unread_count || '')}
+                        </span>
                     </a>
                 </td>`;
 
@@ -247,8 +261,9 @@
                         chatBtn.appendChild(unreadBadge);
                     }
                     unreadBadge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                    unreadBadge.style.display = '';
                 } else if (unreadBadge) {
-                    unreadBadge.remove();
+                    unreadBadge.style.display = 'none';
                 }
             }
         },
@@ -285,10 +300,26 @@
                 </td>
                 <td class="text-end">
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="javascript:void(0)" onclick="openAdminChat(${ticket.id})" class="chat-btn-modern" title="Open Chat">
-                            <i class="fa-solid fa-message"></i>
-                            ${unreadHtml}
+                        <a href="javascript:void(0)" onclick="openAdminChat(${ticket.id})" class="chat-btn-modern position-relative" title="Open Chat">
+                            <svg viewBox="0 0 256 256" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="messenger-grad-${ticket.id}" x1="0" y1="1" x2="1" y2="0">
+                                        <stop offset="0%" stop-color="#00C6FF" />
+                                        <stop offset="50%" stop-color="#0078FF" />
+                                        <stop offset="100%" stop-color="#A033FF" />
+                                    </linearGradient>
+                                </defs>
+                                <path fill="url(#messenger-grad-${ticket.id})" d="M128,24C68.9,24,21,68.6,21,123.5c0,31.2,15.7,58.5,40.1,76.5c1.4,1,2.5,2.6,2.8,4.3l3.8,27.3c0.4,3,3.7,4.8,6.4,3.3l29.1-14.9c1-0.5,2.2-0.6,3.2-0.3c7.2,1.8,14.8,2.7,22.7,2.7c59.1,0,107-44.6,107-99.5S187.1,24,128,24z M138.8,148v-0.1l-25.5-27c-4-4.2-10.6-4.5-15.1-0.5l-31.5,28.5c-3,2.7-7.2-0.8-5.2-4.1l29.4-48c3.2-5.3,10.6-6.6,15.5-2.8l25.3,19.3c3.8,2.9,9.3,3.3,13.5-0.1l32-26.1c3-2.5,7,1,5.2,4.3L153,141.5C149.8,146.9,142.5,148.6,138.8,148z" />
+                            </svg>
+                            <span id="unread-count-${ticket.id}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light shadow-sm" style="font-size: 0.66rem; padding: 0.24em 0.45em; line-height: 1; ${ticket.unread_count > 0 ? '' : 'display:none;'}">
+                                ${ticket.unread_count > 99 ? '99+' : (ticket.unread_count || '')}
+                            </span>
                         </a>
+                        <button type="button" class="chat-btn-modern" title="Delete Ticket"
+                            style="background: rgba(220,53,69,0.08); border-color: rgba(220,53,69,0.15); color: #dc3545;"
+                            onclick="confirmDelete(${ticket.id}, '${ticket.subject.replace(/'/g, "\\'")}')">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
                     </div>
                 </td>`;
 
@@ -341,8 +372,9 @@
                         chatBtn.appendChild(unreadBadge);
                     }
                     unreadBadge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                    unreadBadge.style.display = '';
                 } else if (unreadBadge) {
-                    unreadBadge.remove();
+                    unreadBadge.style.display = 'none';
                 }
             }
         },
@@ -371,14 +403,32 @@
                 </td>
                 <td class="text-center">
                     <div class="d-flex justify-content-center gap-1">
-                        <a href="javascript:void(0)" onclick="openAdminChat(${ticket.id})" class="action-btn-premium" title="Chat">
-                            <svg viewBox="0 0 256 256" width="24" height="24"><path fill="#0078FF" d="M128,24C68.9,24,21,68.6,21,123.5c0,31.2,15.7,58.5,40.1,76.5l3.8,27.3c3.7,4.8,6.4,3.3l29.1-14.9c7.2,1.8,14.8,2.7,22.7,2.7c59.1,0,107-44.6,107-99.5S187.1,24,128,24z"/></svg>
-                            ${ticket.unread_count > 0 ? `<span id="unread-count-${ticket.id}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.66rem;">${ticket.unread_count}</span>` : ''}
+                        <a href="javascript:void(0)" onclick="openAdminChat(${ticket.id})" class="action-btn-premium position-relative" title="Chat">
+                            <svg viewBox="0 0 256 256" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="messenger-grad-${ticket.id}" x1="0" y1="1" x2="1" y2="0">
+                                        <stop offset="0%" stop-color="#00C6FF" />
+                                        <stop offset="50%" stop-color="#0078FF" />
+                                        <stop offset="100%" stop-color="#A033FF" />
+                                    </linearGradient>
+                                </defs>
+                                <path fill="url(#messenger-grad-${ticket.id})" d="M128,24C68.9,24,21,68.6,21,123.5c0,31.2,15.7,58.5,40.1,76.5c1.4,1,2.5,2.6,2.8,4.3l3.8,27.3c0.4,3,3.7,4.8,6.4,3.3l29.1-14.9c1-0.5,2.2-0.6,3.2-0.3c7.2,1.8,14.8,2.7,22.7,2.7c59.1,0,107-44.6,107-99.5S187.1,24,128,24z M138.8,148v-0.1l-25.5-27c-4-4.2-10.6-4.5-15.1-0.5l-31.5,28.5c-3,2.7-7.2-0.8-5.2-4.1l29.4-48c3.2-5.3,10.6-6.6,15.5-2.8l25.3,19.3c3.8,2.9,9.3,3.3,13.5-0.1l32-26.1c3-2.5,7,1,5.2,4.3L153,141.5C149.8,146.9,142.5,148.6,138.8,148z" />
+                            </svg>
+                            <span id="unread-count-${ticket.id}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light shadow-sm" style="font-size: 0.66rem; padding: 0.24em 0.45em; line-height: 1; ${ticket.unread_count > 0 ? '' : 'display:none;'}">
+                                ${ticket.unread_count > 99 ? '99+' : (ticket.unread_count || '')}
+                            </span>
                         </a>
                         <form method="POST" action="/agent/tickets/${ticket.id}" class="m-0" onsubmit="return confirm('Delete this ticket?')">
                             <input type="hidden" name="_token" value="${csrfToken}">
                             <input type="hidden" name="_method" value="DELETE">
-                            <button type="submit" class="action-btn-premium action-btn-danger" title="Delete Ticket">🗑</button>
+                            <button type="submit" class="action-btn-premium action-btn-danger" title="Delete Ticket">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                            </button>
                         </form>
                     </div>
                 </td>`;

@@ -48,7 +48,9 @@
         },
     });
 
-    if (config.role === 1) {
+    const role = Number(config.role);
+
+    if (role === 1) {
         window.Echo.private('admin')
             .listen('.ticket.changed', (e) => {
                 window.Realtime.emit('ticket.changed', e);
@@ -64,7 +66,7 @@
             });
     }
 
-    if (config.role === 0) {
+    if (role === 0) {
         window.Echo.private(`agent.${config.userId}`)
             .listen('.ticket.changed', (e) => {
                 window.Realtime.emit('ticket.changed', e);
@@ -80,7 +82,7 @@
             });
     }
 
-    if (config.role === 2) {
+    if (role === 2) {
         window.Echo.private(`user.${config.userId}`)
             .listen('.ticket.changed', (e) => {
                 window.Realtime.emit('ticket.changed', e);

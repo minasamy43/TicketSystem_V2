@@ -44,15 +44,16 @@ class RealtimePayloadService
         ]);
 
         $status = $ticket->status;
+        // Agent UI expects: open=red, in progress=yellow, closed=green
         $statusBg = match ($status) {
-            'open' => '#e8f5e9',
-            'closed' => '#fce4ec',
-            default => '#fff8e1',
+            'open' => 'rgba(220, 53, 69, 0.1)',
+            'closed' => 'rgba(25, 135, 84, 0.1)',
+            default => 'rgba(212, 175, 83, 0.15)', // in progress
         };
         $statusColor = match ($status) {
-            'open' => '#2e7d32',
-            'closed' => '#c62828',
-            default => '#f57f17',
+            'open' => '#dc3545',
+            'closed' => '#198754',
+            default => '#d4af53',
         };
 
         return [
@@ -129,15 +130,16 @@ class RealtimePayloadService
             ]);
 
             $status = $ticket->status;
+            // Agent UI expects: open=red, in progress=yellow, closed=green
             $statusBg = match ($status) {
-                'open' => '#e8f5e9',
-                'closed' => '#fce4ec',
-                default => '#fff8e1',
+                'open' => 'rgba(220, 53, 69, 0.1)',
+                'closed' => 'rgba(25, 135, 84, 0.1)',
+                default => 'rgba(212, 175, 83, 0.15)', // in progress
             };
             $statusColor = match ($status) {
-                'open' => '#2e7d32',
-                'closed' => '#c62828',
-                default => '#f57f17',
+                'open' => '#dc3545',
+                'closed' => '#198754',
+                default => '#d4af53',
             };
 
             return [

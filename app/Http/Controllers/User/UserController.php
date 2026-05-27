@@ -207,9 +207,6 @@ class UserController extends Controller
             'image' => $imagePath,
         ]);
 
-        // Mark as unread for the admin
-        Ticket::where('id', $id)->update(['has_admin_read' => false]);
-
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
