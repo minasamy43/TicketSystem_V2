@@ -169,8 +169,14 @@
             newRow.innerHTML = `
                 <td style="font-weight: 600; color: #000;">#${ticket.id}</td>
                 <td style="font-weight: 500;">
-                    ${ticket.user_name}
-                    <span class="new-badge rounded-pill ms-2"><span class="pulse-dot"></span> New</span>
+                    <div class="d-flex align-items-center gap-1">
+                        ${(ticket.user_role ?? 2) === 0
+                            ? `<i class="fa-solid fa-user-cog" style="font-size: 0.75rem; color: var(--primary-color);" title="Agent"></i>`
+                            : `<i class="fa-solid fa-users" style="font-size: 0.75rem; color: var(--primary-color);" title="User"></i>`
+                        }
+                        <span class="ms-1">${ticket.user_name}</span>
+                        <span class="new-badge rounded-pill ms-2"><span class="pulse-dot"></span> New</span>
+                    </div>
                 </td>
                 <td>${ticket.subject}</td>
                 <td>
