@@ -193,7 +193,7 @@
                                             <div class="d-flex align-items-center gap-3">
                                                 <input type="color" class="form-control form-control-color" id="primary_color"
                                                     name="primary_color"
-                                                    value="{{ old('primary_color', \App\Models\Setting::get('primary_color', '#d4af53')) }}"
+                                                    value="{{ old('primary_color', \App\Models\Setting::get('primary_color', '#006eff')) }}"
                                                     title="Choose your color" required
                                                     style="width: 60px; height: 45px; padding: 5px;">
                                                 @if(session()->has('undo_preferences') && isset(session('undo_preferences')['primary_color']) && session('undo_preferences')['primary_color'] !== \App\Models\Setting::get('primary_color'))
@@ -404,7 +404,7 @@
                                     <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
                                         <div class="d-grid d-sm-block">
                                             <button type="button" class="btn btn-outline-secondary px-4"
-                                                onclick="document.getElementById('site_name').value='HelpTK'; document.getElementById('primary_color').value='#d4af53'; document.getElementById('sidebar_bg').value='#ffffff'; document.getElementById('navbar_bg').value='#ffffff'; document.getElementById('sidebar_text').value='#6c7380'; document.getElementById('navbar_text').value='#6c7380'; document.getElementById('site_name_color').value='#1a1a1a'; document.getElementById('user_name_color').value='#6c7380'; document.getElementById('sidebar_separator').value='#e6e9f4'; document.getElementById('menu_title_color').value='#828795'; document.getElementById('restore_logo').value='1'; document.getElementById('site_logo').value=''; document.getElementById('logoPreview').src='{{ asset('img/HelpTK--C.png') }}'; document.getElementById('preferencesForm').submit();">Restore
+                                                onclick="document.getElementById('site_name').value='Meta'; document.getElementById('primary_color').value='#006eff'; document.getElementById('sidebar_bg').value='#ffffff'; document.getElementById('navbar_bg').value='#ffffff'; document.getElementById('sidebar_text').value='#6c7380'; document.getElementById('navbar_text').value='#6c7380'; document.getElementById('site_name_color').value='#1a1a1a'; document.getElementById('user_name_color').value='#6c7380'; document.getElementById('sidebar_separator').value='#e6e9f4'; document.getElementById('menu_title_color').value='#828795'; document.getElementById('restore_logo').value='1'; document.getElementById('site_logo').value=''; document.getElementById('logoPreview').src='{{ asset('img/BlueLogo.png') }}'; document.getElementById('preferencesForm').submit();">Restore
                                                 Defaults</button>
                                         </div>
                                         <div class="d-grid d-sm-block">

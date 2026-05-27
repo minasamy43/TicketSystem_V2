@@ -44,7 +44,7 @@ function applyTheme(colors) {
         document.getElementById('applied_logo').value = "";
         const logoPreview = document.getElementById('logoPreview');
         if (logoPreview) {
-            logoPreview.src = '/img/HelpTK--C.png';
+            logoPreview.src = '/img/BlueLogo.png';
         }
     }
     

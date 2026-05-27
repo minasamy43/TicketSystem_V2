@@ -231,7 +231,7 @@ class SettingsController extends Controller
         }
 
         // Also check if it's the default logo path (if applicable)
-        if ($logoPath === 'img/HelpTK--C.png') return;
+        if ($logoPath === 'img/BlueLogo.png' || $logoPath === 'img/HelpTK--C.png') return;
 
         if (\Illuminate\Support\Facades\Storage::disk('public')->exists($logoPath)) {
             \Illuminate\Support\Facades\Storage::disk('public')->delete($logoPath);

@@ -9,7 +9,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="icon" type="image/png" href="{{ \App\Models\Setting::getLogoUrl() }}?v=2">
-  <link rel="preload" as="image" href="{{ asset('img/HelpTK--C.png') }}">
+  <link rel="preload" as="image" href="{{ asset('img/BlueLogo.png') }}">
   @auth
     @if(Auth::user()->avatar)
       <link rel="preload" as="image" href="{{ asset('storage/' . Auth::user()->avatar) }}">

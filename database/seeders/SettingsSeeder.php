@@ -11,9 +11,9 @@ class SettingsSeeder extends Seeder
     {
         // 1. Seed the Active Preferences (Current state)
         $settings = [
-            'site_name' => 'HelpTK',
-            'site_logo' => 'img/HelpTK--C.png',
-            'primary_color' => '#d4af53',
+            'site_name' => 'Meta',
+            'site_logo' => 'img/BlueLogo.png',
+            'primary_color' => '#006eff',
             'sidebar_bg' => '#ffffff',
             'navbar_bg' => '#ffffff',
             'sidebar_text' => '#6c7380',
@@ -50,9 +50,9 @@ class SettingsSeeder extends Seeder
             ],
             [
                 'id' => 'theme_69f9b11006761',
-                'name' => 'Blue design',
+                'name' => 'Gold design',
                 'colors' => [
-                    'primary_color' => '#006eff',
+                    'primary_color' => '#d4af53',
                     'sidebar_bg' => '#ffffff',
                     'navbar_bg' => '#ffffff',
                     'sidebar_text' => '#6c7380',
@@ -61,8 +61,8 @@ class SettingsSeeder extends Seeder
                     'user_name_color' => '#6c7380',
                     'sidebar_separator' => '#e6e9f4',
                     'menu_title_color' => '#828795',
-                    'site_name' => 'Meta',
-                    'site_logo' => 'img/BlueLogo.png',
+                    'site_name' => 'HelpTK',
+                    'site_logo' => 'img/HelpTK--C.png',
                 ],
                 'created_at' => '2026-05-05 11:57:52',
             ],

@@ -45,7 +45,7 @@ class Setting extends Model
     {
         $logo = self::get('site_logo');
         if (!$logo) {
-            return asset('img/HelpTK--C.png');
+            return asset('img/BlueLogo.png');
         }
 
         if (str_starts_with($logo, 'img/')) {
