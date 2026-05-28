@@ -190,7 +190,7 @@
     }
 
     .premium-card {
-        padding: 1rem;
+        padding: 1rem 0.75rem;
     }
 
     .page-title {
@@ -221,17 +221,18 @@
 
     .table-premium tbody tr {
         margin-bottom: 1.2rem;
-        padding: 0.5rem;
+        padding: 0.5rem 0;
         border: 1px solid var(--border-soft);
         background: #fff;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
         border-radius: 16px !important;
         display: flex;
         flex-direction: column;
+        position: relative;
     }
 
     .table-premium tbody td {
-        padding: 0.8rem 1rem !important;
+        padding: 0.6rem 1.2rem !important;
         border: none;
         display: flex;
         justify-content: space-between;
@@ -240,11 +241,28 @@
     }
 
     .table-premium tbody td[data-label="ID"] {
-        order: 1;
+        order: 2;
     }
 
     .table-premium tbody td[data-label="User"] {
-        order: 2;
+        order: 1;
+        justify-content: flex-start;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        padding: 1rem 1.2rem !important;
+        margin-bottom: 0.5rem;
+    }
+
+    .table-premium tbody td[data-label="User"] .text-start {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .table-premium tbody td[data-label="User"] .fw-bold,
+    .table-premium tbody td[data-label="User"] .text-muted {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
     }
 
     .table-premium tbody td[data-label="Role"] {
@@ -264,12 +282,19 @@
         text-align: left;
     }
 
+    .table-premium tbody td[data-label="User"]::before {
+        display: none;
+    }
+
     .table-premium tbody td:last-child {
-        order: -1;
-        padding-bottom: 0.5rem !important;
-        margin-bottom: 0.5rem;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-        justify-content: flex-end;
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: auto;
+        padding: 0 !important;
+        background: transparent;
+        border: none;
+        z-index: 10;
     }
 
     .table-premium tbody td:last-child::before {

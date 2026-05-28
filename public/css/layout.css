@@ -436,6 +436,33 @@ body.no-sidebar .main-wrapper {
     padding: 0 20px;
   }
 
+  .navbar-breadcrumb {
+    font-size: 0.8rem;
+    gap: 6px;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    max-width: calc(100vw - 160px);
+    display: flex;
+    align-items: center;
+  }
+
+  .navbar-breadcrumb::-webkit-scrollbar {
+    display: none;
+  }
+
+  .breadcrumb-home span {
+    display: none;
+  }
+
+  .breadcrumb-home, 
+  .breadcrumb-current,
+  .breadcrumb-current a,
+  .breadcrumb-current span {
+    font-size: 0.8rem;
+  }
+
   .content-area {
     padding: 20px;
   }
