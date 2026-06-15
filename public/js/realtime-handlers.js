@@ -356,14 +356,15 @@
             const row = document.querySelector(`tr[data-ticket-id="${update.id}"]`);
             if (!row) return;
 
-            const statusBadge = row.querySelector('.badge');
+            // Use dedicated class to avoid selecting the category badge (first .badge in row)
+            const statusBadge = row.querySelector('.status-badge-agent');
             if (statusBadge) {
                 statusBadge.style.background = update.status_bg;
                 statusBadge.style.color = update.status_color;
                 statusBadge.innerHTML = `${update.status_label} ${update.status_icon}`;
             }
 
-            const closerCell = row.cells[2];
+            const closerCell = row.cells[3];
             if (closerCell) closerCell.textContent = update.closer;
 
             let unreadCount = update.unread_count;
@@ -373,7 +374,9 @@
 
             const chatBtn = row.querySelector('.action-btn-premium[title="Chat"]');
             if (chatBtn) {
-                let unreadBadge = chatBtn.querySelector(`span[id^="unread-count-"]`);
+                // Try getElementById first (works for pre-rendered badge spans)
+                let unreadBadge = document.getElementById(`unread-count-${update.id}`)
+                    || chatBtn.querySelector(`span[id^="unread-count-"]`);
                 if (unreadCount > 0) {
                     if (!unreadBadge) {
                         unreadBadge = document.createElement('span');
@@ -401,7 +404,7 @@
 
             newRow.innerHTML = `
                 <td style="font-weight: 500;">${ticket.subject}</td>
-                <td><span class="badge" style="padding: 0.5rem 0.8rem; border-radius: 10px; font-size: 0.72rem; background: ${ticket.status_bg}; color: ${ticket.status_color};">${ticket.status_label} ${ticket.status_icon}</span></td>
+                <td><span class="badge status-badge-agent" style="padding: 0.5rem 0.8rem; border-radius: 10px; font-size: 0.72rem; background: ${ticket.status_bg}; color: ${ticket.status_color};">${ticket.status_label} ${ticket.status_icon}</span></td>
                 <td class="text-muted">${ticket.closer}</td>
                 <td>
                     <div style="display:flex; align-items:center; gap:8px;">
