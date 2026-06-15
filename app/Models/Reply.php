@@ -9,7 +9,7 @@ class Reply extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['ticket_id', 'admin_id', 'user_id', 'body', 'is_read', 'image'];
+    protected $fillable = ['ticket_id', 'admin_id', 'user_id', 'body', 'is_read', 'image', 'video'];
 
     public function ticket()
     {

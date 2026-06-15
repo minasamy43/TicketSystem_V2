@@ -37,6 +37,10 @@ class TicketController extends Controller
             $query->where('status', $status);
         }
 
+        if ($category = request('category')) {
+            $query->where('category', $category);
+        }
+
         if ($userName = request('user_name')) {
             $query->whereHas('user', function ($q) use ($userName) {
                 $q->where('name', 'like', '%' . $userName . '%');
@@ -132,25 +136,50 @@ class TicketController extends Controller
 
         if ($request->status === 'closed') {
             $updateData['closed_by'] = $currentUserId;
+            $updateData['solved_at'] = now();
         } elseif ($request->status === 'in progress') {
             $updateData['inprogress_by'] = $currentUserId;
             $updateData['closed_by'] = null; // Clear closer if moved back to progress
+            $updateData['solved_at'] = null;
         } else {
             // Re-opening: Clear both
             $updateData['closed_by'] = null;
             $updateData['inprogress_by'] = null;
+            $updateData['solved_at'] = null;
         }
 
         $ticket->update($updateData);
         $ticket->load(['inprogressBy', 'closer']);
 
         if ($request->ajax()) {
+            // Calculate resolution time for display
+            $resolutionTime = null;
+            if ($ticket->solved_at) {
+                $diffMins  = (int) $ticket->created_at->diffInMinutes($ticket->solved_at);
+                $diffHours = (int) $ticket->created_at->diffInHours($ticket->solved_at);
+                $diffDays  = (int) $ticket->created_at->diffInDays($ticket->solved_at);
+
+                if ($diffMins < 60) {
+                    $resolutionTime = $diffMins . ' min' . ($diffMins !== 1 ? 's' : '');
+                } elseif ($diffHours < 24) {
+                    $remainMins = $diffMins - ($diffHours * 60);
+                    $resolutionTime = $diffHours . ' hr' . ($diffHours !== 1 ? 's' : '');
+                    if ($remainMins > 0) $resolutionTime .= ' ' . $remainMins . ' min' . ($remainMins !== 1 ? 's' : '');
+                } else {
+                    $remainHours = $diffHours - ($diffDays * 24);
+                    $resolutionTime = $diffDays . ' day' . ($diffDays !== 1 ? 's' : '');
+                    if ($remainHours > 0) $resolutionTime .= ' ' . $remainHours . ' hr' . ($remainHours !== 1 ? 's' : '');
+                }
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Status updated successfully.',
                 'new_status' => $ticket->status,
                 'closer' => $ticket->closer ? $ticket->closer->name : '---',
-                'inprogress_by' => $ticket->inprogressBy ? $ticket->inprogressBy->name : '---'
+                'inprogress_by' => $ticket->inprogressBy ? $ticket->inprogressBy->name : '---',
+                'solved_at' => $ticket->solved_at ? $ticket->solved_at->format('M d, Y \a\t g:i A') : null,
+                'resolution_time' => $resolutionTime,
             ]);
         }
 
@@ -197,12 +226,13 @@ class TicketController extends Controller
                 }
 
                 return [
-                    'id' => $reply->id,
-                    'body' => $reply->body,
-                    'image' => $reply->image ? asset('storage/' . $reply->image) : null,
-                    'is_admin' => $reply->isFromAdmin(),
-                    'sender' => $reply->isFromAdmin() ? ($reply->admin->name ?? 'Admin') : ($reply->user->name ?? 'User'),
-                    'time' => $reply->created_at->format('g:i A'),
+                    'id'             => $reply->id,
+                    'body'           => $reply->body,
+                    'image'          => $reply->image ? asset('storage/' . $reply->image) : null,
+                    'video'          => $reply->video ? asset('storage/' . $reply->video) : null,
+                    'is_admin'       => $reply->isFromAdmin(),
+                    'sender'         => $reply->isFromAdmin() ? ($reply->admin->name ?? 'Admin') : ($reply->user->name ?? 'User'),
+                    'time'           => $reply->created_at->format('g:i A'),
                     'is_first_unread' => $isFirstUnread,
                 ];
             })
@@ -225,12 +255,13 @@ class TicketController extends Controller
     public function storeComment(Request $request, $id)
     {
         $request->validate([
-            'body' => 'nullable|string|max:2000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'body'  => 'nullable|string|max:2000',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'video' => 'nullable|mimetypes:video/mp4,video/webm,video/ogg,video/quicktime,video/x-msvideo|max:51200',
         ]);
 
-        if (!$request->body && !$request->hasFile('image')) {
-            return response()->json(['success' => false, 'message' => 'Message or image is required.'], 422);
+        if (!$request->body && !$request->hasFile('image') && !$request->hasFile('video')) {
+            return response()->json(['success' => false, 'message' => 'Message, image, or video is required.'], 422);
         }
 
         $imagePath = null;
@@ -240,11 +271,19 @@ class TicketController extends Controller
             $imagePath = $image->storeAs('tickets', $filename, 'public');
         }
 
+        $videoPath = null;
+        if ($request->hasFile('video')) {
+            $video = $request->file('video');
+            $filename = date('Y-m-d_H-i-s') . '_' . uniqid() . '.' . $video->getClientOriginalExtension();
+            $videoPath = $video->storeAs('tickets/videos', $filename, 'public');
+        }
+
         $reply = Reply::create([
             'ticket_id' => $id,
-            'admin_id' => Auth::id(),
-            'body' => $request->body ?? '',
-            'image' => $imagePath,
+            'admin_id'  => Auth::id(),
+            'body'      => $request->body ?? '',
+            'image'     => $imagePath,
+            'video'     => $videoPath,
         ]);
 
         // Mark as unread for the user
@@ -254,13 +293,14 @@ class TicketController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Comment posted.',
-                'reply' => [
-                    'id' => $reply->id,
-                    'body' => $reply->body,
+                'reply'   => [
+                    'id'       => $reply->id,
+                    'body'     => $reply->body,
                     'is_admin' => true,
-                    'image' => $reply->image ? asset('storage/' . $reply->image) : null,
-                    'sender' => Auth::user()->name ?? 'Admin',
-                    'time' => $reply->created_at->format('g:i A'),
+                    'image'    => $reply->image ? asset('storage/' . $reply->image) : null,
+                    'video'    => $reply->video ? asset('storage/' . $reply->video) : null,
+                    'sender'   => Auth::user()->name ?? 'Admin',
+                    'time'     => $reply->created_at->format('g:i A'),
                 ]
             ]);
         }
@@ -290,6 +330,8 @@ class TicketController extends Controller
             $query->where('priority', $priority);
         if ($status = $request->get('status'))
             $query->where('status', $status);
+        if ($category = $request->get('category'))
+            $query->where('category', $category);
         if ($userName = $request->get('user_name')) {
             $query->whereHas('user', function ($q) use ($userName) {
                 $q->where('name', 'like', '%' . $userName . '%'); });
@@ -363,6 +405,7 @@ class TicketController extends Controller
                     'user_name' => $t->user->name ?? 'N/A',
                     'user_role' => $t->user->role ?? 2,
                     'subject' => $t->subject,
+                    'category' => ucfirst($t->category ?? 'None'),
                     'status' => $t->status,
                     'status_label' => ucfirst($t->status) . ($t->status == 'open' ? ' 🎟️' : ($t->status == 'closed' ? ' ✅️' : ' 👍🏻')),
                     'inprogress_by' => $t->inprogressBy->name ?? '---',

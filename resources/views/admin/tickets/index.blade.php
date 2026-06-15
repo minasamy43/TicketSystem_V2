@@ -55,6 +55,7 @@
                                 <tr>
                                     <th width="80">Id</th>
                                     <th>Sender</th>
+                                    <th>Category</th>
                                     <th width="200">Subject</th>
                                     <th>Status</th>
                                     <th>In Progress By</th>
@@ -72,6 +73,17 @@
                                         <input type="text" name="user_name" id="filter_user_name"
                                             class="inline-filter-input search-icon-input" placeholder="Sender..."
                                             value="{{ request('user_name') }}" oninput="debounceSubmit()">
+                                    </td>
+                                    <td style="padding: 8px 10px;">
+                                        <select name="category" class="inline-filter-select"
+                                            onchange="document.getElementById('filterForm').submit()">
+                                            <option value="">All </option>
+                                            <option value="live Egypt" {{ request('category') == 'live Egypt' ? 'selected' : '' }}>live Egypt</option>
+                                            <option value="live pro" {{ request('category') == 'live pro' ? 'selected' : '' }}>live pro</option>
+                                            <option value="demo Egypt" {{ request('category') == 'demo Egypt' ? 'selected' : '' }}>demo Egypt</option>
+                                            <option value="demo pro" {{ request('category') == 'demo pro' ? 'selected' : '' }}>demo pro</option>
+                                            <option value="other" {{ request('category') == 'other' ? 'selected' : '' }}>other</option>
+                                        </select>
                                     </td>
                                     <td style="padding: 8px 10px;">
                                         <input type="text" name="subject" id="filter_subject"
@@ -140,6 +152,11 @@
                                                     <span class="new-badge rounded-pill ms-2"><span class="pulse-dot"></span> New</span>
                                                 @endif
                                             </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary" style="font-size: 0.8rem; padding: 0.4em 0.6em; border-radius: 6px; background-color: #f1f3f5 !important; color: #495057 !important; border: 1px solid #dee2e6;">
+                                                {{ ucfirst($ticket->category ?? 'None') }}
+                                            </span>
                                         </td>
                                         <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $ticket->subject }}">{{ $ticket->subject }}</td>
                                         <td>
@@ -218,7 +235,7 @@
                                     </tr>
                                 @empty
                                     <tr class="empty-state-row">
-                                        <td colspan="8" class="p-0">
+                                        <td colspan="9" class="p-0">
                                             <div class="empty-state-container text-center w-100"
                                                 style="padding: 4rem 1rem; background: #fff;">
                                                 <div

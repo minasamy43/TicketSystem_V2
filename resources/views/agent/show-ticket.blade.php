@@ -82,7 +82,30 @@
                         {{ $ticket->created_at->format('M d, Y') }} at {{ $ticket->created_at->format('g:i A') }}
                     </span>
                 </div>
-
+                <div class="meta-item-premium">
+                    <span class="meta-label-premium">Category</span>
+                    <span class="meta-value-premium">
+                        <span class="meta-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                            </svg></span>
+                        {{ ucfirst($ticket->category ?? 'None') }}
+                    </span>
+                </div>
+                @if($ticket->status === 'closed' && $ticket->solved_at)
+                <div class="meta-item-premium">
+                    <span class="meta-label-premium">Solved Date-Time</span>
+                    <span class="meta-value-premium">
+                        <span class="meta-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg></span>
+                        {{ $ticket->solved_at->format('M d, Y') }} at {{ $ticket->solved_at->format('g:i A') }}
+                    </span>
+                </div>
+                @endif
             </div>
 
             <div class="orig-request-box">

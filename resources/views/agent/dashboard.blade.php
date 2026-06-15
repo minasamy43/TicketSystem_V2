@@ -152,6 +152,7 @@
                         <thead>
                             <tr>
                                 <th>Subject</th>
+                                <th>Category</th>
                                 <th>Status</th>
                                 <th>Closed By</th>
                                 <th>Date</th>
@@ -163,6 +164,18 @@
                                         class="inline-filter-input search-icon-input" placeholder="Subject..."
                                         value="{{ request('subject') }}" oninput="debounceSubmit()">
                                 </td>
+                                <td style="padding: 8px 10px;">
+                                        <select name="category" class="inline-filter-select"
+                                            onchange="document.getElementById('filterForm').submit()">
+                                            <option value="">All </option>
+                                            <option value="live Egypt" {{ request('category') == 'live Egypt' ? 'selected' : '' }}>live Egypt</option>
+                                            <option value="live pro" {{ request('category') == 'live pro' ? 'selected' : '' }}>live pro</option>
+                                            <option value="demo Egypt" {{ request('category') == 'demo Egypt' ? 'selected' : '' }}>demo Egypt</option>
+                                            <option value="demo pro" {{ request('category') == 'demo pro' ? 'selected' : '' }}>demo pro</option>
+                                            <option value="other" {{ request('category') == 'other' ? 'selected' : '' }}>other</option>
+                                        </select>
+                                    </td>
+                                
                                 <td style="padding: 10px 15px;">
                                     <select name="status" class="inline-filter-select" form="filterForm"
                                         onchange="document.getElementById('filterForm').submit()">
@@ -200,6 +213,11 @@
                             @forelse($tickets as $ticket)
                                 <tr data-ticket-id="{{ $ticket->id }}" style="cursor: pointer;">
                                     <td style="font-weight: 500;">{{ $ticket->subject }}</td>
+                                    <td>
+                                        <span class="badge bg-secondary" style="font-size: 0.8rem; padding: 0.4em 0.6em; border-radius: 6px; background-color: #f1f3f5 !important; color: #495057 !important; border: 1px solid #dee2e6;">
+                                            {{ ucfirst($ticket->category ?? 'None') }}
+                                        </span>
+                                    </td>
                                     <td>
                                         <span class="badge"
                                             style="padding: 0.5rem 0.8rem; border-radius: 10px; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.5px;

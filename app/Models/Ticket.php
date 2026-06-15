@@ -39,10 +39,13 @@ class Ticket extends Model
         'has_user_read',
         'closed_by',
         'inprogress_by',
+        'category',
+        'solved_at',
     ];
 
     protected $casts = [
         'images' => 'array',
+        'solved_at' => 'datetime',
     ];
 
     public function user()

@@ -174,15 +174,16 @@ class RealtimePayloadService
         $reply->loadMissing(['admin', 'user']);
 
         return [
-            'id' => $reply->id,
-            'ticket_id' => $reply->ticket_id,
-            'body' => $reply->body,
-            'image' => $reply->image ? asset('storage/' . $reply->image) : null,
-            'is_admin' => $reply->isFromAdmin(),
-            'sender' => $reply->isFromAdmin()
+            'id'             => $reply->id,
+            'ticket_id'      => $reply->ticket_id,
+            'body'           => $reply->body,
+            'image'          => $reply->image ? asset('storage/' . $reply->image) : null,
+            'video'          => $reply->video ? asset('storage/' . $reply->video) : null,
+            'is_admin'       => $reply->isFromAdmin(),
+            'sender'         => $reply->isFromAdmin()
                 ? ($reply->admin->name ?? 'Admin')
                 : ($reply->user->name ?? 'User'),
-            'time' => $reply->created_at->format('g:i A'),
+            'time'           => $reply->created_at->format('g:i A'),
             'is_first_unread' => false,
         ];
     }

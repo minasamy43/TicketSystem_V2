@@ -135,6 +135,7 @@ class UserController extends Controller
         $request->validate([
             'subject' => 'required|max:64',
             'message' => 'required|max:1000',
+            'category' => 'required|in:live Egypt,live pro,demo Egypt,demo pro,other',
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
@@ -152,6 +153,7 @@ class UserController extends Controller
             'user_id' => Auth::id(),
             'subject' => $request->subject,
             'message' => $request->message,
+            'category' => $request->category,
             'status' => 'open',
             'images' => $imagePaths
         ]);
@@ -184,12 +186,13 @@ class UserController extends Controller
         }
 
         $request->validate([
-            'body' => 'nullable|string|max:2000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'body'  => 'nullable|string|max:2000',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'video' => 'nullable|mimetypes:video/mp4,video/webm,video/ogg,video/quicktime,video/x-msvideo|max:51200',
         ]);
 
-        if (!$request->body && !$request->hasFile('image')) {
-            return back()->with('error', 'Message or image is required.');
+        if (!$request->body && !$request->hasFile('image') && !$request->hasFile('video')) {
+            return back()->with('error', 'Message, image, or video is required.');
         }
 
         $imagePath = null;
@@ -199,25 +202,34 @@ class UserController extends Controller
             $imagePath = $image->storeAs('tickets', $filename, 'public');
         }
 
+        $videoPath = null;
+        if ($request->hasFile('video')) {
+            $video = $request->file('video');
+            $filename = date('Y-m-d_H-i-s') . '_' . uniqid() . '.' . $video->getClientOriginalExtension();
+            $videoPath = $video->storeAs('tickets/videos', $filename, 'public');
+        }
+
         $reply = \App\Models\Reply::create([
             'ticket_id' => $id,
-            'user_id' => Auth::id(),
-            'admin_id' => null,
-            'body' => $request->body ?? '',
-            'image' => $imagePath,
+            'user_id'   => Auth::id(),
+            'admin_id'  => null,
+            'body'      => $request->body ?? '',
+            'image'     => $imagePath,
+            'video'     => $videoPath,
         ]);
 
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Reply sent.',
-                'reply' => [
-                    'id' => $reply->id,
-                    'body' => $request->body ?? '',
+                'reply'   => [
+                    'id'       => $reply->id,
+                    'body'     => $request->body ?? '',
                     'is_admin' => false,
-                    'image' => $imagePath ? asset('storage/' . $imagePath) : null,
-                    'sender' => 'You',
-                    'time' => now()->format('g:i A'),
+                    'image'    => $imagePath ? asset('storage/' . $imagePath) : null,
+                    'video'    => $videoPath ? asset('storage/' . $videoPath) : null,
+                    'sender'   => 'You',
+                    'time'     => now()->format('g:i A'),
                 ]
             ]);
         }
@@ -269,12 +281,13 @@ class UserController extends Controller
                 }
 
                 return [
-                    'id' => $reply->id,
-                    'body' => $reply->body,
-                    'image' => $reply->image ? asset('storage/' . $reply->image) : null,
-                    'is_admin' => $reply->isFromAdmin(),
-                    'sender' => $reply->isFromAdmin() ? ($reply->admin->name ?? 'Support') : 'You',
-                    'time' => $reply->created_at->format('g:i A'),
+                    'id'             => $reply->id,
+                    'body'           => $reply->body,
+                    'image'          => $reply->image ? asset('storage/' . $reply->image) : null,
+                    'video'          => $reply->video ? asset('storage/' . $reply->video) : null,
+                    'is_admin'       => $reply->isFromAdmin(),
+                    'sender'         => $reply->isFromAdmin() ? ($reply->admin->name ?? 'Support') : 'You',
+                    'time'           => $reply->created_at->format('g:i A'),
                     'is_first_unread' => $isFirstUnread,
                 ];
             })

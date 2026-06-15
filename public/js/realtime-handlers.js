@@ -178,6 +178,11 @@
                         <span class="new-badge rounded-pill ms-2"><span class="pulse-dot"></span> New</span>
                     </div>
                 </td>
+                <td>
+                    <span class="badge bg-secondary" style="font-size: 0.8rem; padding: 0.4em 0.6em; border-radius: 6px; background-color: #f1f3f5 !important; color: #495057 !important; border: 1px solid #dee2e6;">
+                        ${ticket.category || 'None'}
+                    </span>
+                </td>
                 <td>${ticket.subject}</td>
                 <td>
                     <select class="status-select-badge status-${ticket.status === 'in progress' ? 'progress' : ticket.status}" onchange="updateStatusLive(${ticket.id}, this.value, this)">

@@ -183,7 +183,7 @@
     }
     .bubble-image:hover { transform: scale(1.02); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
 
-    /* Image Upload Button */
+    /* Image / Video Upload Buttons */
     .btn-upload {
         background: none; border: none; color: #65676b; width: 34px; height: 34px;
         border-radius: 50%; display: flex; align-items: center; justify-content: center;
@@ -191,8 +191,10 @@
     }
     .btn-upload:hover { background: #f0f2f5; color: #1c1e21; }
     .btn-upload svg { width: 22px; height: 22px; }
+    .btn-upload.video-btn { color: #9b59b6; }
+    .btn-upload.video-btn:hover { background: rgba(155,89,182,0.1); color: #7d3c98; }
 
-    /* New CSS for image preview */
+    /* Image preview */
     .chat-image-preview-wrap {
         padding: 0.8rem 1.2rem; border-top: 1px solid #f0f2f5; display: none; background: #fff;
     }
@@ -207,6 +209,40 @@
         font-size: 14px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: all 0.2s;
     }
     .remove-preview:hover { background: #f0f2f5; color: #dc3545; transform: scale(1.1); }
+
+    /* Video preview in footer */
+    .chat-video-preview-wrap {
+        padding: 0.8rem 1.2rem; border-top: 1px solid #f0f2f5; display: none; background: #fff;
+    }
+    .chat-video-preview {
+        position: relative; display: inline-flex; align-items: center; gap: 10px;
+        background: #f0f2f5; border-radius: 12px; padding: 8px 12px;
+        border: 1px solid #e8eaed; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .chat-video-preview .video-icon {
+        width: 36px; height: 36px; border-radius: 8px; background: rgba(155,89,182,0.15);
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .chat-video-preview .video-icon svg { color: #7d3c98; width: 20px; height: 20px; }
+    .chat-video-preview .video-name {
+        font-size: 0.82rem; color: #333; max-width: 160px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .chat-video-preview .video-size { font-size: 0.72rem; color: #65676b; }
+    .remove-video-preview {
+        position: absolute; top: -8px; right: -8px; background: #fff; color: #333; border: 1px solid #e8eaed;
+        border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+        font-size: 14px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: all 0.2s;
+    }
+    .remove-video-preview:hover { background: #f0f2f5; color: #dc3545; transform: scale(1.1); }
+
+    /* Video bubble */
+    .bubble-video {
+        max-width: 100%; border-radius: 14px; margin-top: 6px; display: block;
+        border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        background: #000; max-height: 240px; outline: none;
+    }
+    .bubble-video:focus { outline: none; }
 
     /* Sending indicator styles */
     .bubble.sending { opacity: 0.7; }
@@ -383,8 +419,15 @@
                                      alt="Attachment">
                             </div>
                         @endif
+                        @if($reply->video)
+                            <video class="bubble-video" controls preload="metadata"
+                                   onloadedmetadata="window.scrollToBottom(50);">
+                                <source src="{{ asset('storage/' . $reply->video) }}">
+                                Your browser does not support video playback.
+                            </video>
+                        @endif
                         @if($reply->body)
-                            <div class="bubble-content {{ $reply->image ? 'mt-1' : '' }}">
+                            <div class="bubble-content {{ ($reply->image || $reply->video) ? 'mt-1' : '' }}">
                                 {{ $reply->body }}
                             </div>
                         @endif
@@ -418,6 +461,22 @@
         </div>
     </div>
 
+    <div id="videoPreviewWrap" class="chat-video-preview-wrap">
+        <div class="chat-video-preview">
+            <div class="video-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                </svg>
+            </div>
+            <div>
+                <div class="video-name" id="videoPreviewName">video.mp4</div>
+                <div class="video-size" id="videoPreviewSize"></div>
+            </div>
+            <button type="button" class="remove-video-preview" onclick="clearVideoPreview()">×</button>
+        </div>
+    </div>
+
     <div class="chat-footer">
         @php
             $defaultAction = '#';
@@ -434,6 +493,13 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
             </button>
             <input type="file" name="image" id="chatImageInput" accept="image/*" style="display: none;" onchange="handleImageSelect(this)">
+            <button type="button" class="btn-upload video-btn" onclick="document.getElementById('chatVideoInput').click()" title="Attach a video (max 50MB)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                </svg>
+            </button>
+            <input type="file" name="video" id="chatVideoInput" accept="video/mp4,video/webm,video/ogg,video/quicktime,video/avi" style="display: none;" onchange="handleVideoSelect(this)">
             <div class="chat-input-wrap">
                 <textarea name="body" class="chat-input" placeholder="Aa" rows="1"></textarea>
             </div>
@@ -451,8 +517,13 @@
         const chatForm = document.getElementById('chatForm');
         const chatInput = chatForm.querySelector('.chat-input');
         const imageInput = document.getElementById('chatImageInput');
+        const videoInput = document.getElementById('chatVideoInput');
         const previewWrap = document.getElementById('imagePreviewWrap');
         const previewImg = document.getElementById('imagePreview');
+        const videoPreviewWrap = document.getElementById('videoPreviewWrap');
+        const videoPreviewName = document.getElementById('videoPreviewName');
+        const videoPreviewSize = document.getElementById('videoPreviewSize');
+        const MAX_VIDEO_BYTES = 50 * 1024 * 1024; // 50 MB
         @php
             $chatRoutePrefix = 'admin';
             if(Auth::check()) {
@@ -470,7 +541,6 @@
         let isSubmitting = false;
 
         // Safety: on list/index pages, ensure chat is not treated as open.
-        // This prevents unread counts from disappearing unless the user actually opens the chat.
         if (!isSingleTicketView) {
             container.classList.remove('active');
             currentTicketId = null;
@@ -480,13 +550,9 @@
         // Auto-scroll helper
         window.scrollToBottom = (delay = 0) => {
             if (delay > 0) {
-                setTimeout(() => {
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }, delay);
+                setTimeout(() => { chatMessages.scrollTop = chatMessages.scrollHeight; }, delay);
             } else {
-                requestAnimationFrame(() => {
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                });
+                requestAnimationFrame(() => { chatMessages.scrollTop = chatMessages.scrollHeight; });
             }
         };
         const scrollToBottom = window.scrollToBottom;
@@ -494,22 +560,21 @@
         if ({{ isset($isStatic) && $isStatic ? 'true' : 'false' }}) {
             window.addEventListener('load', () => {
                 scrollToBottom();
-                const lastBubble = chatMessages.querySelector('.bubble:last-child');
-                // We'll trust the initial load IDs if we need polling for static, 
-                // but usually static is just for the show page.
-                // For now, let's start polling even if static if there is a ticket.
                 if (currentTicketId && !useWebsocketRealtime) startPolling();
             });
         }
 
+        // ── Image helpers ────────────────────────────────────────────
         window.handleImageSelect = function(input) {
             if (input.files && input.files[0]) {
+                // Clear any pending video
+                clearVideoPreview();
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     previewImg.src = e.target.result;
                     previewWrap.style.display = 'block';
                     scrollToBottom();
-                }
+                };
                 reader.readAsDataURL(input.files[0]);
             }
         };
@@ -518,6 +583,34 @@
             imageInput.value = '';
             previewWrap.style.display = 'none';
             previewImg.src = '';
+        };
+
+        // ── Video helpers ────────────────────────────────────────────
+        function formatBytes(bytes) {
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        window.handleVideoSelect = function(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (file.size > MAX_VIDEO_BYTES) {
+                    alert('Video is too large. Maximum allowed size is 50 MB.');
+                    input.value = '';
+                    return;
+                }
+                // Clear any pending image
+                clearImagePreview();
+                videoPreviewName.textContent = file.name;
+                videoPreviewSize.textContent = formatBytes(file.size);
+                videoPreviewWrap.style.display = 'block';
+                scrollToBottom();
+            }
+        };
+
+        window.clearVideoPreview = function() {
+            if (videoInput) videoInput.value = '';
+            if (videoPreviewWrap) videoPreviewWrap.style.display = 'none';
         };
 
         function startPolling() {
@@ -781,6 +874,7 @@
             const commentUrl = `/${chatRoutePrefix}/tickets/${ticketId}/${chatRoutePrefix === 'admin' ? 'comment' : 'reply'}`;
             chatForm.action = commentUrl;
             clearImagePreview();
+            clearVideoPreview();
             clearTicketUnreadUi(ticketId);
 
             try {
@@ -906,11 +1000,39 @@
                 `;
             }
 
+            let videoHtml = '';
+            if (reply.video) {
+                videoHtml = `
+                    <video class="bubble-video" controls preload="metadata"
+                           onloadedmetadata="window.scrollToBottom(50);">
+                        <source src="${reply.video}">
+                        Your browser does not support video playback.
+                    </video>
+                `;
+            }
+
+            // For temp (sending) video bubbles, show a placeholder pill
+            let videoSendingHtml = '';
+            if (isSending && reply.video_sending) {
+                videoSendingHtml = `
+                    <div style="display:flex;align-items:center;gap:8px;background:rgba(155,89,182,0.1);border-radius:10px;padding:8px 12px;margin-top:4px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7d3c98" stroke-width="2">
+                            <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                        </svg>
+                        <span style="font-size:0.82rem;color:#555;">${reply.video_sending}</span>
+                    </div>
+                `;
+            }
+
+            const hasMedia = reply.image || reply.video || reply.video_sending;
             return `
                 ${reply.is_first_unread ? `<div class="unread-divider"><span>${unreadCount} New Coming</span></div>` : ''}
                 <div class="bubble ${bubbleClass} ${isSending ? 'sending' : ''}" ${bubbleIdAttr} ${tempIdAttr}>
                     ${imageHtml}
-                    ${reply.body ? `<div class="bubble-content ${reply.image ? 'mt-1' : ''}">${reply.body}</div>` : ''}
+                    ${videoHtml}
+                    ${videoSendingHtml}
+                    ${reply.body ? `<div class="bubble-content ${hasMedia ? 'mt-1' : ''}">${reply.body}</div>` : ''}
                     <div class="bubble-info">
                         ${senderLabel} · ${reply.time}
                         ${isSending ? `<span class="sending-status"><div class="spinner-border-sm-custom" style="width:10px;height:10px;border-width:1px;"></div> Sending...</span>` : ''}
@@ -922,7 +1044,8 @@
         // AJAX Submission
         chatForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            if (isSubmitting || (!chatInput.value.trim() && !imageInput.files.length) || !currentTicketId) return;
+            const hasVideo = videoInput && videoInput.files.length > 0;
+            if (isSubmitting || (!chatInput.value.trim() && !imageInput.files.length && !hasVideo) || !currentTicketId) return;
 
             isSubmitting = true;
             const submitBtn = this.querySelector('.btn-send');
@@ -931,15 +1054,16 @@
             submitBtn.style.opacity = '0.5';
 
             const formData = new FormData(this);
-            
-            // Immediate feedback for image
+
+            // Immediate optimistic feedback bubble
             let tempId = null;
-            if (imageInput.files.length > 0) {
+            if (imageInput.files.length > 0 || hasVideo) {
                 tempId = 'temp_' + Date.now();
                 const tempReply = {
                     temp_id: tempId,
                     body: chatInput.value.trim(),
-                    image: URL.createObjectURL(imageInput.files[0]),
+                    image: imageInput.files.length > 0 ? URL.createObjectURL(imageInput.files[0]) : null,
+                    video_sending: hasVideo ? videoInput.files[0].name : null,
                     is_admin: !isUserContext,
                     sender: isUserContext ? 'You' : 'Admin',
                     time: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }),
@@ -971,6 +1095,7 @@
                     chatInput.value = '';
                     chatInput.style.height = 'auto';
                     clearImagePreview();
+                    clearVideoPreview();
                     
                     const countEl = document.getElementById('chatCount');
                     if (countEl) {

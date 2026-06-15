@@ -86,7 +86,7 @@
                     </span>
                 </div>
                 <div class="meta-item-premium">
-                    <span class="meta-label-premium">Customer Name</span>
+                    <span class="meta-label-premium">User Name</span>
                     <span class="meta-value-premium">
                         <span class="meta-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2.5">
@@ -107,7 +107,64 @@
                         {{ $ticket->user->email ?? 'N/A' }}
                     </span>
                 </div>
+
+                <div class="meta-item-premium" id="solved-at-meta-container" style="{{ $ticket->status === 'closed' && $ticket->solved_at ? '' : 'display: none;' }}">
+                    <span class="meta-label-premium">Solved At</span>
+                    <span class="meta-value-premium">
+                        <span class="meta-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg></span>
+                        <span id="solved-at-meta-value">{{ $ticket->solved_at ? $ticket->solved_at->format('M d, Y \a\t g:i A') : '' }}</span>
+                    </span>
+                </div>
+
+                {{-- Resolution Time --}}
+                @php
+                    $resolutionTime = '';
+                    if ($ticket->status === 'closed' && $ticket->solved_at) {
+                        $diffMins  = (int) $ticket->created_at->diffInMinutes($ticket->solved_at);
+                        $diffHours = (int) $ticket->created_at->diffInHours($ticket->solved_at);
+                        $diffDays  = (int) $ticket->created_at->diffInDays($ticket->solved_at);
+
+                        if ($diffMins < 60) {
+                            $resolutionTime = $diffMins . ' min' . ($diffMins !== 1 ? 's' : '');
+                        } elseif ($diffHours < 24) {
+                            $remainMins = $diffMins - ($diffHours * 60);
+                            $resolutionTime = $diffHours . ' hr' . ($diffHours !== 1 ? 's' : '');
+                            if ($remainMins > 0) $resolutionTime .= ' ' . $remainMins . ' min' . ($remainMins !== 1 ? 's' : '');
+                        } else {
+                            $remainHours = $diffHours - ($diffDays * 24);
+                            $resolutionTime = $diffDays . ' day' . ($diffDays !== 1 ? 's' : '');
+                            if ($remainHours > 0) $resolutionTime .= ' ' . $remainHours . ' hr' . ($remainHours !== 1 ? 's' : '');
+                        }
+                    }
+                @endphp
+                <div class="meta-item-premium" id="resolution-time-meta-container" style="{{ $ticket->status === 'closed' && $ticket->solved_at ? '' : 'display: none;' }}">
+                    <span class="meta-label-premium">Resolution Time</span>
+                    <span class="meta-value-premium">
+                        <span class="meta-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg></span>
+                        <span id="resolution-time-meta-value">{{ $resolutionTime }}</span>
+                    </span>
+                </div>
+
                 <div class="meta-item-premium">
+                    <span class="meta-label-premium">Category</span>
+                    <span class="meta-value-premium">
+                        <span class="meta-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                            </svg></span>
+                        {{ ucfirst($ticket->category ?? 'None') }}
+                    </span>
+                </div>
+                <!-- <div class="meta-item-premium">
                     <span class="meta-label-premium">Message Status</span>
                     <span class="meta-value-premium" id="message-status-container-{{ $ticket->id }}">
                         <span class="meta-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -122,7 +179,7 @@
                             {{ $uCount }} new
                         </span>
                     </span>
-                </div>
+                </div> -->
             </div>
 
             <div class="orig-request-box">
@@ -130,7 +187,7 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                     </svg>
-                    Original Message
+                    Ticket Details
                 </div>
                 <div class="orig-request-text">{{ $ticket->message }}</div>
             </div>
@@ -200,6 +257,30 @@
                         } else if (newStatus === 'closed') {
                             mainPill.classList.add('status-closed-prem');
                             mainPill.innerHTML = '✅️ Closed';
+                        }
+                    }
+
+                    // Update Solved Date-Time in meta grid dynamically
+                    const solvedContainer = document.getElementById('solved-at-meta-container');
+                    const solvedValue = document.getElementById('solved-at-meta-value');
+                    if (solvedContainer && solvedValue) {
+                        if (newStatus === 'closed' && data.solved_at) {
+                            solvedValue.textContent = data.solved_at;
+                            solvedContainer.style.display = '';
+                        } else {
+                            solvedContainer.style.display = 'none';
+                        }
+                    }
+
+                    // Update Resolution Time dynamically
+                    const resContainer = document.getElementById('resolution-time-meta-container');
+                    const resValue = document.getElementById('resolution-time-meta-value');
+                    if (resContainer && resValue) {
+                        if (newStatus === 'closed' && data.resolution_time) {
+                            resValue.textContent = data.resolution_time;
+                            resContainer.style.display = '';
+                        } else {
+                            resContainer.style.display = 'none';
                         }
                     }
 
