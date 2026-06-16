@@ -16,11 +16,20 @@ class DashboardController extends Controller
         $defaultDate = now()->format('Y-m-d');
         $date = request()->filled('date') ? request('date') : $defaultDate;
 
+        $dateFrom = request('date_from');
+        $dateTo = request('date_to');
+
         $query = Ticket::where('user_id', $userId)
-                        ->whereDate('created_at', $date)
                         ->withCount(['replies as unread_replies_count' => function($query) {
                             $query->whereNotNull('admin_id')->where('is_read', 0);
                         }]);
+
+        if ($dateFrom && $dateTo) {
+            $query->whereDate('created_at', '>=', $dateFrom)
+                  ->whereDate('created_at', '<=', $dateTo);
+        } else {
+            $query->whereDate('created_at', $date);
+        }
 
         if ($subject = request('subject')) {
             $query->where('subject', 'like', '%' . $subject . '%');
@@ -39,10 +48,17 @@ class DashboardController extends Controller
         $tickets = $query->latest()->paginate(10)->withQueryString();
 
         // Status cards — Today's totals (respecting date filter)
-        $totalTickets = Ticket::where('user_id', $userId)->whereDate('created_at', $date)->count();
-        $openTickets  = Ticket::where('user_id', $userId)->whereDate('created_at', $date)->where('status', 'open')->count();
-        $closedTickets = Ticket::where('user_id', $userId)->whereDate('created_at', $date)->where('status', 'closed')->count();
-        $inProgress   = Ticket::where('user_id', $userId)->whereDate('created_at', $date)->where('status', 'in progress')->count();
+        if ($dateFrom && $dateTo) {
+            $totalTickets  = Ticket::where('user_id', $userId)->whereDate('created_at', '>=', $dateFrom)->whereDate('created_at', '<=', $dateTo)->count();
+            $openTickets   = Ticket::where('user_id', $userId)->whereDate('created_at', '>=', $dateFrom)->whereDate('created_at', '<=', $dateTo)->where('status', 'open')->count();
+            $closedTickets = Ticket::where('user_id', $userId)->whereDate('created_at', '>=', $dateFrom)->whereDate('created_at', '<=', $dateTo)->where('status', 'closed')->count();
+            $inProgress    = Ticket::where('user_id', $userId)->whereDate('created_at', '>=', $dateFrom)->whereDate('created_at', '<=', $dateTo)->where('status', 'in progress')->count();
+        } else {
+            $totalTickets  = Ticket::where('user_id', $userId)->whereDate('created_at', $date)->count();
+            $openTickets   = Ticket::where('user_id', $userId)->whereDate('created_at', $date)->where('status', 'open')->count();
+            $closedTickets = Ticket::where('user_id', $userId)->whereDate('created_at', $date)->where('status', 'closed')->count();
+            $inProgress   = Ticket::where('user_id', $userId)->whereDate('created_at', $date)->where('status', 'in progress')->count();
+        }
 
         return view('agent.dashboard',compact(
             'tickets',

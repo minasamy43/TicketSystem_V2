@@ -17,13 +17,22 @@ class TicketController extends Controller
         $defaultDate = now()->format('Y-m-d');
         $date = request()->filled('date') ? request('date') : $defaultDate;
 
+        $dateFrom = request('date_from');
+        $dateTo = request('date_to');
+
         $query = Ticket::with(['user', 'closer', 'inprogressBy'])
             ->withCount([
                 'replies as unread_replies_count' => function ($query) {
                     $query->where('is_read', 0)->whereNull('admin_id');
                 }
-            ])
-            ->whereDate('created_at', $date);
+            ]);
+
+        if ($dateFrom && $dateTo) {
+            $query->whereDate('created_at', '>=', $dateFrom)
+                  ->whereDate('created_at', '<=', $dateTo);
+        } else {
+            $query->whereDate('created_at', $date);
+        }
 
         if ($ticketId = request('ticket_id')) {
             $query->where('id', $ticketId);

@@ -142,32 +142,96 @@
 
         <div class="card mt-4 shadow-sm border-0" style="border-radius: 16px; overflow: hidden;">
             <div class="card-header bg-white pt-4 px-3 border-bottom-0" style="padding-bottom: 20px;">
-                <div class="d-flex align-items-center justify-content-between gap-3" style="border-left: 4px solid var(--primary-color); padding-left: 12px;">
-                    <h5 class="m-0" style="font-weight: 600; color: #111; font-family: 'Inter', sans-serif; font-size: 1.15rem; letter-spacing: -0.3px;">
+                <div class="d-flex align-items-center justify-content-between gap-3"
+                    style="border-left: 4px solid var(--primary-color); padding-left: 12px;">
+                    <h5 class="m-0"
+                        style="font-weight: 600; color: #111; font-family: 'Inter', sans-serif; font-size: 1.15rem; letter-spacing: -0.3px;">
                         My Tickets
                     </h5>
 
                     {{-- ── Report Widget ── --}}
                     <div class="report-widget">
-                        {{-- Single row: label + date range + export icon buttons --}}
                         <div class="report-widget-row">
                             <span class="report-widget-label">Report</span>
-                            <input type="text" id="agent_report_date_from" class="report-date-input" value="{{ now()->format('Y-m-d') }}" title="From date" readonly>
+
+                            <input type="text" id="agent_report_date_from" class="report-date-input"
+                                value="{{ request('date_from', now()->format('Y-m-d')) }}" title="From date" readonly>
+
                             <span class="report-sep">→</span>
-                            <input type="text" id="agent_report_date_to" class="report-date-input" value="{{ now()->format('Y-m-d') }}" title="To date" readonly>
-                            <button class="report-btn report-btn-pdf" id="agentReportPdf" title="Open PDF in browser">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+
+                            <input type="text" id="agent_report_date_to" class="report-date-input"
+                                value="{{ request('date_to', now()->format('Y-m-d')) }}" title="To date" readonly>
+
+                            <button class="report-btn report-btn-filter" id="agentReportFilter" title="Filter by date range">
+                                <i class="fa-solid fa-filter"></i>
                             </button>
+
+                            <button class="report-btn report-btn-pdf" id="agentReportPdf" title="Open PDF in browser">
+                                <i class="fa-solid fa-file-pdf"></i>
+                            </button>
+
                             <button class="report-btn report-btn-excel" id="agentReportExcel" title="Download Excel">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                                <i class="fa-solid fa-file-excel"></i>
                             </button>
                         </div>
+
+                        <style>
+                            .report-btn {
+                                width: 34px;
+                                height: 34px;
+                                border: none;
+                                border-radius: 8px;
+                                display: inline-flex;
+                                align-items: center;
+                                justify-content: center;
+                                cursor: pointer;
+                                transition: all .2s ease;
+                                font-size: 18px;
+                            }
+
+                            .report-btn-filter {
+                                color: var(--primary-color);
+                                background: var(--primary-light);
+                            }
+
+                            .report-btn-filter:hover {
+                                background: color-mix(in srgb, var(--primary-color), transparent 85%);
+                                transform: translateY(-1px);
+                            }
+
+                            .report-btn-pdf {
+                                color: #dc2626;
+                                background: rgba(220, 38, 38, .08);
+                            }
+
+                            .report-btn-pdf:hover {
+                                background: rgba(220, 38, 38, .15);
+                                transform: translateY(-1px);
+                            }
+
+                            .report-btn-excel {
+                                color: #16a34a;
+                                background: rgba(22, 163, 74, .08);
+                            }
+
+                            .report-btn-excel:hover {
+                                background: rgba(22, 163, 74, .15);
+                                transform: translateY(-1px);
+                            }
+                        </style>
                     </div>
                 </div>
             </div>
 
             <div class="card-body p-0">
-                <form method="GET" action="{{ route('agent.dashboard') }}" id="filterForm"></form>
+                <form method="GET" action="{{ route('agent.dashboard') }}" id="filterForm">
+                    @if(request('date_from'))
+                        <input type="hidden" name="date_from" id="hidden_date_from" value="{{ request('date_from') }}">
+                    @endif
+                    @if(request('date_to'))
+                        <input type="hidden" name="date_to" id="hidden_date_to" value="{{ request('date_to') }}">
+                    @endif
+                </form>
                 <div class="table-responsive">
                     <table class="table table-bordered mb-0" style="min-width: 800px;">
                         <thead>
@@ -186,17 +250,20 @@
                                         value="{{ request('subject') }}" oninput="debounceSubmit()">
                                 </td>
                                 <td style="padding: 8px 10px;">
-                                        <select name="category" class="inline-filter-select"
-                                            onchange="document.getElementById('filterForm').submit()">
-                                            <option value="">All </option>
-                                            <option value="live Egypt" {{ request('category') == 'live Egypt' ? 'selected' : '' }}>live Egypt</option>
-                                            <option value="live pro" {{ request('category') == 'live pro' ? 'selected' : '' }}>live pro</option>
-                                            <option value="demo Egypt" {{ request('category') == 'demo Egypt' ? 'selected' : '' }}>demo Egypt</option>
-                                            <option value="demo pro" {{ request('category') == 'demo pro' ? 'selected' : '' }}>demo pro</option>
-                                            <option value="other" {{ request('category') == 'other' ? 'selected' : '' }}>other</option>
-                                        </select>
-                                    </td>
-                                
+                                    <select name="category" class="inline-filter-select"
+                                        onchange="document.getElementById('filterForm').submit()">
+                                        <option value="">All </option>
+                                        <option value="live Egypt" {{ request('category') == 'live Egypt' ? 'selected' : '' }}>live Egypt</option>
+                                        <option value="live pro" {{ request('category') == 'live pro' ? 'selected' : '' }}>
+                                            live pro</option>
+                                        <option value="demo Egypt" {{ request('category') == 'demo Egypt' ? 'selected' : '' }}>demo Egypt</option>
+                                        <option value="demo pro" {{ request('category') == 'demo pro' ? 'selected' : '' }}>
+                                            demo pro</option>
+                                        <option value="other" {{ request('category') == 'other' ? 'selected' : '' }}>other
+                                        </option>
+                                    </select>
+                                </td>
+
                                 <td style="padding: 10px 15px;">
                                     <select name="status" class="inline-filter-select" form="filterForm"
                                         onchange="document.getElementById('filterForm').submit()">
@@ -214,7 +281,7 @@
                                 </td>
                                 <td style="padding: 10px 15px;">
                                     <input type="date" name="date" class="inline-filter-input" value="{{ $date }}"
-                                        form="filterForm" onchange="document.getElementById('filterForm').submit()">
+                                        form="filterForm" onchange="submitAgentSingleDate()">
                                 </td>
                                 <td class="text-center" style="padding: 10px 15px;">
                                     <a href="{{ route('agent.dashboard') }}" class="btn-clear-inline" title="Clear Filters">
@@ -235,14 +302,15 @@
                                 <tr data-ticket-id="{{ $ticket->id }}" style="cursor: pointer;">
                                     <td style="font-weight: 500;">{{ $ticket->subject }}</td>
                                     <td>
-                                        <span class="badge bg-secondary" style="font-size: 0.8rem; padding: 0.4em 0.6em; border-radius: 6px; background-color: #f1f3f5 !important; color: #495057 !important; border: 1px solid #dee2e6;">
+                                        <span class="badge bg-secondary"
+                                            style="font-size: 0.8rem; padding: 0.4em 0.6em; border-radius: 6px; background-color: #f1f3f5 !important; color: #495057 !important; border: 1px solid #dee2e6;">
                                             {{ ucfirst($ticket->category ?? 'None') }}
                                         </span>
                                     </td>
                                     <td>
                                         <span class="badge status-badge-agent"
                                             style="padding: 0.5rem 0.8rem; border-radius: 10px; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.5px;
-                                                    @if ($ticket->status == 'open') background: rgba(220, 53, 69, 0.1); color: #dc3545;@elseif($ticket->status == 'in progress') background: rgba(212, 175, 83, 0.15); color: #d4af53;@else background: rgba(25, 135, 84, 0.1); color: #198754; @endif">
+                                                            @if ($ticket->status == 'open') background: rgba(220, 53, 69, 0.1); color: #dc3545;@elseif($ticket->status == 'in progress') background: rgba(212, 175, 83, 0.15); color: #d4af53;@else background: rgba(25, 135, 84, 0.1); color: #198754; @endif">
                                             {{ ucfirst($ticket->status) }}
                                             @if ($ticket->status == 'open')
                                                 🎟️
@@ -379,55 +447,105 @@
     <script src="{{ asset('js/report-export.js') }}"></script>
     <script src="{{ asset('js/user-dashboard.js') }}"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize flatpickr for report date inputs
-        flatpickr('#agent_report_date_from', {
-            dateFormat: 'Y-m-d',
-            defaultDate: '{{ now()->format("Y-m-d") }}'
-        });
-        flatpickr('#agent_report_date_to', {
-            dateFormat: 'Y-m-d',
-            defaultDate: '{{ now()->format("Y-m-d") }}'
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize flatpickr for report date inputs
+            flatpickr('#agent_report_date_from', {
+                dateFormat: 'Y-m-d',
+                defaultDate: '{{ request("date_from", now()->format("Y-m-d")) }}'
+            });
+            flatpickr('#agent_report_date_to', {
+                dateFormat: 'Y-m-d',
+                defaultDate: '{{ request("date_to", now()->format("Y-m-d")) }}'
+            });
+
+            function setAgentReportBtnsLoading(loading) {
+                document.getElementById('agentReportFilter').disabled = loading;
+                document.getElementById('agentReportPdf').disabled = loading;
+                document.getElementById('agentReportExcel').disabled = loading;
+            }
+
+            // ── Filter by Date Range ──
+            document.getElementById('agentReportFilter').addEventListener('click', function() {
+                const dateFrom = document.getElementById('agent_report_date_from').value;
+                const dateTo = document.getElementById('agent_report_date_to').value;
+                if (!dateFrom || !dateTo) { alert('Please select both From and To dates.'); return; }
+                if (dateFrom > dateTo) { alert('"From" date must be before or equal to "To" date.'); return; }
+
+                const form = document.getElementById('filterForm');
+                if (form) {
+                    let inputFrom = document.getElementById('hidden_date_from');
+                    if (!inputFrom) {
+                        inputFrom = document.createElement('input');
+                        inputFrom.type = 'hidden';
+                        inputFrom.name = 'date_from';
+                        inputFrom.id = 'hidden_date_from';
+                        form.appendChild(inputFrom);
+                    }
+                    inputFrom.value = dateFrom;
+
+                    let inputTo = document.getElementById('hidden_date_to');
+                    if (!inputTo) {
+                        inputTo = document.createElement('input');
+                        inputTo.type = 'hidden';
+                        inputTo.name = 'date_to';
+                        inputTo.id = 'hidden_date_to';
+                        form.appendChild(inputTo);
+                    }
+                    inputTo.value = dateTo;
+
+                    const dateInput = form.querySelector('input[name="date"]');
+                    if (dateInput) {
+                        dateInput.value = '';
+                    }
+
+                    form.submit();
+                }
+            });
+
+            // ── PDF Export ──
+            document.getElementById('agentReportPdf').addEventListener('click', async function () {
+                const dateFrom = document.getElementById('agent_report_date_from').value;
+                const dateTo = document.getElementById('agent_report_date_to').value;
+                if (!dateFrom || !dateTo) { alert('Please select both From and To dates.'); return; }
+                if (dateFrom > dateTo) { alert('"From" date must be before or equal to "To" date.'); return; }
+                const url = `${DASHBOARD_CONFIG.reportDataUrl}?date_from=${dateFrom}&date_to=${dateTo}`;
+
+                await ReportExportUtil.exportPdf({
+                    title: 'My Tickets Report',
+                    fetchUrl: url,
+                    isAdmin: false,
+                    onStart: () => setAgentReportBtnsLoading(true),
+                    onEnd: () => setAgentReportBtnsLoading(false)
+                });
+            });
+
+            // ── Excel Export ──
+            document.getElementById('agentReportExcel').addEventListener('click', async function () {
+                const dateFrom = document.getElementById('agent_report_date_from').value;
+                const dateTo = document.getElementById('agent_report_date_to').value;
+                if (!dateFrom || !dateTo) { alert('Please select both From and To dates.'); return; }
+                if (dateFrom > dateTo) { alert('"From" date must be before or equal to "To" date.'); return; }
+                const url = `${DASHBOARD_CONFIG.reportDataUrl}?date_from=${dateFrom}&date_to=${dateTo}`;
+
+                await ReportExportUtil.exportExcel({
+                    title: 'My Tickets Report',
+                    fetchUrl: url,
+                    isAdmin: false,
+                    onStart: () => setAgentReportBtnsLoading(true),
+                    onEnd: () => setAgentReportBtnsLoading(false)
+                });
+            });
         });
 
-        function setAgentReportBtnsLoading(loading) {
-            document.getElementById('agentReportPdf').disabled   = loading;
-            document.getElementById('agentReportExcel').disabled = loading;
+        function submitAgentSingleDate() {
+            const form = document.getElementById('filterForm');
+            if (form) {
+                const inputFrom = document.getElementById('hidden_date_from');
+                if (inputFrom) inputFrom.value = '';
+                const inputTo = document.getElementById('hidden_date_to');
+                if (inputTo) inputTo.value = '';
+                form.submit();
+            }
         }
-
-        // ── PDF Export ──
-        document.getElementById('agentReportPdf').addEventListener('click', async function() {
-            const dateFrom = document.getElementById('agent_report_date_from').value;
-            const dateTo   = document.getElementById('agent_report_date_to').value;
-            if (!dateFrom || !dateTo) { alert('Please select both From and To dates.'); return; }
-            if (dateFrom > dateTo) { alert('"From" date must be before or equal to "To" date.'); return; }
-            const url = `${DASHBOARD_CONFIG.reportDataUrl}?date_from=${dateFrom}&date_to=${dateTo}`;
-
-            await ReportExportUtil.exportPdf({
-                title: 'My Tickets Report',
-                fetchUrl: url,
-                isAdmin: false,
-                onStart: () => setAgentReportBtnsLoading(true),
-                onEnd: () => setAgentReportBtnsLoading(false)
-            });
-        });
-
-        // ── Excel Export ──
-        document.getElementById('agentReportExcel').addEventListener('click', async function() {
-            const dateFrom = document.getElementById('agent_report_date_from').value;
-            const dateTo   = document.getElementById('agent_report_date_to').value;
-            if (!dateFrom || !dateTo) { alert('Please select both From and To dates.'); return; }
-            if (dateFrom > dateTo) { alert('"From" date must be before or equal to "To" date.'); return; }
-            const url = `${DASHBOARD_CONFIG.reportDataUrl}?date_from=${dateFrom}&date_to=${dateTo}`;
-
-            await ReportExportUtil.exportExcel({
-                title: 'My Tickets Report',
-                fetchUrl: url,
-                isAdmin: false,
-                onStart: () => setAgentReportBtnsLoading(true),
-                onEnd: () => setAgentReportBtnsLoading(false)
-            });
-        });
-    });
     </script>
 @endsection

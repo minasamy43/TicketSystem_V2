@@ -34,153 +34,100 @@
             background: #feeaea !important;
         }
 
-        /* ── Modern Premium Report Widget ── */
+        /* ── Report Widget ── */
         .report-widget {
-            background: #ffffff;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            border-radius: 16px;
-            padding: 14px 18px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.01);
-            min-width: 320px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
         }
-        /* Glowing top border with primary color gradient */
-        .report-widget::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color) 0%, color-mix(in srgb, var(--primary-color), white 40%) 100%);
-        }
-        .report-widget:hover {
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06), 0 2px 5px rgba(0, 0, 0, 0.03);
-            transform: translateY(-2px);
-        }
-        .report-widget-header {
+
+        .report-widget-row {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px dashed rgba(0, 0, 0, 0.08);
+            gap: 7px;
         }
-        .report-widget-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 0.8rem;
+
+        .report-widget-label {
+            font-size: 0.7rem;
             font-weight: 700;
-            color: #1a1a1a;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
+            color: #888;
+            letter-spacing: 0.08em;
+            white-space: nowrap;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
-        .report-widget-title svg {
-            color: var(--primary-color);
-        }
-        .report-widget-title-badge {
-            font-size: 0.65rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            background: var(--primary-light);
-            padding: 2px 8px;
-            border-radius: 20px;
-            letter-spacing: 0.02em;
-        }
-        .report-inputs-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-        .report-input-wrapper {
-            position: relative;
-            flex: 1;
-        }
+
         .report-date-input {
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 6px 12px;
-            font-size: 0.78rem;
-            color: #334155;
-            background: #f8fafc;
+            border: 1px solid #e0e0e0;
+            border-radius: 7px;
+            padding: 4px 9px;
+            font-size: 0.76rem;
+            color: #444;
+            background: #fafafa;
             outline: none;
-            transition: all 0.25s ease;
-            width: 100%;
-            font-weight: 600;
+            transition: border-color .2s;
+            width: 115px;
             text-align: center;
             cursor: pointer;
         }
+
         .report-date-input:focus {
             border-color: var(--primary-color);
-            background: #fff;
-            box-shadow: 0 0 0 3px var(--primary-light);
         }
-        .report-arrow {
-            font-size: 0.85rem;
-            color: #94a3b8;
-            font-weight: 700;
-            user-select: none;
+
+        .report-sep {
+            font-size: 0.72rem;
+            color: #bbb;
+            font-weight: 600;
         }
-        .report-actions {
-            display: flex;
-            gap: 8px;
-        }
+
         .report-btn {
+            width: 34px;
+            height: 34px;
+            border: none;
+            border-radius: 8px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            border: none;
             cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            white-space: nowrap;
-            flex: 1;
+            transition: all .2s ease;
+            font-size: 18px;
         }
+
         .report-btn-pdf {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+            color: #dc2626;
+            background: rgba(220, 38, 38, .08);
         }
+
         .report-btn-pdf:hover {
+            background: rgba(220, 38, 38, .15);
             transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(220, 38, 38, 0.25);
-            background: linear-gradient(135deg, #f87171, #dc2626);
         }
-        .report-btn-pdf:active {
-            transform: translateY(1px);
-        }
+
         .report-btn-excel {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+            color: #16a34a;
+            background: rgba(22, 163, 74, .08);
         }
+
         .report-btn-excel:hover {
+            background: rgba(22, 163, 74, .15);
             transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(5, 150, 105, 0.25);
-            background: linear-gradient(135deg, #34d399, #059669);
         }
-        .report-btn-excel:active {
-            transform: translateY(1px);
-        }
+
         .report-btn:disabled {
-            opacity: 0.6;
+            opacity: .6;
             cursor: not-allowed;
             transform: none !important;
-            box-shadow: none !important;
         }
-        .report-btn svg {
-            transition: transform 0.2s ease;
+
+        .report-btn-filter {
+            color: var(--primary-color);
+            background: var(--primary-light);
         }
-        .report-btn:hover svg {
+
+        .report-btn-filter:hover {
+            background: color-mix(in srgb, var(--primary-color), transparent 85%);
             transform: translateY(-1px);
         }
     </style>
@@ -197,22 +144,28 @@
             </div>
 
             {{-- ── Report Widget ── --}}
-            <div class="report-widget flex-shrink-0" style="min-width:unset;">
-                {{-- Single row: label + date range + export icon buttons --}}
-                <div class="report-inputs-container" style="margin-bottom:0;">
-                    <span style="font-family:'Outfit',sans-serif;font-size:0.8rem;font-weight:700;color:#1a1a1a;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;">Report</span>
-                    <div class="report-input-wrapper">
-                        <input type="text" id="report_date_from" class="report-date-input" value="{{ now()->format('Y-m-d') }}" placeholder="From Date" title="From date" readonly>
-                    </div>
-                    <span class="report-arrow">→</span>
-                    <div class="report-input-wrapper">
-                        <input type="text" id="report_date_to" class="report-date-input" value="{{ now()->format('Y-m-d') }}" placeholder="To Date" title="To date" readonly>
-                    </div>
-                    <button class="report-btn report-btn-pdf" id="adminReportPdf" title="Open PDF in browser" style="flex:0 0 auto;padding:8px 10px;">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <div class="report-widget">
+                <div class="report-widget-row">
+                    <span class="report-widget-label">Report</span>
+
+                    <input type="text" id="report_date_from" class="report-date-input"
+                        value="{{ request('date_from', now()->format('Y-m-d')) }}" title="From date" readonly>
+
+                    <span class="report-sep">→</span>
+
+                    <input type="text" id="report_date_to" class="report-date-input"
+                        value="{{ request('date_to', now()->format('Y-m-d')) }}" title="To date" readonly>
+
+                    <button class="report-btn report-btn-filter" id="adminReportFilter" title="Filter by date range">
+                        <i class="fa-solid fa-filter"></i>
                     </button>
-                    <button class="report-btn report-btn-excel" id="adminReportExcel" title="Download Excel" style="flex:0 0 auto;padding:8px 10px;">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+
+                    <button class="report-btn report-btn-pdf" id="adminReportPdf" title="Open PDF in browser">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </button>
+
+                    <button class="report-btn report-btn-excel" id="adminReportExcel" title="Download Excel">
+                        <i class="fa-solid fa-file-excel"></i>
                     </button>
                 </div>
             </div>
@@ -220,10 +173,17 @@
 
 
         <div class="card shadow-sm border-0" style="border-radius: 16px; overflow: hidden;">
+            
             <div class="card-body p-0">
                 <form method="GET" action="{{ route('admin.tickets.index') }}" id="filterForm">
                     @if(request('sender_type'))
                         <input type="hidden" name="sender_type" value="{{ request('sender_type') }}">
+                    @endif
+                    @if(request('date_from'))
+                        <input type="hidden" name="date_from" id="hidden_date_from" value="{{ request('date_from') }}">
+                    @endif
+                    @if(request('date_to'))
+                        <input type="hidden" name="date_to" id="hidden_date_to" value="{{ request('date_to') }}">
                     @endif
                     <div class="table-responsive">
                         <table class="table table-bordered mb-0" style="min-width: 100%;">
@@ -475,7 +435,13 @@
                 defaultDate: '{{ $date }}',
                 onChange: function(selectedDates, dateStr) {
                     const form = document.getElementById('filterForm');
-                    if (form) form.submit();
+                    if (form) {
+                        const inputFrom = document.getElementById('hidden_date_from');
+                        if (inputFrom) inputFrom.value = '';
+                        const inputTo = document.getElementById('hidden_date_to');
+                        if (inputTo) inputTo.value = '';
+                        form.submit();
+                    }
                 },
                 onDayCreate: function(dObj, dStr, fp, dayElem) {
                     const date = dayElem.dateObj;
@@ -493,17 +459,56 @@
             // Initialize flatpickr for report date inputs
             flatpickr('#report_date_from', {
                 dateFormat: 'Y-m-d',
-                defaultDate: '{{ now()->format("Y-m-d") }}'
+                defaultDate: '{{ request("date_from", now()->format("Y-m-d")) }}'
             });
             flatpickr('#report_date_to', {
                 dateFormat: 'Y-m-d',
-                defaultDate: '{{ now()->format("Y-m-d") }}'
+                defaultDate: '{{ request("date_to", now()->format("Y-m-d")) }}'
             });
 
             function setReportBtnsLoading(loading) {
+                document.getElementById('adminReportFilter').disabled = loading;
                 document.getElementById('adminReportPdf').disabled   = loading;
                 document.getElementById('adminReportExcel').disabled = loading;
             }
+
+            // ── Filter by Date Range ──
+            document.getElementById('adminReportFilter').addEventListener('click', function() {
+                const dateFrom = document.getElementById('report_date_from').value;
+                const dateTo   = document.getElementById('report_date_to').value;
+                if (!dateFrom || !dateTo) { alert('Please select both From and To dates.'); return; }
+                if (dateFrom > dateTo) { alert('"From" date must be before or equal to "To" date.'); return; }
+
+                const form = document.getElementById('filterForm');
+                if (form) {
+                    let inputFrom = document.getElementById('hidden_date_from');
+                    if (!inputFrom) {
+                        inputFrom = document.createElement('input');
+                        inputFrom.type = 'hidden';
+                        inputFrom.name = 'date_from';
+                        inputFrom.id = 'hidden_date_from';
+                        form.appendChild(inputFrom);
+                    }
+                    inputFrom.value = dateFrom;
+
+                    let inputTo = document.getElementById('hidden_date_to');
+                    if (!inputTo) {
+                        inputTo = document.createElement('input');
+                        inputTo.type = 'hidden';
+                        inputTo.name = 'date_to';
+                        inputTo.id = 'hidden_date_to';
+                        form.appendChild(inputTo);
+                    }
+                    inputTo.value = dateTo;
+
+                    const singleDateInput = form.querySelector('input[name="date"]');
+                    if (singleDateInput) {
+                        singleDateInput.value = '';
+                    }
+
+                    form.submit();
+                }
+            });
 
             // ── PDF Export ──
             document.getElementById('adminReportPdf').addEventListener('click', async function() {
