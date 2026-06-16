@@ -287,3 +287,93 @@
                 right: 1rem;
             }
         }
+
+        /* ── Report Widget ── */
+        .report-widget {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .report-widget-row {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .report-widget-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #888;
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .report-date-input {
+            border: 1px solid #e0e0e0;
+            border-radius: 7px;
+            padding: 4px 9px;
+            font-size: 0.76rem;
+            color: #444;
+            background: #fafafa;
+            outline: none;
+            transition: border-color .2s;
+            width: 115px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .report-date-input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .report-sep {
+            font-size: 0.72rem;
+            color: #bbb;
+            font-weight: 600;
+        }
+
+        .report-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 12px;
+            border-radius: 7px;
+            font-size: 0.73rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all .25s ease;
+            white-space: nowrap;
+        }
+
+        .report-btn-pdf {
+            background: linear-gradient(135deg, #e53935, #c62828);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(198, 40, 40, .22);
+        }
+
+        .report-btn-pdf:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(198, 40, 40, .32);
+        }
+
+        .report-btn-excel {
+            background: linear-gradient(135deg, #1e7e34, #155724);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(21, 87, 36, .18);
+        }
+
+        .report-btn-excel:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(21, 87, 36, .28);
+        }
+
+        .report-btn:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+            transform: none !important;
+        }

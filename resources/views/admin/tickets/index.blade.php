@@ -9,6 +9,9 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="{{ asset('css/Admin-tickets-index.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         .flatpickr-day.has-unread-tickets {
             background: #fff5f5 !important;
@@ -30,6 +33,156 @@
         .flatpickr-day.has-unread-tickets:hover {
             background: #feeaea !important;
         }
+
+        /* ── Modern Premium Report Widget ── */
+        .report-widget {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
+            padding: 14px 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.01);
+            min-width: 320px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* Glowing top border with primary color gradient */
+        .report-widget::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, color-mix(in srgb, var(--primary-color), white 40%) 100%);
+        }
+        .report-widget:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06), 0 2px 5px rgba(0, 0, 0, 0.03);
+            transform: translateY(-2px);
+        }
+        .report-widget-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.08);
+        }
+        .report-widget-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .report-widget-title svg {
+            color: var(--primary-color);
+        }
+        .report-widget-title-badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            background: var(--primary-light);
+            padding: 2px 8px;
+            border-radius: 20px;
+            letter-spacing: 0.02em;
+        }
+        .report-inputs-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .report-input-wrapper {
+            position: relative;
+            flex: 1;
+        }
+        .report-date-input {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 6px 12px;
+            font-size: 0.78rem;
+            color: #334155;
+            background: #f8fafc;
+            outline: none;
+            transition: all 0.25s ease;
+            width: 100%;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+        }
+        .report-date-input:focus {
+            border-color: var(--primary-color);
+            background: #fff;
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        .report-arrow {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            font-weight: 700;
+            user-select: none;
+        }
+        .report-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .report-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            flex: 1;
+        }
+        .report-btn-pdf {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+        }
+        .report-btn-pdf:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(220, 38, 38, 0.25);
+            background: linear-gradient(135deg, #f87171, #dc2626);
+        }
+        .report-btn-pdf:active {
+            transform: translateY(1px);
+        }
+        .report-btn-excel {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+        }
+        .report-btn-excel:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(5, 150, 105, 0.25);
+            background: linear-gradient(135deg, #34d399, #059669);
+        }
+        .report-btn-excel:active {
+            transform: translateY(1px);
+        }
+        .report-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        .report-btn svg {
+            transition: transform 0.2s ease;
+        }
+        .report-btn:hover svg {
+            transform: translateY(-1px);
+        }
     </style>
 @endpush
  
@@ -37,9 +190,32 @@
 
 
     <div class="container mt-4">
-        <div class="d-none d-lg-flex flex-column mb-4">
-            <h1 class="page-title mb-1">Tickets Management</h1>
-            <p class="text-muted lead mb-0">Track and manage all customer support tickets across the platform.</p>
+        <div class="d-flex flex-column flex-md-row align-items-md-start justify-content-between mb-4 gap-4">
+            <div class="flex-grow-1">
+                <h1 class="page-title mb-1">Tickets Management</h1>
+                <p class="text-muted lead mb-0">Track and manage all customer support tickets across the platform.</p>
+            </div>
+
+            {{-- ── Report Widget ── --}}
+            <div class="report-widget flex-shrink-0" style="min-width:unset;">
+                {{-- Single row: label + date range + export icon buttons --}}
+                <div class="report-inputs-container" style="margin-bottom:0;">
+                    <span style="font-family:'Outfit',sans-serif;font-size:0.8rem;font-weight:700;color:#1a1a1a;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;">Report</span>
+                    <div class="report-input-wrapper">
+                        <input type="text" id="report_date_from" class="report-date-input" value="{{ now()->format('Y-m-d') }}" placeholder="From Date" title="From date" readonly>
+                    </div>
+                    <span class="report-arrow">→</span>
+                    <div class="report-input-wrapper">
+                        <input type="text" id="report_date_to" class="report-date-input" value="{{ now()->format('Y-m-d') }}" placeholder="To Date" title="To date" readonly>
+                    </div>
+                    <button class="report-btn report-btn-pdf" id="adminReportPdf" title="Open PDF in browser" style="flex:0 0 auto;padding:8px 10px;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    </button>
+                    <button class="report-btn report-btn-excel" id="adminReportExcel" title="Download Excel" style="flex:0 0 auto;padding:8px 10px;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                    </button>
+                </div>
+            </div>
         </div>
 
 
@@ -276,12 +452,14 @@
     @include('admin.partials._chat')
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="{{ asset('js/report-export.js') }}"></script>
     <script>
         const ADMIN_TICKETS_CONFIG = {
             highestTicketId: {{ $tickets->first()->id ?? 0 }},
             newDataUrl: '{{ route("admin.tickets.new-data") }}',
             senderType: '{{ request("sender_type", "") }}',
-            unreadDatesUrl: '{{ route("admin.tickets.unread-dates") }}'
+            unreadDatesUrl: '{{ route("admin.tickets.unread-dates") }}',
+            reportDataUrl: '{{ route("admin.tickets.report-data") }}',
         };
 
         document.addEventListener('DOMContentLoaded', async function() {
@@ -310,6 +488,57 @@
                         dayElem.title = 'Has unread tickets';
                     }
                 }
+            });
+
+            // Initialize flatpickr for report date inputs
+            flatpickr('#report_date_from', {
+                dateFormat: 'Y-m-d',
+                defaultDate: '{{ now()->format("Y-m-d") }}'
+            });
+            flatpickr('#report_date_to', {
+                dateFormat: 'Y-m-d',
+                defaultDate: '{{ now()->format("Y-m-d") }}'
+            });
+
+            function setReportBtnsLoading(loading) {
+                document.getElementById('adminReportPdf').disabled   = loading;
+                document.getElementById('adminReportExcel').disabled = loading;
+            }
+
+            // ── PDF Export ──
+            document.getElementById('adminReportPdf').addEventListener('click', async function() {
+                const dateFrom = document.getElementById('report_date_from').value;
+                const dateTo   = document.getElementById('report_date_to').value;
+                if (!dateFrom || !dateTo) { alert('Please select both From and To dates.'); return; }
+                if (dateFrom > dateTo) { alert('"From" date must be before or equal to "To" date.'); return; }
+                const senderType = ADMIN_TICKETS_CONFIG.senderType;
+                const url = `${ADMIN_TICKETS_CONFIG.reportDataUrl}?date_from=${dateFrom}&date_to=${dateTo}${senderType ? '&sender_type=' + senderType : ''}`;
+
+                await ReportExportUtil.exportPdf({
+                    title: 'Tickets Report',
+                    fetchUrl: url,
+                    isAdmin: true,
+                    onStart: () => setReportBtnsLoading(true),
+                    onEnd: () => setReportBtnsLoading(false)
+                });
+            });
+
+            // ── Excel Export ──
+            document.getElementById('adminReportExcel').addEventListener('click', async function() {
+                const dateFrom = document.getElementById('report_date_from').value;
+                const dateTo   = document.getElementById('report_date_to').value;
+                if (!dateFrom || !dateTo) { alert('Please select both From and To dates.'); return; }
+                if (dateFrom > dateTo) { alert('"From" date must be before or equal to "To" date.'); return; }
+                const senderType = ADMIN_TICKETS_CONFIG.senderType;
+                const url = `${ADMIN_TICKETS_CONFIG.reportDataUrl}?date_from=${dateFrom}&date_to=${dateTo}${senderType ? '&sender_type=' + senderType : ''}`;
+
+                await ReportExportUtil.exportExcel({
+                    title: 'Tickets Report',
+                    fetchUrl: url,
+                    isAdmin: true,
+                    onStart: () => setReportBtnsLoading(true),
+                    onEnd: () => setReportBtnsLoading(false)
+                });
             });
         });
     </script>

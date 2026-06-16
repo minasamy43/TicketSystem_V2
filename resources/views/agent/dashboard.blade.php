@@ -3,7 +3,12 @@
 @section('breadcrumb', 'Dashboard')
 @push('styles')
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="{{ asset('css/Agent-dashboard.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 @endpush
 
 @section('content')
@@ -137,11 +142,27 @@
 
         <div class="card mt-4 shadow-sm border-0" style="border-radius: 16px; overflow: hidden;">
             <div class="card-header bg-white pt-4 px-3 border-bottom-0" style="padding-bottom: 20px;">
-                <div style="border-left: 4px solid var(--primary-color); padding-left: 12px;">
-                    <h5 class="m-0"
-                        style="font-weight: 600; color: #111; font-family: 'Inter', sans-serif; font-size: 1.15rem; letter-spacing: -0.3px;">
+                <div class="d-flex align-items-center justify-content-between gap-3" style="border-left: 4px solid var(--primary-color); padding-left: 12px;">
+                    <h5 class="m-0" style="font-weight: 600; color: #111; font-family: 'Inter', sans-serif; font-size: 1.15rem; letter-spacing: -0.3px;">
                         My Tickets
                     </h5>
+
+                    {{-- ── Report Widget ── --}}
+                    <div class="report-widget">
+                        {{-- Single row: label + date range + export icon buttons --}}
+                        <div class="report-widget-row">
+                            <span class="report-widget-label">Report</span>
+                            <input type="text" id="agent_report_date_from" class="report-date-input" value="{{ now()->format('Y-m-d') }}" title="From date" readonly>
+                            <span class="report-sep">→</span>
+                            <input type="text" id="agent_report_date_to" class="report-date-input" value="{{ now()->format('Y-m-d') }}" title="To date" readonly>
+                            <button class="report-btn report-btn-pdf" id="agentReportPdf" title="Open PDF in browser">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            </button>
+                            <button class="report-btn report-btn-excel" id="agentReportExcel" title="Download Excel">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -351,8 +372,62 @@
         const DASHBOARD_CONFIG = {
             mode: 'agent',
             highestTicketId: {{ $tickets->first()->id ?? 0 }},
-            newDataUrl: '{{ route("agent.dashboard.new-data") }}'
+            newDataUrl: '{{ route("agent.dashboard.new-data") }}',
+            reportDataUrl: '{{ route("agent.dashboard.report-data") }}',
         };
     </script>
+    <script src="{{ asset('js/report-export.js') }}"></script>
     <script src="{{ asset('js/user-dashboard.js') }}"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize flatpickr for report date inputs
+        flatpickr('#agent_report_date_from', {
+            dateFormat: 'Y-m-d',
+            defaultDate: '{{ now()->format("Y-m-d") }}'
+        });
+        flatpickr('#agent_report_date_to', {
+            dateFormat: 'Y-m-d',
+            defaultDate: '{{ now()->format("Y-m-d") }}'
+        });
+
+        function setAgentReportBtnsLoading(loading) {
+            document.getElementById('agentReportPdf').disabled   = loading;
+            document.getElementById('agentReportExcel').disabled = loading;
+        }
+
+        // ── PDF Export ──
+        document.getElementById('agentReportPdf').addEventListener('click', async function() {
+            const dateFrom = document.getElementById('agent_report_date_from').value;
+            const dateTo   = document.getElementById('agent_report_date_to').value;
+            if (!dateFrom || !dateTo) { alert('Please select both From and To dates.'); return; }
+            if (dateFrom > dateTo) { alert('"From" date must be before or equal to "To" date.'); return; }
+            const url = `${DASHBOARD_CONFIG.reportDataUrl}?date_from=${dateFrom}&date_to=${dateTo}`;
+
+            await ReportExportUtil.exportPdf({
+                title: 'My Tickets Report',
+                fetchUrl: url,
+                isAdmin: false,
+                onStart: () => setAgentReportBtnsLoading(true),
+                onEnd: () => setAgentReportBtnsLoading(false)
+            });
+        });
+
+        // ── Excel Export ──
+        document.getElementById('agentReportExcel').addEventListener('click', async function() {
+            const dateFrom = document.getElementById('agent_report_date_from').value;
+            const dateTo   = document.getElementById('agent_report_date_to').value;
+            if (!dateFrom || !dateTo) { alert('Please select both From and To dates.'); return; }
+            if (dateFrom > dateTo) { alert('"From" date must be before or equal to "To" date.'); return; }
+            const url = `${DASHBOARD_CONFIG.reportDataUrl}?date_from=${dateFrom}&date_to=${dateTo}`;
+
+            await ReportExportUtil.exportExcel({
+                title: 'My Tickets Report',
+                fetchUrl: url,
+                isAdmin: false,
+                onStart: () => setAgentReportBtnsLoading(true),
+                onEnd: () => setAgentReportBtnsLoading(false)
+            });
+        });
+    });
+    </script>
 @endsection

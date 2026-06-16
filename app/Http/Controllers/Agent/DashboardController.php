@@ -137,4 +137,55 @@ class DashboardController extends Controller
             'new_highest_id' => $newTickets->max('id') ?: $lastId
         ]);
     }
+
+    /** Get report data for a date range (used by PDF/Excel export). */
+    public function getReportData(Request $request)
+    {
+        $userId   = Auth::id();
+        $dateFrom = $request->get('date_from', now()->format('Y-m-d'));
+        $dateTo   = $request->get('date_to',   now()->format('Y-m-d'));
+
+        $tickets = Ticket::with(['closer'])
+            ->where('user_id', $userId)
+            ->whereDate('created_at', '>=', $dateFrom)
+            ->whereDate('created_at', '<=', $dateTo)
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'success'   => true,
+            'date_from' => $dateFrom,
+            'date_to'   => $dateTo,
+            'total'     => $tickets->count(),
+            'tickets'   => $tickets->map(function($t) {
+                $resolutionTime = '---';
+                if ($t->solved_at) {
+                    $diffMins  = (int) $t->created_at->diffInMinutes($t->solved_at);
+                    $diffHours = (int) $t->created_at->diffInHours($t->solved_at);
+                    $diffDays  = (int) $t->created_at->diffInDays($t->solved_at);
+                    if ($diffMins < 60) {
+                        $resolutionTime = $diffMins . ' min' . ($diffMins !== 1 ? 's' : '');
+                    } elseif ($diffHours < 24) {
+                        $remainMins = $diffMins - ($diffHours * 60);
+                        $resolutionTime = $diffHours . ' hr' . ($diffHours !== 1 ? 's' : '');
+                        if ($remainMins > 0) $resolutionTime .= ' ' . $remainMins . ' min' . ($remainMins !== 1 ? 's' : '');
+                    } else {
+                        $remainHours = $diffHours - ($diffDays * 24);
+                        $resolutionTime = $diffDays . ' day' . ($diffDays !== 1 ? 's' : '');
+                        if ($remainHours > 0) $resolutionTime .= ' ' . $remainHours . ' hr' . ($remainHours !== 1 ? 's' : '');
+                    }
+                }
+                return [
+                    'id'              => $t->id,
+                    'subject'         => $t->subject,
+                    'category'        => ucfirst($t->category ?? 'None'),
+                    'status'          => ucfirst($t->status),
+                    'closed_by'       => $t->closer->name ?? '---',
+                    'solved_at'       => $t->solved_at ? $t->solved_at->format('Y-m-d g:i A') : '---',
+                    'created_at'      => $t->created_at->format('Y-m-d g:i A'),
+                    'resolution_time' => $resolutionTime,
+                ];
+            }),
+        ]);
+    }
 }

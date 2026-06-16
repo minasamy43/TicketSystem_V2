@@ -28,6 +28,7 @@ Route::post('tickets/{id}/mark-read', [App\Http\Controllers\Admin\TicketControll
 Route::get('sidebar/unread-counts', [App\Http\Controllers\Admin\TicketController::class, 'getSidebarAggregateCounts'])->name('sidebar.unread-counts')->middleware('auth');
 Route::get('admin/tickets/new-data', [App\Http\Controllers\Admin\TicketController::class, 'getNewTicketsData'])->name('admin.tickets.new-data')->middleware(['auth', 'admin']); //for ajax for realtime data update
 Route::get('admin/tickets/unread-dates', [App\Http\Controllers\Admin\TicketController::class, 'getUnreadDates'])->name('admin.tickets.unread-dates')->middleware(['auth', 'admin']);
+Route::get('admin/tickets/report-data', [App\Http\Controllers\Admin\TicketController::class, 'getReportData'])->name('admin.tickets.report-data')->middleware(['auth', 'admin']);
 // Knowledge Base routes accessible to both User and Admin (for Preview only)
 Route::middleware('auth')->group(function () {
     Route::get('agent/knowledge-base', [App\Http\Controllers\Agent\KnowledgeBaseController::class, 'index'])->name('knowledge.base');
@@ -41,6 +42,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'agent'])->group(function () {
     Route::get('agent/dashboard', [DashboardController::class, 'index'])->name('agent.dashboard');
     Route::get('agent/dashboard/new-data', [DashboardController::class, 'getNewTicketsData'])->name('agent.dashboard.new-data'); //for ajax for realtime data update
+    Route::get('agent/dashboard/report-data', [DashboardController::class, 'getReportData'])->name('agent.dashboard.report-data');
     Route::get('agent/tickets/create', [TicketController::class, 'create'])->name('agent.tickets.create');
     Route::post('agent/tickets/store', [TicketController::class, 'store'])->name('agent.tickets.store');
     Route::get('agent/tickets/{id}', [TicketController::class, 'show'])->name('agent.tickets.show');
