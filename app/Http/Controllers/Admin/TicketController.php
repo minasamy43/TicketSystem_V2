@@ -81,8 +81,9 @@ class TicketController extends Controller
         }
 
         $tickets = $query->latest()->paginate(10)->withQueryString();
+        $categories = \App\Models\TicketCategory::orderBy('name')->get();
 
-        return view('admin.tickets.index', compact('tickets', 'date'));
+        return view('admin.tickets.index', compact('tickets', 'date', 'categories'));
     }
     /** Show ticket details with comments. */
     public function show($id)

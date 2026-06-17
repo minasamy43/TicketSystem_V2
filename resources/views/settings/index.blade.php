@@ -27,6 +27,9 @@
                         <div class="px-4 mt-4 mb-3 text-uppercase text-muted"
                             style="font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;">System</div>
 
+                        <div class="settings-nav-item" onclick="switchTab('categories', this)">
+                            <i class="fa-solid fa-tags"></i> Ticket Categories
+                        </div>
                         <div class="settings-nav-item" onclick="switchTab('preferences', this)">
                             <i class="fa-solid fa-sliders"></i> Preferences
                         </div>
@@ -142,8 +145,122 @@
                         </form>
                     </div>
 
-                    <!-- Preferences Tab (Admin Only Placeholder) -->
+                    {{-- ── Ticket Categories Tab (Admin Only) ── --}}
                     @if(Auth::user()->role == 1)
+                        <div id="tab-categories" class="settings-tab-pane">
+                            <h3 class="settings-section-title"><i class="fa-solid fa-tags text-muted"></i> Ticket Categories</h3>
+
+                     
+
+                            {{-- Add New Category Form --}}
+                            <div class="p-4 border rounded mb-4 shadow-sm" style="background-color: #fafbfe;">
+                                <h5 class="mb-3 fw-bold text-muted d-flex align-items-center gap-2" style="font-size: 1rem; letter-spacing: 1px;">
+                                    <i class="fa-solid fa-plus-circle"></i> Add New Category
+                                </h5>
+                                <form action="{{ route('admin.settings.categories.store') }}" method="POST">
+                                    @csrf
+                                    <div class="d-flex gap-2 align-items-start">
+                                        <div class="flex-grow-1">
+                                            <input type="text" name="name" id="new_category_name"
+                                                class="form-control @error('name') is-invalid @enderror"
+                                                placeholder="e.g. Billing Issue"
+                                                value="{{ old('name') }}" maxlength="100" style="height:36px;"required>
+                                            @error('name')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <button type="submit" class="btn btn-gold px-3" style="height: 34px;">
+                                            <i class="fa-solid fa-plus me-1"></i> Add
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            {{-- Categories List --}}
+                            <div class="p-4 border rounded shadow-sm" style="background-color: #fff;">
+                                <h5 class="mb-3 fw-bold text-muted d-flex align-items-center gap-2" style="font-size: 1rem; letter-spacing: 1px;">
+                                    <i class="fa-solid fa-list"></i> Current Categories
+                                    <span class="badge rounded-pill ms-1" style="background: var(--primary-color); color: #fff; font-size: 0.75rem;">{{ count($ticketCategories) }}</span>
+                                </h5>
+                                @if($ticketCategories->isEmpty())
+                                    <p class="text-muted text-center py-3"><i class="fa-solid fa-inbox me-2"></i>No categories yet. Add one above.</p>
+                                @else
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0" style="font-size: 0.92rem;">
+                                            <thead style="background: var(--primary-light);">
+                                                <tr>
+                                                    <th style="padding: 10px 14px; font-weight: 600; color: var(--primary-color);">#</th>
+                                                    <th style="padding: 10px 14px; font-weight: 600; color: var(--primary-color);">Category Name</th>
+                                                    <th style="padding: 10px 14px; font-weight: 600; color: var(--primary-color);">Created</th>
+                                                    <th class="text-center" style="padding: 10px 14px; font-weight: 600; color: var(--primary-color);">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($ticketCategories as $i => $cat)
+                                                    <tr>
+                                                        <td style="padding: 10px 14px; color: #888;">{{ $i + 1 }}</td>
+                                                        <td style="padding: 10px 14px;">
+                                                            <span class="badge" style="background: var(--primary-light); color: var(--primary-color); font-size: 0.85rem; font-weight: 500; padding: 6px 12px; border-radius: 20px;">
+                                                                <i class="fa-solid fa-tag me-1"></i>{{ $cat->name }}
+                                                            </span>
+                                                        </td>
+                                                        <td style="padding: 10px 14px; color: #888; font-size: 0.82rem;">{{ $cat->created_at->format('M d, Y') }}</td>
+                                                        <td class="text-center" style="padding: 10px 14px;">
+                                                            <div class="d-flex justify-content-center gap-2">
+                                                                {{-- Edit button --}}
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-outline-primary"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#editCatModal{{ $cat->id }}"
+                                                                    title="Edit">
+                                                                    <i class="fa-solid fa-pen"></i>
+                                                                </button>
+                                                                {{-- Delete form --}}
+                                                                <form action="{{ route('admin.settings.categories.destroy', $cat->id) }}" method="POST"
+                                                                    onsubmit="return confirm('Delete category &quot;{{ addslashes($cat->name) }}&quot;? Existing tickets will keep the label.')">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                                                        <i class="fa-solid fa-trash"></i>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+
+                                                    {{-- Edit Modal --}}
+                                                    <div class="modal fade" id="editCatModal{{ $cat->id }}" tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog modal-sm">
+                                                            <div class="modal-content border-0 shadow">
+                                                                <div class="modal-header border-bottom-0 pb-0">
+                                                                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-pen me-2"></i>Edit Category</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                                </div>
+                                                                <form action="{{ route('admin.settings.categories.update', $cat->id) }}" method="POST">
+                                                                    @csrf
+                                                                    @method('PUT')
+                                                                    <div class="modal-body">
+                                                                        <label class="form-label fw-semibold">Category Name</label>
+                                                                        <input type="text" name="name" class="form-control"
+                                                                            value="{{ $cat->name }}" maxlength="100" required>
+                                                                    </div>
+                                                                    <div class="modal-footer border-top-0 pt-0">
+                                                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                                                                        <button type="submit" class="btn btn-gold">Save Changes</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                    {{-- ── Preferences Tab ── --}}
                         <div id="tab-preferences" class="settings-tab-pane">
                             <h3 class="settings-section-title"><i class="fa-solid fa-sliders text-muted"></i> System Preferences
                             </h3>
@@ -472,7 +589,7 @@
 @push('scripts')
     <script>
         window.SettingsConfig = {
-            hasPasswordErrors: {{ ($errors->has('current_password') || $errors->has('password')) ? 'true' : 'false' }}
+            hasPasswordErrors: {{ ($errors->has('current_password') || $errors->has('password')) ? 'true' : 'false' }},
         };
     </script>
     <script src="{{ asset('js/settings.js') }}"></script>

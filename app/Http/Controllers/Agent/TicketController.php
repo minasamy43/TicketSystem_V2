@@ -35,14 +35,15 @@ class TicketController extends Controller
 
     public function create()
     {
-        return view('agent.create-ticket');
+        $categories = \App\Models\TicketCategory::orderBy('name')->get();
+        return view('agent.create-ticket', compact('categories'));
     }
     public function store(Request $request)
     {
         $request->validate([
             'subject' => 'required|max:64',
             'message' => 'required|max:1000',
-            'category' => 'required|in:live Egypt,live pro,demo Egypt,demo pro,other',
+            'category' => 'required|exists:ticket_categories,name',
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
         ], [

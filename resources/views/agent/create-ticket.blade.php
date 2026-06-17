@@ -24,11 +24,9 @@
                         <label class="form-label">Category</label>
                         <select name="category" class="form-select @error('category') is-invalid @enderror" required>
                             <option value="" disabled {{ old('category') ? '' : 'selected' }}>Select Category</option>
-                            <option value="live Egypt" {{ old('category') == 'live Egypt' ? 'selected' : '' }}>live Egypt</option>
-                            <option value="live pro" {{ old('category') == 'live pro' ? 'selected' : '' }}>live pro</option>
-                            <option value="demo Egypt" {{ old('category') == 'demo Egypt' ? 'selected' : '' }}>demo Egypt</option>
-                            <option value="demo pro" {{ old('category') == 'demo pro' ? 'selected' : '' }}>demo pro</option>
-                            <option value="other" {{ old('category') == 'other' ? 'selected' : '' }}>other</option>
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat->name }}" {{ old('category') == $cat->name ? 'selected' : '' }}>{{ $cat->name }}</option>
+                            @endforeach
                         </select>
                         @error('category')
                             <div class="invalid-feedback">{{ $message }}</div>

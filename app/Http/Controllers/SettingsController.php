@@ -13,7 +13,8 @@ class SettingsController extends Controller
     public function index()
     {
         $user = Auth::user();
-        return view('settings.index', compact('user'));
+        $ticketCategories = \App\Models\TicketCategory::orderBy('name')->get();
+        return view('settings.index', compact('user', 'ticketCategories'));
     }
     public function updateProfile(Request $request)
     {
@@ -237,4 +238,65 @@ class SettingsController extends Controller
             \Illuminate\Support\Facades\Storage::disk('public')->delete($logoPath);
         }
     }
+
+    /** Store a new ticket category (admin only). */
+    public function storeCategory(Request $request)
+    {
+        if (Auth::user()->role != 1) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:100|unique:ticket_categories,name',
+        ], [
+            'name.unique' => 'A category with this name already exists.',
+        ]);
+
+        \App\Models\TicketCategory::create(['name' => trim($request->name)]);
+
+        return redirect()->back()->with('success', 'Category "' . trim($request->name) . '" created successfully.');
+    }
+
+    /** Update an existing ticket category (admin only). */
+    public function updateCategory(Request $request, $id)
+    {
+        if (Auth::user()->role != 1) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $category = \App\Models\TicketCategory::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:100|unique:ticket_categories,name,' . $id,
+        ], [
+            'name.unique' => 'A category with this name already exists.',
+        ]);
+
+        $oldName = $category->name;
+        $newName = trim($request->name);
+
+        $category->update(['name' => $newName]);
+
+        // Cascade update existing tickets that used the old category name
+        if ($oldName !== $newName) {
+            \App\Models\Ticket::where('category', $oldName)->update(['category' => $newName]);
+        }
+
+        return redirect()->back()->with('success', 'Category updated from "' . $oldName . '" to "' . $newName . '".');
+    }
+
+    /** Delete a ticket category (admin only). */
+    public function destroyCategory($id)
+    {
+        if (Auth::user()->role != 1) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $category = \App\Models\TicketCategory::findOrFail($id);
+        $name = $category->name;
+        $category->delete();
+
+        return redirect()->back()->with('success', 'Category "' . $name . '" deleted. Existing tickets retain the category label.');
+    }
 }
+

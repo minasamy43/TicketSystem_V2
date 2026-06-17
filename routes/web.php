@@ -118,6 +118,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('admin/settings/preferences/undo/{key}', [\App\Http\Controllers\SettingsController::class, 'undoSinglePreference'])->name('admin.settings.preferences.undo');
     Route::post('admin/settings/themes/save', [\App\Http\Controllers\SettingsController::class, 'saveTheme'])->name('admin.settings.themes.save');
     Route::post('admin/settings/themes/delete/{id}', [\App\Http\Controllers\SettingsController::class, 'deleteTheme'])->name('admin.settings.themes.delete');
+    // Admin Settings Ticket Categories
+    Route::post('admin/settings/categories', [\App\Http\Controllers\SettingsController::class, 'storeCategory'])->name('admin.settings.categories.store');
+    Route::put('admin/settings/categories/{id}', [\App\Http\Controllers\SettingsController::class, 'updateCategory'])->name('admin.settings.categories.update');
+    Route::delete('admin/settings/categories/{id}', [\App\Http\Controllers\SettingsController::class, 'destroyCategory'])->name('admin.settings.categories.destroy');
 });
 
 

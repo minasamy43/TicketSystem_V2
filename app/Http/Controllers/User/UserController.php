@@ -127,7 +127,8 @@ class UserController extends Controller
 
     public function createTicket()
     {
-        return view('user.tickets.create');
+        $categories = \App\Models\TicketCategory::orderBy('name')->get();
+        return view('user.tickets.create', compact('categories'));
     }
 
     public function storeTicket(Request $request)
@@ -135,7 +136,7 @@ class UserController extends Controller
         $request->validate([
             'subject' => 'required|max:64',
             'message' => 'required|max:1000',
-            'category' => 'required|in:live Egypt,live pro,demo Egypt,demo pro,other',
+            'category' => 'required|exists:ticket_categories,name',
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);

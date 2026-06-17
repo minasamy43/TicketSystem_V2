@@ -214,11 +214,9 @@
                                         <select name="category" class="inline-filter-select"
                                             onchange="document.getElementById('filterForm').submit()">
                                             <option value="">All </option>
-                                            <option value="live Egypt" {{ request('category') == 'live Egypt' ? 'selected' : '' }}>live Egypt</option>
-                                            <option value="live pro" {{ request('category') == 'live pro' ? 'selected' : '' }}>live pro</option>
-                                            <option value="demo Egypt" {{ request('category') == 'demo Egypt' ? 'selected' : '' }}>demo Egypt</option>
-                                            <option value="demo pro" {{ request('category') == 'demo pro' ? 'selected' : '' }}>demo pro</option>
-                                            <option value="other" {{ request('category') == 'other' ? 'selected' : '' }}>other</option>
+                                            @foreach($categories as $cat)
+                                                <option value="{{ $cat->name }}" {{ request('category') == $cat->name ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                            @endforeach
                                         </select>
                                     </td>
                                     <td style="padding: 8px 10px;">

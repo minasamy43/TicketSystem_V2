@@ -85,7 +85,7 @@ const ReportExportUtil = {
             doc.setTextColor(71, 85, 105); // Slate-600 (#475569)
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(9);
-            const metaText = `Period: ${data.date_from} -> ${data.date_to}         Total: ${data.total} ticket(s)`;
+            const metaText = `Period: ${data.date_from} -> ${data.date_to}         Total: ${data.total} ticket`;
             doc.text(metaText, 297 - 14, 14, { align: 'right' });
 
             // Thin divider line (using primary color)

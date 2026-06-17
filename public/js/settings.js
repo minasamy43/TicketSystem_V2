@@ -113,19 +113,25 @@ function switchTab(tabId, element) {
 
 // Keep active tab on validation failure or reload
 document.addEventListener('DOMContentLoaded', function () {
-    // Restore active tab from session storage
-    const savedTab = sessionStorage.getItem('settingsActiveTab');
-    if (savedTab) {
-        const tabElement = document.querySelector(`[onclick="switchTab('${savedTab}', this)"]`);
-        if (tabElement) {
-            switchTab(savedTab, tabElement);
+    // Auto-switch to categories tab after category CRUD success or name error
+    if (window.SettingsConfig && (window.SettingsConfig.hasCategoryErrors || window.SettingsConfig.hasCategorySuccess)) {
+        const catTab = document.querySelector('[onclick="switchTab(\'categories\', this)"]');
+        if (catTab) {
+            switchTab('categories', catTab);
         }
-    }
-
-    if (window.SettingsConfig && window.SettingsConfig.hasPasswordErrors) {
+    } else if (window.SettingsConfig && window.SettingsConfig.hasPasswordErrors) {
         // If password errors exist, switch to security tab
         const securityTab = document.querySelector('[onclick="switchTab(\'security\', this)"]');
         if (securityTab) switchTab('security', securityTab);
+    } else {
+        // Restore active tab from session storage
+        const savedTab = sessionStorage.getItem('settingsActiveTab');
+        if (savedTab) {
+            const tabElement = document.querySelector(`[onclick="switchTab('${savedTab}', this)"]`);
+            if (tabElement) {
+                switchTab(savedTab, tabElement);
+            }
+        }
     }
 
     // Avatar Image Preview
